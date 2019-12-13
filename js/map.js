@@ -52,7 +52,6 @@ $(document).ready(function () {
     });
     view.ui.add(legend, "top-right");
 
-
     var queryProjectTask = new QueryTask({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0"
     });
@@ -83,7 +82,7 @@ $(document).ready(function () {
       allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
       locationEnabled: false,
       popupEnabled: true,
-      container: "searchPlace",
+      //container: "searchPlace",
       includeDefaultSources: false,
       sources: [{
         locator: new Locator({
@@ -95,6 +94,9 @@ $(document).ready(function () {
       }]
     });
 
+	  	  view.ui.add(searchWidget, "top-left");
+	  
+	  
     map.add(projectLocations);
 
     view.on('click', function (event) {

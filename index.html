@@ -35,9 +35,6 @@
       <main class="col" style="background-color: white">
         <div class="row h-100 w-100 justify-content-md-center">
           <div class="col-2 sideContents" >
-            <label for="searchPlace">Project/Address Search</label>
-  		      <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
-            <br>
             <label for="division">MassDOT Division</label>
             <select class="form-control filter" id="division">
               <option>All</option>
@@ -59,14 +56,21 @@
           </select>
 			  
   		      <br>
-            <label for="programs">Draft Projects</label>
+            <label for="programs">Project Source</label>
             <select class="custom-select filter" id="" multiple>
               <option selected>All</option>
+				<option selected>CIP</option>
+				<option selected>STIP</option>
+				<option selected>MapIT</option>
+				<option selected>MBTA</option>
             </select>
             <br>
-            <label for="programs">Approved Projects</label>
+            <label for="programs">Stip Status</label>
             <select class="custom-select filter" id="" multiple>
               <option selected>All</option>
+				<option selected>Funded</option>
+				<option selected>In Design</option>
+				<option selected>In Construction</option>
             </select>
             <br>
             <label for="programs">CIP Program</label>
