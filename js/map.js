@@ -86,27 +86,6 @@ $(document).ready(function () {
       container: "searchPlace",
       includeDefaultSources: false,
       sources: [{
-        layer: new FeatureLayer({
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/1",
-          outFields: ["*"],
-          popupTemplate: {
-            title: "{Project_Description}",
-            content: popupFunction
-          }
-        }),
-        searchFields: ["Project_Description", "Program"],
-        displayField: "Project_Description",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "CIP Projects",
-        placeholder: "example: Red-Blue Connector",
-        maxResults: 60,
-        maxSuggestions: 6,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 2,
-        popupEnabled: true,
-        autoNavigate: true
-      }, {
         locator: new Locator({
           url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
         }),
@@ -219,8 +198,8 @@ $(document).ready(function () {
       // projects = "Project_Description = '" + projectSelected + "'"
 
 
-      $("#minValue").html("Minimum project cost: $" + parseInt($("#min").val().replace(/\D/g, '')).toLocaleString())
-      $("#maxValue").html("Maximum project cost: $" + parseInt($("#max").val().replace(/\D/g, '')).toLocaleString())
+      //$("#minValue").html("Minimum project cost: $" + parseInt($("#min").val().replace(/\D/g, '')).toLocaleString())
+      //$("#maxValue").html("Maximum project cost: $" + parseInt($("#max").val().replace(/\D/g, '')).toLocaleString())
       sql = sql + " AND (" + divisions + ") AND (" + programs + ") AND (" + projects + ") AND ( Total__M >= " + $("#min").val() + " AND Total__M <= " + $("#max").val() + ")"
 
 
@@ -246,7 +225,17 @@ $(document).ready(function () {
       });
     };
 
-
+    $("#cost-range").slider({
+      range: true,
+      min: 0,
+      max: 100000000,
+      values: [0, 100000000],
+      slide: function (event, ui) {
+        $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
+        $("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
+        filterMap();
+      }
+    });
 
   });
 });
