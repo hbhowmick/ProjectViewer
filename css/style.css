@@ -107,6 +107,11 @@ span {
   width: 200px;
 }
 
+#cost-range {
+  margin: 15px 0px 10px 10px;
+  width: 94%;
+}
+
 #aboutBtn:hover {
   color: #2C2C2C;
   transition: .3s;
