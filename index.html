@@ -109,7 +109,7 @@
             </div>
           </div>
 
-          <div class="col d-flex flex-column h-100 noPadding">
+          <div class="col d-flex flex-column h-100 mapCol">
             <input class="form-control mr-sm-2 input w-100" id="projectSearch" type="text" placeholder="Search for a project (e.g. Red-Blue Connector)">
             <div id="viewDiv" class="w-100 p-3 h-100" ></div>
 
@@ -119,13 +119,13 @@
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
                 <div class="row w-100 justify-content-md-center projectContent">
-                  <div class="col-md paddingLeft">
-                    <div class="row placeholder">
+                  <div class="col-md leftCol">
+                    <div class="row">
                       <h5 id="projID"></h5>
-                      <p id="projDesc"></p>
                     </div>
+                    <div class="row" id="projDesc"></div>
                   </div>
-                  <div class="col-md paddingRight">
+                  <div class="col-md rightCol">
                     <div id="viewMini"></div>
                   </div>
 
@@ -140,7 +140,7 @@
     </div>
   </div>
   <script src="js/aboutModal.js"></script>
-  <!-- <script src="js/listModal.js"></script> -->
+  <script src="js/listModal.js"></script>
   <script src="js/projectModal.js"></script>
   <script type="text/javascript">
   function googleTranslateElementInit() {
