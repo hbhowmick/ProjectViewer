@@ -3,10 +3,21 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest"></script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
+<script src="https://js.arcgis.com/4.13/"></script>
+<script src="js/map.js"></script>
+  <!-- <script src="js/miniMap.js"></script> -->
+<script src="js/controls.js"></script>
 <link rel="stylesheet" href="css/style.css"/>
+
 </head>
 <body>
   <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
@@ -16,9 +27,12 @@
       <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
         <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip">2020-2024 CIP<span class="sr-only">(current)</span></a>
         <a class="nav-link" id="aboutBtn">ABOUT</a>
+        <div class="btn my-2 my-sm-0 m-2">
+          <div id="google_translate_element"></div>
+        </div>
       </div>
     </nav>
-    <div id="aboutModal class="test">
+    <div id="aboutModal">
       <div id="aboutModal-content">
         <span class="close">&times;</span>
         <h4 class="w-100 h-10">Welcome to the Project Viewer and Interactive Map!</h4>
@@ -29,61 +43,63 @@
       <main class="col" style="background-color: white">
         <div class="row h-100 w-100 justify-content-md-center">
           <div class="col-2 sideContents" >
-            <label for="searchPlace">Project/Address Search</label>
-  		      <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
+            <h4 class="test1">Filter Projects</h4>
             <br>
             <label for="division">MassDOT Division</label>
             <select class="form-control filter" id="division">
               <option>All</option>
-              <option>Highway</option>
-              <option>MBTA</option>
-              <option>Rail and Transit</option>
-              <option>RMV</option>
-              <option>Aeronautics</option>
             </select>
             <br>
             <label for="townSelect">Town</label>
-            <select class="form-control town-filter" id="townSelect">
+            <!-- <select class="form-control filter town-filter" id="townSelect"> -->
+            <select class="form-control filter filter" id="townSelect">
   	          <option value="0">All</option>
             </select>
   		      <br>
-            <label for="programs">Draft Projects</label>
-            <select class="custom-select filter" id="" multiple>
-              <option selected>All</option>
+            <label for="mpoSelect">MPO</label>
+            <!-- <select class="form-control town-filter" id="mpoSelect"> -->
+            <select class="form-control filter" id="mpoSelect">
+              <option value="All">All</option>
             </select>
-            <br>
-            <label for="programs">Approved Projects</label>
-            <select class="custom-select filter" id="" multiple>
-              <option selected>All</option>
-            </select>
+            <div class="filter mr-sm-2 filter w-100" id="filterMpoSpecific">
+              <input class="" type="checkbox" id="mpoSpecific">
+              <label class="form-check-label" for="mpoSpecific"> MPO Selected Projects </label>
+            </div>
             <br>
             <label for="programs">CIP Program</label>
             <select class="custom-select filter" id="programs" multiple>
-              <option selected>All</option>
+              <option value="All" division= "All" selected>All</option>
             </select>
             <br>
             <br>
-            <label for="customRange1" id="minValue">Minimum project cost: $0</label>
-              <input type="range" class="custom-range  filter" id="min" min="0" max="100000000" value="0" step="1000000">
-            <label for="customRange1" id="maxValue">Maximum project cost: $10,000,000</label>
-              <input type="range" class="custom-range  filter" id="max" min="0" max="100000000" value="100000000" step="1000000">
-            <br>
+            <form class="form-inline">
+              <label for="amount">Cost range: $</label>
+              <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0">
+              - $
+              <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="100,000,000" value="100,000,000">
+            </form>
+            <div id="cost-range" 	class="filter ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+              <div class="ui-slider-range ui-corner-all ui-widget-header" style="left: 0%; width: 100%;"></div>
+              <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 0%;"></span>
+              <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 100%;"></span>
+            </div>
+            <!-- <br>
             <br>
             <div>
               <button id="projectBtn">Project Modal</button>
-            </div>
+            </div> -->
           </div>
-
-          <div class="container listModal" id="listModal" style="display:none;">
+          <div class="container listModal" id="listModal">
             <div class="row">
               <div class="col-11 noRightPadding">
                 <div class="row">
-                  <h4 class="w-100 h-10 leftHeader">PROJECTS</h4>
+                  <h4 class="w-100 leftHeader" id="projectList-header"></h4>
+                  <h4 class="w-100 leftHeader" id="projectList-subheader"></h4>
                   <hr>
                 </div>
                 <div class="row" id="listModal-content">
                   <div class="col-10 h-90" id="projectList">
-                    <p class="" id="projectList-content">Result</p>
+                    <div class="" id="projectList-content"></div>
                   </div>
                 </div>
               </div>
@@ -92,67 +108,44 @@
               </div>
             </div>
           </div>
-          <div class="col noPadding">
+
+          <div class="col d-flex flex-column h-100 noPadding">
+            <input class="form-control mr-sm-2 input w-100" id="projectSearch" type="text" placeholder="Search for a project (e.g. Red-Blue Connector)">
             <div id="viewDiv" class="w-100 p-3 h-100" ></div>
-          </div>
-        </div>
 
-
-
-        <div class="col col-offset-5" id="projectModal">
-          <div id="projectModal-content">
-            <div class="row closeProject">
-              <span><i class="fa fa-angle-double-down"></i></span>
-            </div>
-            <div class="row w-100 justify-content-md-center">
-              <div class="col-7 projectLeft" >
-                <div class="row top">
-                  <h4 class="w-100 h-10 grayFont">PROJECT DESCRIPTION</h4>
-                  <p class='lorem'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  <p class='lorem'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  <p class='lorem'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
+            <div class="col col-offset-5" id="projectModal">
+              <div id="projectModal-content">
+                <div class="row closeProject">
+                  <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
-                <div class="row bottom">
-                  <div class="col w-50 leftCol">
-                    <h4 class="w-100 h-10 grayFont">COST SHEDULE</h4>
-                    <p class='lorem'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <div class="row w-100 justify-content-md-center projectContent">
+                  <div class="col-md paddingLeft">
+                    <div class="row placeholder">
+                      <h5 id="projID"></h5>
+                      <p id="projDesc"></p>
+                    </div>
                   </div>
-                  <div class="col-6 rightCol">
-                    <!-- <h4 class="w-100 h-10">PROJECT DESCRIPTION</h4> -->
-                    <p class='lorem'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                  <div class="col-md paddingRight">
+                    <div id="viewMini"></div>
                   </div>
-                </div>
 
-
-              </div>
-              <div class="col projectRight">
-                <div class="row oneThird">
-                  <!-- <h4 class="grayFont">PROJECT IMAGE</h4> -->
-                </div>
-                <div class="row oneThird">
-                  <!-- <h4 class="grayFont">PLANS/DESIGNS</h4> -->
-                </div>
-                <div class="row oneThird">
-                  <h4 class="grayFont">MAP</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
 
       </main>
     </div>
-
   </div>
-
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <script src="https://js.arcgis.com/4.13/"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/controls.js"></script>
   <script src="js/aboutModal.js"></script>
-  <script src="js/listModal.js"></script>
+  <!-- <script src="js/listModal.js"></script> -->
   <script src="js/projectModal.js"></script>
+  <script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+  }
+  </script>
 </body>
 </html>
