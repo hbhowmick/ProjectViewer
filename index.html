@@ -14,9 +14,12 @@
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script>
 <script src="js/map.js"></script>
-  <!-- <script src="js/miniMap.js"></script> -->
+<script src="js/testMapillary.js"></script>
 <script src="js/controls.js"></script>
 <link rel="stylesheet" href="css/style.css"/>
+<!-- <script src='https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.js'></script> -->
+<link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css"
+      rel="stylesheet"/>
 
 </head>
 <body>
@@ -121,13 +124,41 @@
                 <div class="row w-100 justify-content-md-center projectContent">
                   <div class="col-md leftCol">
                     <div class="row">
-                      <h5 id="projID"></h5>
+                      <h6 id="projTitle"></h6>
                     </div>
                     <div class="row" id="projDesc"></div>
                   </div>
                   <div class="col-md rightCol">
-                    <div id="viewMini"></div>
+                    <div class="toggleGroup">
+                      <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round">
+                        </span>
+                      </label>
+                    </div>
+                    <div id="viewMini">
+                      <div class="labelWrapper">
+                        <h6 class="toggleLabel">StreetView</h6>
+                      </div>
+                    </div>
+                    <div class="mly-wrapper">
+                      <div id="mly" class="mapillary-js"></div>
+                      <div class="labelWrapper">
+                        <h6 class="toggleLabel whiteFont">StreetView</h6>
+                      </div>
+                    </div>
                   </div>
+
+
+
+
+
+
+
+
+
+
+
 
                 </div>
               </div>

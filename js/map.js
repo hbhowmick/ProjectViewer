@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
-  require(["esri/views/MapView",
+  require([
+    "esri/views/MapView",
     "esri/Map",
     "esri/tasks/QueryTask",
     "esri/tasks/support/Query",
@@ -11,8 +12,9 @@ $(document).ready(function () {
     "esri/widgets/Expand",
     "esri/widgets/Legend",
     "esri/widgets/Home",
+    "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, QueryTask, Query, FeatureLayer, GraphicsLayer, Locator, Search, Expand, Legend, Home, Graphic) {
+  ], function (MapView, Map, QueryTask, Query, FeatureLayer, GraphicsLayer, Locator, Search, Expand, Legend, Home, FeatureFilter, Graphic) {
     var reset;
     var extentForRegionOfInterest = false;
     var spatialFilter = false;
@@ -99,7 +101,8 @@ $(document).ready(function () {
       });
       return queryProjectTask.execute(query).then(function (result) {
         var attributes = result.features[0].attributes;
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'></br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total + "</p> This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.Total).format('$0,0[.]00') + ".</br></br> It also lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        return "<p>Project ID: " + attributes.ProjectID + "</br> Location: " + attributes.Location + "</br> MassDOT Division: " + attributes.Division + "</br> Program: " + attributes.Program.split(' | ')[1] + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p>" +
+        "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>see in Project Info</a></p>"
       });
     }
 
@@ -254,7 +257,7 @@ $(document).ready(function () {
             view2.goTo({
               target: response.features[0].geometry,
             });
-            applyAttributeFilter();
+            applyFeatureViewFilters();
           });
       } else {
         view1.goTo({
@@ -266,7 +269,7 @@ $(document).ready(function () {
         //   center: [-71.8, 42]
         // });
         spatialFilter = false;
-        applyAttributeFilter();
+        applyFeatureViewFilters();
       }
     });
 
@@ -289,7 +292,7 @@ $(document).ready(function () {
             view2.goTo({
               target: response.features[0].geometry,
             });
-            applyAttributeFilter();
+            applyFeatureViewFilters();
           });
       } else {
         view1.goTo({
@@ -297,7 +300,7 @@ $(document).ready(function () {
           center: [-71.8, 42]
         });
         spatialFilter = false;
-        applyAttributeFilter();
+        applyFeatureViewFilters();
       }
     });
 
@@ -309,7 +312,7 @@ $(document).ready(function () {
       slide: function (event, ui) {
         $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
         $("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
-        applyAttributeFilter();
+        applyFeatureViewFilters();
       }
     });
 
@@ -322,17 +325,38 @@ $(document).ready(function () {
       $("#minCost").val(numeral(minValue).format('0,0[.]00'));
       $("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
       $("#cost-range").slider("values", [minValue, maxValue]);
-      applyAttributeFilter();
+      applyFeatureViewFilters();
     });
 
     $(".filter").change(function () {
-      applyAttributeFilter();
+      applyFeatureViewFilters();
     });
 
-    //These functions are used to filter features on the map. The first filters features by attributes alone. applySpatialFilter() applies a spatial filter. applyMBTAFilter() filters MBTA lines
-    function applyAttributeFilter() {
-      sql = "1=1"
+    //These are the feature layer views of the project locations
+    view1.whenLayerView(projectLocationsLines)
+      .then(function (layerView) {
+        prjLocationLines = layerView
+      })
+      .catch(function (error) {});
 
+    view1.whenLayerView(projectLocationsPoints)
+      .then(function (layerView) {
+        prjLocationPoints = layerView
+      })
+      .catch(function (error) {});
+
+    view1.whenLayerView(projectLocationsMBTA)
+      .then(function (layerView) {
+        mbtaLines = layerView
+      })
+      .catch(function (error) {});
+
+
+
+    //This function applies FeatureFilters to the layers in the map
+    function applyFeatureViewFilters() {
+      view1.popup.close();
+      sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
       if ($("#division").val() !== "All") {
@@ -348,146 +372,38 @@ $(document).ready(function () {
         });
       }
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( TotalCost  >= " + parseFloat($("#minCost").val().replace(/,/g, '')) + " AND TotalCost  <= " + parseFloat($("#maxCost").val().replace(/,/g, '')) + ")"
-      projectLocationsLines.definitionExpression = sql;
-      projectLocationsPoints.definitionExpression = sql;
+
+      if ($("#division").val() == "All" || $("#division").val() == "MBTA") {
+        mbtaLines.visible = true;
+        mbtaSql = sql.replace("TotalCost", "Total").replace("TotalCost", "Total")
+      } else {
+        mbtaLines.visible = false;
+      }
 
       if (spatialFilter === true) {
-        applySpatialFilter(sql)
-      }
-      if ($("#division").val() == "All" || $("#division").val() == "MBTA") {
-        applyMBTAAttributeFilter(sql)
-      } else {
-        projectLocationsMBTA.definitionExpression = '1=2';
-      }
-    };
-
-    function applySpatialFilter() {
-      if (extentForRegionOfInterest != false) {
-        var query = {
+        queryFilter = new FeatureFilter({
+          where: sql,
           geometry: extentForRegionOfInterest,
-          spatialRelationship: "intersects",
-          outFields: ["*"],
-          returnGeometry: true,
-        };
-        console.log("APPLYING SPATIAL FILTER: ", query);
-
-        view1.whenLayerView(projectLocationsLines).then(function (featureLayerView) {
-          if (featureLayerView.updating) {
-            var handle = featureLayerView.watch("updating", function (isUpdating) {
-              if (!isUpdating) {
-                featureLayerView.queryObjectIds(query).then(function (result) {
-                  theOids = "OBJECTID in (" + result + ")";
-                  if (result.length > 0) {
-                    projectLocationsLines.definitionExpression = theOids;
-                  }
-                });
-                handle.remove();
-              }
-            });
-          } else {
-            featureLayerView.queryObjectIds(query).then(function (result) {
-              theOids = "OBJECTID in (" + result + ")";
-              if (result.length > 0) {
-                projectLocationsLines.definitionExpression = theOids;
-              }
-            });
-          }
+          spatialRelationship: "intersects"
         });
-
-        view1.whenLayerView(projectLocationsPoints).then(function (featureLayerView) {
-          if (featureLayerView.updating) {
-            var handle = featureLayerView.watch("updating", function (isUpdating) {
-              if (!isUpdating) {
-                featureLayerView.queryObjectIds(query).then(function (result) {
-                  theOids = "OBJECTID in (" + result + ")";
-                  if (result.length > 0) {
-                    projectLocationsPoints.definitionExpression = theOids;
-                  } else {
-                    projectLocationsPoints.definitionExpression = "1=2";
-                  }
-                });
-                handle.remove();
-              }
-            });
-          } else {
-            featureLayerView.queryObjectIds(query).then(function (result) {
-              theOids = "OBJECTID in (" + result + ")";
-              if (result.length > 0) {
-                projectLocationsPoints.definitionExpression = theOids;
-              } else {
-                projectLocationsPoints.definitionExpression = "1=2";
-              }
-            });
-          }
+      } else {
+        queryFilter = new FeatureFilter({
+          where: sql,
         });
       }
-    };
 
-    function applyMBTAAttributeFilter(sql) {
-      mbtaSql = sql.replace("TotalCost", "Total").replace("TotalCost", "Total")
-      $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6/query", {
-        where: mbtaSql,
-        outFields: "MBTA_Location",
-        returnGeometry: false,
-        orderByFields: 'MBTA_Location',
-        returnDistinctValues: true,
-        f: 'pjson'
-      })
-      .done(function (data) {
-        var projLocations = $.parseJSON(data);
-        mbtaLocationList = [];
-        $(projLocations.features).each(function () {
-          if (this.attributes.MBTA_Location != null) {
-            mbtaLocationList.push("'" + this.attributes.MBTA_Location + "'");
-          }
-        });
-        if (projLocations.features.length > 0) {
-          mbtaLocationList = "MBTA_Location in (" + mbtaLocationList.join() + ")";
-          projectLocationsMBTA.definitionExpression = mbtaLocationList;
-          if (spatialFilter === true) {
-            applyMBTASpatialFilter(mbtaLocationList)
-          }
-        } else {
-          projectLocationsMBTA.definitionExpression = '1=2';
-        }
-      });
-    };
+      prjLocationLines.filter = queryFilter
+      prjLocationPoints.filter = queryFilter
+      checkLayersUpdated()
+    }
 
-    function applyMBTASpatialFilter(mbtaLocationList) {
-      var query = {
-        geometry: extentForRegionOfInterest,
-        spatialRelationship: "intersects",
-        outFields: ["*"],
-        returnGeometry: true,
-      };
-      console.log("MBTA spatial query: ", mbtaLocationList)
-      view1.whenLayerView(projectLocationsMBTA).then(function (featureLayerView) {
-        if (featureLayerView.updating) {
-          var handle = featureLayerView.watch("updating", function (isUpdating) {
-            if (!isUpdating) {
-              featureLayerView.queryObjectIds(query).then(function (result) {
-                theOids = "OBJECTID in (" + result + ")";
-                if (result.length > 0) {
-                  projectLocationsMBTA.definitionExpression = theOids;
-                } else {
-                  projectLocationsMBTA.definitionExpression = '1=2';
-                }
-              });
-              handle.remove();
-            }
-          });
-        } else {
-          featureLayerView.queryObjectIds(query).then(function (result) {
-            theOids = "OBJECTID in (" + result + ")";
-            if (result.length > 0) {
-              projectLocationsMBTA.definitionExpression = theOids;
-            } else {
-              projectLocationsMBTA.definitionExpression = '1=2';
-            }
-          });
-        }
-      });
-    };
+    function checkLayersUpdated() {
+      prjLocationLines.visible = true;
+      prjLocationPoints.visible = true;
+    }
+
+
+
 
     $("select.filter").change(function(){ // begin filter from Side Panel
       listModal.style.display = "block";
@@ -495,6 +411,14 @@ $(document).ready(function () {
       var mySelect_List = $('#projectList-content').empty();
 
       var str = $(this).children("option:selected").val(this.attributes.Program)[0].innerText;
+
+      // var str = $(this).children("option:selected").val(this.attributes.Division)[0].attributes.division.value;
+      // console.log(str);
+
+
+
+
+
       var programSelect = str.replace(/ /g, "+");
       programSelect = str.replace(/&/g, "%26");
       // console.log(programSelect);
@@ -502,6 +426,7 @@ $(document).ready(function () {
         splitProgramSelect.push(programSelect);
       } else {
         splitProgramSelect = programSelect.split(" | ");
+
       }
       var getLink = "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query?where=Program%3D%27" +
       programSelect +
@@ -513,7 +438,8 @@ $(document).ready(function () {
         mySelect_List = $('#projectList-content');
 
         if(splitProgramSelect.length>1){
-          $('#projectList-header').html(splitProgramSelect[0].toUpperCase());
+          // $('#projectList-header').html(splitProgramSelect[0].toUpperCase());
+          $('#projectList-header').html('test'.toUpperCase());
           $('#projectList-subheader').html(splitProgramSelect[1].toUpperCase() + ' PROJECTS');
         } else {
           $('#projectList-header').html(splitProgramSelect[0].toUpperCase() + ' PROJECTS');
@@ -521,16 +447,15 @@ $(document).ready(function () {
         }
 
         $(programs.features).each(function () {
-          var projDesc = this.attributes.ProjectID;
+          var projDesc = this.attributes.Project_Description;
+          var projID = this.attributes.ProjectID;
           var location = this.attributes.Location;
-          if(location=="Multiple - See Project Name") {
-            location = "Multiple Towns";
-          }
           var textResult = projDesc.concat(" (").concat(location).concat(")");
           // console.log(textResult);
+          // mySelect_List.attr('id', $(projDesc).text());
+          // mySelect_List.
           mySelect_List.append(
-            // $('<div class="listItem"><a href=""></a></div>').val(textResult).html(textResult)
-            $('<div class="listItem"></div>').val(textResult).html(textResult)
+            $('<div class="listItem"></div>').val(textResult).html(textResult).attr('id', projID)
           );
         });
       });
@@ -555,7 +480,8 @@ $(document).ready(function () {
           $('.listItem').removeClass('selected');
           $(this).addClass('selected');
           var projectName = this.innerText;
-          var projectID = this.innerText.split(" (")[0];
+          // var projDesc = this.innerText.split(" (")[0];
+          var projectID = this.id;
           // console.log(projectID);
           queryProjects.where = "ProjectID='" + projectID + "'";
 
@@ -580,33 +506,31 @@ $(document).ready(function () {
             );
 
             projectModal.style.display = "block";
-            $('#projID').html('PROJECT ID: ' + projectID);
+            var projectDesc = result.features[0].attributes["Project_Description"];
+            $('#projTitle').html(projectDesc);
             var projectDiv = result.features[0].attributes["Division"];
             var projectProg = result.features[0].attributes["Program"].split(' | ')[1];
             var projectLoc = result.features[0].attributes["Location"];
             var projectPrior = result.features[0].attributes["Priority"];
-            var projectDesc = result.features[0].attributes["Project_Description"];
             var projectCost = numeral(result.features[0].attributes["TotalCost"]).format('$0,0[.]00');
 
-            // numeral(attributes.Total).format('$0,0[.]00')
-
-
             var mySelect_Project = $('#projDesc').empty();
-            mySelect_Project = $('#projDesc');
+            // mySelect_Project = $('#projDesc');
             mySelect_Project.append(
-              '<p id="projDesc"><b>MassDOT Division: </b>' + projectDiv + '</p>' +
-              '<p id="projDesc"><b>Program: </b>' + projectProg + '</p>' +
-              '<p id="projDesc"><b>Location: </b>' + projectLoc + '</p>' +
-              '<p id="projDesc"><b>Priority: </b>' + projectPrior + '</p>' +
-              '<p id="projDesc"><b>Total Cost: </b>' + projectCost + '</p>' +
-              '<p id="projDesc"><b>Description: </b>' + projectDesc + '</p>');
+              '<p><b>Project ID: </b>' + projectID + '</p>' +
+              '<p><b>Location: </b>' + projectLoc + '</p>' +
+              '<p><b>MassDOT Division: </b>' + projectDiv + '</p>' +
+              '<p><b>Program: </b>' + projectProg + '</p>' +
+              '<p><b>Priority: </b>' + projectPrior + '</p>' +
+              '<p><b>Total Cost: </b>' + projectCost + '</p>'
+              );
           });
         });
 
         $(document).on("mouseover", ".listItem", function(e){
-          var projectID = this.innerText.split(" (")[0];
-          // console.log(projectID);
-          queryProjects.where = "ProjectID='" + projectID + "'";
+          // var projectID = this.innerText.split(" (")[0];
+          // // console.log(projectID);
+          // queryProjects.where = "ProjectID='" + projectID + "'";
           projectLayer
             .queryFeatures(queryProjects, { signal })
             .then(function(result) {
