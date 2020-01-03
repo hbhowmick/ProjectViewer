@@ -28,9 +28,9 @@ $(document).ready(function () {
       }
     );
 
-    $('.mly-wrapper').hide();
-    $('.slider').click(function(){
-      $('#viewMini,.mly-wrapper').toggle();
+    $('.mapillary').hide();
+    $('.tw-toggle').click(function(){
+      $('#viewMini,.mapillary').toggle();
     });
 
 

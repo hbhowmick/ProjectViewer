@@ -20,26 +20,26 @@ $(document).ready(function () {
     var spatialFilter = false;
     MBTALine = false;
 
-    test = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
-      outFields: ["*"],
-      visible: true,
-      popupEnabled: true,
-      popupTemplate: {
-        title: "{Project_Description}",
-        content: popupFunction
-      }
-    });
+    // test = new FeatureLayer({
+    //   url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
+    //   outFields: ["*"],
+    //   visible: true,
+    //   popupEnabled: true,
+    //   popupTemplate: {
+    //     title: "{Project_Description}",
+    //     content: popupFunction
+    //   }
+    // });
 
 
     var map1 = new Map({
       basemap: "dark-gray",
     });
 
-    var map2 = new Map({
-      basemap: "gray",
-      layers: [test],
-    })
+    // var map2 = new Map({
+    //   basemap: "gray",
+    //   layers: [test],
+    // })
 
     var view1 = new MapView({
       map: map1,
@@ -52,14 +52,12 @@ $(document).ready(function () {
       },
     });
 
-    var view2 = new MapView({
-      map: map2,
-      container: "viewMini",
-      zoom: 12,
-      center: [-71.2, 42.2],
-      // zoom: 5 mile buffer from centroid of project,
-      // center: centroid of project,
-    });
+    // var view2 = new MapView({
+    //   map: map2,
+    //   container: "viewMini",
+    //   zoom: 12, // 5 mile buffer from centroid of project
+    //   center: [-71.2, 42.2], // centroid of project
+    // });
 
 
     //The following feature layers represent the projects and their locations
@@ -161,7 +159,7 @@ $(document).ready(function () {
       });
     }
 
-    map2.add(projectLocationsPoints);
+    // map2.add(projectLocationsPoints);
     map1.addMany([projectLocationsMBTA, projectLocationsPoints, projectLocationsLines]);
     // map1.addMany([projectLocationsPoints]);
     //These are periphery layers used for added functionality, including spatial querying and commenting

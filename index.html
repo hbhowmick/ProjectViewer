@@ -10,6 +10,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script>
@@ -128,24 +129,24 @@
                     </div>
                     <div class="row" id="projDesc"></div>
                   </div>
+
                   <div class="col-md rightCol">
-                    <div class="toggleGroup">
-                      <label class="switch">
-                        <input type="checkbox">
-                        <span class="slider round">
-                        </span>
+                    <div class="tw-toggle">
+                      <input checked type="radio" name="toggle" value="true">
+                      <label class="toggle toggle-yes">
+                        <i class="fas fa-street-view"></i>
                       </label>
+                      <input type="radio" name="toggle" value="false">
+                      <label class="toggle toggle-yes">
+                        <i class="fas fa-images"></i>
+                      </label>
+                      <span></span>
                     </div>
-                    <div id="viewMini">
-                      <div class="labelWrapper">
-                        <h6 class="toggleLabel">StreetView</h6>
-                      </div>
-                    </div>
-                    <div class="mly-wrapper">
+
+                    <div id="viewMini"></div>
+
+                    <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
-                      <div class="labelWrapper">
-                        <h6 class="toggleLabel whiteFont">StreetView</h6>
-                      </div>
                     </div>
                   </div>
 

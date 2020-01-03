@@ -333,14 +333,84 @@ span {
   font-weight: bold;
 }
 
+.mapillary {
+  background-color: grey;
+  width: 100%;
+  height: 94%;
+  margin: 15px 0;
+}
 
+.mapillary-js {
+  height: 100%;
+  width: 100%;
+}
 
+.tw-toggle {
+  background: #e6e6e6;
+  display: inline-block;
+  padding: 2px 2px;
+  margin: 0 0 20px 10px;
+  border-radius: 20px;
+  position: absolute;
+  left: 10;
+  bottom: 0;
+  border: 2px solid #fff;
+  line-height: 1.5;
+  z-index: 4;
+}
 
+.tw-toggle label {
+  text-align: center;
+  font-family: sans-serif;
+  display: inline-block;
+  color: #95A5A6;
+  position:relative;
+  z-index:2;
+  margin: 0;
+  text-align: center;
+  padding: 2px 7px;
+  font-size: 15px;
+  width: 28px;
+}
 
+.tw-toggle input {
+  /* display: none; */
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  cursor: pointer;
+  padding: 50px;
+  width: 28px;
+  height: 28px;
+}
 
+.tw-toggle span {
+  height: 25px;
+  width: 25px;
+  line-height: 25px;
+  border-radius: 50%;
+  background:#2197F5;
+  display:block;
+  position:absolute;
+  left: 5px;
+  top: 2px;
+  transition:all 0.3s ease-in-out;
+}
 
+.tw-toggle input[value="true"]:checked ~ span{
+  background:#2197F5;
+  left: 5px;
+  color:#fff;
+}
 
+.tw-toggle input[value="false"]:checked ~ span{
+  background:#2197F5;
+  left: 36px;
+}
 
+.tw-toggle input[value="true"]:checked + label,.tw-toggle input[value="false"]:checked + label{
+  color:#fff;
+}
 
 
 
@@ -364,123 +434,6 @@ span {
 .pink {
   background-color: pink;
 }
-
-
-
-
-.lorem {
-  color: white;
-}
-
 .grayFont {
   color: lightgray;
-}
-
-
-
-
-
-
-.mly-wrapper {
-  background-color: grey;
-  width: 100%;
-  height: 94%;
-  margin: 15px 0;
-}
-.mapillary-js {
-  height: 100%;
-  width: 100%;
-}
-
-.toggleGroup {
-  z-index: 4;
-  display: inline-block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  padding: 0 0 12px 25px;
-}
-
-.labelWrapper {
-  z-index: 3;
-  display: inline-block;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  padding: 0 0 12px 25px;
-}
-
-.toggleLabel {
-  float: right;
-  padding-left: 40px;
-  font-family: Roboto, Arial, sans-serif;
-  font-size: 13px;
-}
-
-.whiteFont {
-  color: white;
-}
-
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 30px;
-  height: 17px;
-  float: left;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 13px;
-  width: 13px;
-  left: 4px;
-  bottom: 2px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(11px);
-  -ms-transform: translateX(11px);
-  transform: translateX(11px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
