@@ -12,15 +12,14 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js'> -->
+<!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet"/> -->
+<link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script>
 <script src="js/map.js"></script>
-<script src="js/testMapillary.js"></script>
 <script src="js/controls.js"></script>
 <link rel="stylesheet" href="css/style.css"/>
-<!-- <script src='https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.js'></script> -->
-<link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css"
-      rel="stylesheet"/>
 
 </head>
 <body>
@@ -143,16 +142,16 @@
                       <span></span>
                     </div>
 
-                    <div id="viewMini"></div>
+                    <!-- <div id="viewMini"></div> -->
+                    <div class="gm_streetview">
+                      <div id="gm_map"></div>
+                      <div id="pano"></div>
+                    </div>
 
                     <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
                     </div>
                   </div>
-
-
-
-
 
 
 
@@ -178,6 +177,8 @@
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize">
   </script>
 </body>
 </html>

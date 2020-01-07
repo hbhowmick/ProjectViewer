@@ -2,13 +2,14 @@ $(document).ready(function () {
 
 	searchedProject = false;
 
-	    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-          pageLanguage: 'en'
-        },
-        'google_translate_element'
-      );
-    }
+  // function googleTranslateElementInit() {
+  //   new google.translate.TranslateElement({
+  //       pageLanguage: 'en',
+	// 			layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  //     },
+  //     'google_translate_element'
+  //   );
+  // }
 
   $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query", {
       where: "1=1",
@@ -88,6 +89,40 @@ $(document).ready(function () {
       });
 
     });
+
+
+
+
+
+
+
+
+		// $.get("https://a.mapillary.com/v3/images?client_id=cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj&closeto=-71.266218,42.352525&per_page=1", function (data) {
+		// 	var features = [];
+		// 	features = data.features;
+		// 	var lat = features[0].geometry.coordinates[1];
+		// 	var long = features[0].geometry.coordinates[0];
+		// 	console.log(lat, long);
+		//
+		// 	var key = features[0].properties.key;
+		// 	console.log(key);
+		// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   function getPrograms() {
