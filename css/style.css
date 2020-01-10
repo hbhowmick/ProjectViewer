@@ -7,7 +7,7 @@ html, body {
 }
 
 nav {
-  height: auto;
+  height: 5%;
   padding: 2px;
 }
 
@@ -33,8 +33,8 @@ span {
   margin-left: 0px;
 }
 
-.esri-view-surface {
-  width: auto !important;
+.esri-view, .esri-view-root, .esri-view-surface {
+  width: 100% !important;
 }
 
 .esri-attribution {
@@ -99,15 +99,18 @@ span {
 }
 
 .mapCol {
+  width: 100%;
   margin: 0 auto;
-  padding: 10px;
+  padding: 10px 0px 0px 0px !important;
 }
 
 #viewDiv {
   width: 100% !important;
-  margin: auto;
+  height: 100% !important;
+  min-height: 1000px;
+  margin: 0;
   margin-top: 10px;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 
 .p-3 {
@@ -115,14 +118,20 @@ span {
 }
 
 #projectSearch {
+  width: 100%;
   margin: 0 auto;
 }
 
 .sideContents{
   padding-top: 20px;
-  padding-left: 30px;
+  padding-left: 0px !important;;
+  padding-right: 0px !important;
   margin-right: 20px;
   width: 200px;
+}
+
+.checkbox {
+  margin-bottom: 1rem;
 }
 
 #cost-range {

@@ -812,69 +812,55 @@ $(document).ready(function () {
 
 
 
+    $("select.filter").change(function(){ // begin dropdown event listener
+      listModal.style.display = "block";
+      var splitProgramSelect = [];
+      var mySelect_List = $('#projectList-content').empty();
+
+      var str = $(this).children("option:selected").val(this.attributes.Program)[0].innerText;
+      console.log(str);
+
+      var programSelect = str.replace(/ /g, "+");
+      programSelect = programSelect.replace(/&/g, "%26");
+      if (programSelect=="All") {
+        programSelect = "1%3D1";
+        splitProgramSelect.push(str);
+      } else {
+        splitProgramSelect = str.split(" | ");
+        programSelect = "Program%3D%27" + programSelect + "%27"
+      }
+      // console.log(programSelect);
+      var getLink = "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query?where=" +
+      programSelect +
+      "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
 
 
+      $.get(getLink, function (data) {
+        var programs = JSON.parse(data);
+        mySelect_List = $('#projectList-content');
 
 
+        $(programs.features).each(function () {
+          $('#projectList-header').empty();
+          $('#projectList-subheader').empty();
+          var projDesc = this.attributes.Project_Description;
+          var projDiv = this.attributes.Division;
+          var projID = this.attributes.ProjectID;
+          var location = this.attributes.Location;
+          var textResult = projDesc.concat(" (").concat(location).concat(")");
 
-
-
-
-
-
-
-
-
-
-
-
-    // $("select.filter").change(function(){ // begin Side Panel event listener
-    //   listModal.style.display = "block";
-    //   var splitProgramSelect = [];
-    //   var mySelect_List = $('#projectList-content').empty();
-    //
-    //   var str = $(this).children("option:selected").val(this.attributes.Program)[0].innerText;
-    //   console.log(str);
-    //
-    //   var programSelect = str.replace(/ /g, "+");
-    //   programSelect = programSelect.replace(/&/g, "%26");
-    //   if (programSelect=="All") {
-    //     programSelect = "1%3D1";
-    //     splitProgramSelect.push(str);
-    //   } else {
-    //     splitProgramSelect = str.split(" | ");
-    //     programSelect = "Program%3D%27" + programSelect + "%27"
-    //   }
-    //   // console.log(programSelect);
-    //   var getLink = "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query?where=" +
-    //   programSelect +
-    //   "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
-    //
-    //   $.get(getLink, function (data) {
-    //     var programs = JSON.parse(data);
-    //     mySelect_List = $('#projectList-content');
-    //
-    //     $(programs.features).each(function () {
-    //       $('#projectList-header').empty();
-    //       $('#projectList-subheader').empty();
-    //       var projDesc = this.attributes.Project_Description;
-    //       var projDiv = this.attributes.Division;
-    //       var projID = this.attributes.ProjectID;
-    //       var location = this.attributes.Location;
-    //       var textResult = projDesc.concat(" (").concat(location).concat(")");
-    //
-    //       if(splitProgramSelect.length>1){
-    //         $('#projectList-header').html(projDiv.toUpperCase());
-    //         $('#projectList-subheader').html(splitProgramSelect[1].toUpperCase() + ' PROJECTS');
-    //       } else {
-    //         $('#projectList-header').html(splitProgramSelect[0].toUpperCase() + ' PROJECTS');
-    //       }
-    //       mySelect_List.append(
-    //         $('<div class="listItem"></div>').val(textResult).html(textResult).attr('id', projID)
-    //       );
-    //     });
-    //   });
-    // }); // end Side Panel event listener
+          if(splitProgramSelect.length>1){
+            $('#projectList-header').html(projDiv.toUpperCase());
+            $('#projectList-subheader').html(splitProgramSelect[1].toUpperCase() + ' PROJECTS');
+          } else {
+            $('#projectList-header').html(splitProgramSelect[0].toUpperCase() + ' PROJECTS');
+          }
+          mySelect_List.append(
+            $('<div class="listItem"></div>').val(textResult).html(textResult).attr('id', projID)
+          );
+        });
+      });
+    }); // end dropdown event listener
 
 
 

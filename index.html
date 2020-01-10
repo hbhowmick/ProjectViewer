@@ -4,27 +4,27 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest"></script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js'> -->
 <!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet"/> -->
 <link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
-<script src="https://js.arcgis.com/4.13/"></script>
+<!-- <script src="https://js.arcgis.com/4.13/"></script>
 <script src="js/map.js"></script>
-<script src="js/controls.js"></script>
+<script src="js/controls.js"></script> -->
 <link rel="stylesheet" href="css/style.css"/>
-
 </head>
+
 <body>
   <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
-    <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
+    <nav class="navbar-expand-sm s-navbar navbar-custom w-100"> <!-- start Nav Bar -->
       <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
       <a class="navbar-brand">Project Viewer</a>
       <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
@@ -34,65 +34,79 @@
           <div id="google_translate_element"></div>
         </div>
       </div>
-    </nav>
-    <div id="aboutModal">
+    </nav> <!-- end Nav Bar -->
+
+    <div id="aboutModal">  <!-- start About Modal -->
       <div id="aboutModal-content">
         <span class="close">&times;</span>
         <h4 class="w-100 h-10">Welcome to the Project Viewer and Interactive Map!</h4>
         <p>This application displays all 2020-2024 Capital Investment Plan Projects in Massachusetts. Search for projects by location or filter by MassDOT division, town, or program using the dropdown menus on the left. Additionally filter by project cost, using the sliders.</p>
       </div>
-    </div>
+    </div>  <!-- end About Modal -->
+
     <div class="row container-fluid flex-fill">
       <main class="col" style="background-color: white">
-        <div class="row h-100 w-100 justify-content-md-center">
-          <div class="col-2 sideContents" >
+        <div class="row h-100">
+          <div class="col-xl-2 sideContents" >  <!-- start Side Panel-->
             <h4 class="test1">Filter Projects</h4>
             <br>
             <label for="division">MassDOT Division</label>
-            <select class="form-control filter" id="division">
-              <option>All</option>
-            </select>
-            <br>
-            <label for="townSelect">Town</label>
-            <!-- <select class="form-control filter town-filter" id="townSelect"> -->
-            <select class="form-control filter filter" id="townSelect">
-  	          <option value="0">All</option>
-            </select>
-  		      <br>
-            <label for="mpoSelect">MPO</label>
-            <!-- <select class="form-control town-filter" id="mpoSelect"> -->
-            <select class="form-control filter" id="mpoSelect">
-              <option value="All">All</option>
-            </select>
-            <div class="filter mr-sm-2 filter w-100" id="filterMpoSpecific">
-              <input class="" type="checkbox" id="mpoSpecific">
-              <label class="form-check-label" for="mpoSpecific"> MPO Selected Projects </label>
+            <div class="input-group mb-3">
+              <select class="form-control dropdown filter" id="division">
+                <option>All</option>
+              </select>
             </div>
-            <br>
+            <label for="townSelect">Town</label>
+            <div class="input-group mb-3">
+              <select class="form-control dropdown filter" id="townSelect">
+    	          <option value="0">All</option>
+              </select>
+  		      </div>
+            <label for="mpoSelect">MPO</label>
+            <div class="input-group mb-3">
+              <select class="form-control dropdown town-filter" id="mpoSelect">
+                <option value="All">All</option>
+              </select>
+            </div>
+            <div class="checkbox">  <!-- start checkboxes -->
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="townPrjs" checked>
+                <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
+              </div>
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="rtaPrjs" checked>
+                <label class="form-check-label" for="rtaPrjs"> RTA-wide projects </label>
+              </div>
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
+                <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
+              </div>
+            </div> <!-- end checkboxes -->
             <label for="programs">CIP Program</label>
-            <select class="custom-select filter" id="programs" multiple>
-              <option value="All" division= "All" selected>All</option>
-            </select>
-            <br>
-            <br>
-            <form class="form-inline">
-              <label for="amount">Cost range: $</label>
-              <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0">
-              - $
-              <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="100,000,000" value="100,000,000">
-            </form>
-            <div id="cost-range" 	class="filter ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
-              <div class="ui-slider-range ui-corner-all ui-widget-header" style="left: 0%; width: 100%;"></div>
-              <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 0%;"></span>
-              <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 100%;"></span>
+            <div class="input-group mb-3">
+              <select class="form-control custom-select filter" id="programs" multiple>
+                <option value="All" division= "All" selected>All</option>
+              </select>
+            </div>
+            <div>
+              <label for="amount">Cost Range</label>
+              <form class="form">
+                <div class="form-inline flex-grow-1">Min:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
+                </div>
+                <div class="form-inline ">Max:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+                </div>
+              </form>
+              <div id="cost-range" 	class="filter"></div>
             </div>
             <!-- <br>
-            <br>
-            <div>
-              <button id="projectBtn">Project Modal</button>
+            <div class="filter mr-sm-2">
+              <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
             </div> -->
-          </div>
-          <div class="container listModal" id="listModal">
+          </div> <!-- end  Side Panel -->
+
+          <div class="container listModal" id="listModal">  <!-- start List Modal -->
             <div class="row">
               <div class="col-11 noRightPadding">
                 <div class="row">
@@ -110,26 +124,26 @@
                 <span class="closeList"><i class="fa fa-angle-double-left"></i></span>
               </div>
             </div>
-          </div>
+          </div> <!-- end List Modal -->
 
-          <div class="col d-flex flex-column h-100 mapCol">
-            <input class="form-control mr-sm-2 input w-100" id="projectSearch" type="text" placeholder="Search for a project (e.g. Red-Blue Connector)">
-            <div id="viewDiv" class="w-100 p-3 h-100" ></div>
+          <div class="col d-flex flex-column h-100 mapCol"> <!-- start Map col -->
+            <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
+            <div id="viewDiv" class="col"></div>
 
-            <div class="col col-offset-5" id="projectModal">
+            <div class="col col-offset-5" id="projectModal"> <!-- start Project Modal -->
               <div id="projectModal-content">
                 <div class="row closeProject">
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
                 <div class="row w-100 justify-content-md-center projectContent">
-                  <div class="col-md leftCol">
+                  <div class="col-md leftCol"> <!-- start left col -->
                     <div class="row">
                       <h6 id="projTitle"></h6>
                     </div>
                     <div class="row" id="projDesc"></div>
-                  </div>
+                  </div> <!-- end left col -->
 
-                  <div class="col-md rightCol">
+                  <div class="col-md rightCol"> <!-- start right col -->
                     <div class="tw-toggle">
                       <input checked type="radio" name="toggle" value="true">
                       <label class="toggle toggle-yes">
@@ -141,44 +155,37 @@
                       </label>
                       <span></span>
                     </div>
-
-                    <!-- <div id="viewMini"></div> -->
                     <div class="gm_streetview">
                       <div id="gm_map"></div>
                       <div id="pano"></div>
                     </div>
-
                     <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
                     </div>
-                  </div>
-
-
-
-
-
-
-
-
+                  </div> <!-- end right col -->
                 </div>
               </div>
-            </div>
-          </div>
+            </div> <!-- end Project Modal -->
+
+          </div> <!-- end Map col -->
+
         </div>
-
-
       </main>
     </div>
   </div>
-  <script src="js/aboutModal.js"></script>
-  <script src="js/listModal.js"></script>
-  <script src="js/projectModal.js"></script>
   <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
   </script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize">
-  </script>
+  <script src="https://js.arcgis.com/4.13/"></script>
+  <!-- <script src="js/page_contents.js"></script> -->
+  <script src="js/controls.js"></script>
+  <!-- <script src="js/aboutModal.js"></script> -->
+  <script src="js/listModal.js"></script>
+  <!-- <script src="js/projectModal.js"></script> -->
+  <!-- <script src="js/map.js"></script> -->
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize">
+  </script> -->
 </body>
 </html>
