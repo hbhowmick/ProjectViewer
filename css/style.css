@@ -25,8 +25,12 @@ span {
   margin: 0 auto;
 }
 
+.col {
+  height: auto;
+}
+
 .row {
-  margin: 0 !important;
+  margin: 0;
 }
 
 .justify-content-md-center {
@@ -96,6 +100,13 @@ span {
 #mainDiv{
   padding-right: 0px;
   padding-left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+.fullScreen {
+  height: 100%;
+  padding-bottom: 10px;
 }
 
 .mapCol {
@@ -128,6 +139,7 @@ span {
   padding-right: 0px !important;
   margin-right: 20px;
   width: 200px;
+  height: 100%;
 }
 
 .checkbox {
@@ -167,14 +179,13 @@ span {
   height: auto;
 }
 
-.noRightPadding {
-  padding-right: 0;
+.h-auto {
+  height: auto;
+  min-height: 8%;
 }
 
-.leftHeader {
-  text-align: left;
-  padding: 50px 10px 10px 15px;
-  font-size: 30px;
+.h-90pct {
+  height: 90%;
 }
 
 .listModal {
@@ -183,53 +194,62 @@ span {
   z-index: 1;
   width: 20%;
   margin-right: 30px;
+  padding: 20px 0px 20px 20px;
+  height: 100%;
 }
 
-#listModal-content {
-  /* display: inline-block; */
+.descList {
+  padding-right: 0;
+  display: inline-block;
+  float: left;
+  max-width: 85%;
   overflow-y: auto;
+  height: 100%;
   max-height: 1050px;
-  padding-bottom: 10px;
+}
+
+.hideList {
+  width: 5%;
+  display: inline-block;
+  height: 100%;
+  padding-left: 5%;
 }
 
 #projectList {
+  height: 10% !important;
   margin: 10px 0px 45px 0px;
-  /* height: 100%; */
-}
-
-#projectList-content {
-  /* height: 90%; */
-  /* overflow-y: auto; */
-}
-
-.projectContent {
-  /* background-color: blue; */
-  /* height: 100%; */
-}
-
-#projectList-header {
-
 }
 
 #projectList-subheader {
   padding-top: 0;
+  padding-bottom: 15px;
   font-size: 20px;
+}
+
+.col-10 {
+  max-width: 100%;
+}
+
+.leftHeader {
+  text-align: left;
+  padding: 20px 10px 10px 15px;
+  font-size: 30px;
+  margin-bottom: 0 !important;
 }
 
 .listItem {
   font-size: 14px;
   color: #4d4d4d;
   margin-top: 8px;
+  white-space: normal;
+  padding-right: 20px;
+  margin-right: 20px;
 }
 
 .listItem:hover, .selected {
   color: black;
   text-decoration: none;
   background-color: rgba(255,255,255,0.6);
-}
-
-#hide {
-  width: 25px;
 }
 
 #pinfoLink {
@@ -263,10 +283,6 @@ span {
 #projectModal-content {
   height: 100%;
   padding-bottom: 20px !important;
-}
-
-.projectContent {
-  height: 93%;
 }
 
 #projTitle {
@@ -317,11 +333,11 @@ span {
 }
 
 .close,
-.closeProject {
+.closeProject-btn {
   color: #aaaaaa;
 }
 
-.closeList {
+.closeList-btn {
   color: #b5b5b5;
   font-size: 20px;
   font-weight: bold;
@@ -331,16 +347,16 @@ span {
 
 .close:hover,
 .close:focus,
-.closeList:hover,
-.closeList:focus,
-.closeProject:hover,
-.closeProject:focus {
+.closeList-btn:hover,
+.closeList-btn:focus,
+.closeProject-btn:hover,
+.closeProject-btn:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
 }
 
-.closeProject {
+.closeProject-btn {
   margin: 7px auto !important;
   font-size: 20px;
   font-weight: bold;
@@ -445,53 +461,4 @@ width: 100%;
   float: left;
   height: 100%;
   width: 50%;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*---TESTING---*/
-/* #test {
-position: absolute;
-z-index: 30;
-height: 100%;
-width: 800px;
-background-color: green;
-} */
-
-.floatLeft {
-  float: left;
-}
-
-.yellow {
-  background-color: yellow;
-}
-.green {
-  background-color: green;
-}
-.blue {
-  background-color: blue;
-}
-.red {
-  background-color: red;
-}
-.pink {
-  background-color: pink;
-}
-.grayFont {
-  color: lightgray;
 }

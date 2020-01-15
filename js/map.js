@@ -29,6 +29,7 @@ $(document).ready(function () {
     var spatialFilter = false;
     var sql = "1=1"
     var projectSearchID = false;
+    var projID = "";
     var extentForRegionOfInterest = false;
     var highlight;
     var polySymbol = {
@@ -455,7 +456,7 @@ $(document).ready(function () {
         }
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
-          projId = feature.attributes.ProjectID;
+          projID = feature.attributes.ProjectID;
         }
 
         if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District" || feature.attributes.Location_Type == "Statewide") {
@@ -501,6 +502,7 @@ $(document).ready(function () {
     //The following event handlers listen for changes in the filter form inputs
     $("#townSelect").change(function () {
       $("#mpoSelect").val("");
+      $("#programs").val("All");
       if ($("#townSelect").val() > 0) {
         $('#loading').modal('show')
         hideLoad = false;
@@ -531,6 +533,7 @@ $(document).ready(function () {
 
     $("#mpoSelect").change(function () {
       $("#townSelect").val("");
+      $("#programs").val("All");
       var selectedMPO = $(this).children("option:selected").val();
       if (selectedMPO != "All") {
         $('#loading').modal('show')
@@ -559,6 +562,12 @@ $(document).ready(function () {
         applyFeatureViewFilters();
         view.goTo(statewidePolygon);
       }
+    });
+
+    $("#programs").change(function () {
+      $("#townSelect").val("0");
+      $("#mpoSelect").val("All");
+      view.goTo(statewidePolygon);
     });
 
     $("#cost-range").slider({
@@ -591,6 +600,14 @@ $(document).ready(function () {
       } else {
         applyFeatureViewFilters();
       }
+    });
+
+    $(".town-filter").change(function (e) {
+      // if (e.target.id === "townPrjs") {
+      //   console.log("DO NOT APPLY FEATURE VIEW FILTER")
+      // } else {
+        applyFeatureViewFilters();
+      // }
     });
 
     $(".geomCheck").change(function (e) {
@@ -628,59 +645,193 @@ $(document).ready(function () {
 
     //This function applies FeatureFilters to the layers in the map
     function applyFeatureViewFilters() {
+      //--------------------------Refresh & Empty-----------------------------//
+      // listModal.style.display = "none";
+      //listSubheader.style.display = "none";
+      // $('#projectList-header').empty();
+      $('#projectList-subheader').empty();
+      // $('#projectList-content').empty();
       view.popup.close();
       view.graphics.removeAll();
+      var headerName = 'All';
+      var subHeaderName = '';
+      var divisionFilter = $("#division").val();
+      var townFilter = $("#townSelect").val();
+      var mpoFilter = $("#mpoSelect").val();
+      var programFilter = String($("#programs").val());
+
+      //---------------------------Clear SQL Statement------------------------//
       sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
-      if ($("#division").val() !== "All") {
-        divisionsSQL = "Division = '" + $("#division").val() + "'";
-      }
-      if ($("#programs").val()[0] !== 'All') {
-        $($("#programs").val()).each(function () {
-          if (this == $("#programs").val()[0]) {
-            programsSQL = "Program = '" + this + "'"
-          } else {
-            programsSQL = programsSQL + " OR Program = '" + this + "'"
-          }
-        });
-      }
+
+      //--------------------------Create Headers------------------------------//
+      if (divisionFilter !== "All") {
+        divisionsSQL = "Division = '" + divisionFilter + "'";
+        headerName = divisionFilter;
+      };
+      if (programFilter == 'All') {
+      } else if (programFilter !== '') {
+        programsSQL = "Program = '" + programFilter + "'";
+        var splitProgramName = programFilter.split(" | ");
+        headerName = splitProgramName[0].toUpperCase();
+        subHeaderName = splitProgramName[1].toUpperCase()
+        listSubheader.style.display = "block";
+        $('#projectList-subheader').html(subHeaderName.toUpperCase());
+      };
+      // $(programFilter).each(function () {
+      //   // console.log(this);
+      //   if (this == programFilter) {
+      //     programsSQL = "Program = '" + this + "'";
+      //   } else {
+      //     programsSQL = programsSQL + " OR Program = " + this;
+      //   }
+      // });
+      if (townFilter !== '0' && townFilter !== null) {
+        townFilter = dict_townID[townFilter]["town"];
+        headerName = townFilter + " " + headerName;
+      };
+      if (mpoFilter !== 'All' && mpoFilter !== null) {
+        headerName = mpoFilter + " " +  headerName;
+      };
+      $('#projectList-header').html(headerName.toUpperCase() + ' PROJECTS');
+      //----------------------------Create & Display Content----------------------------//
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total  >= " + parseFloat($("#minCost").val().replace(/,/g, '')) + " AND Total <= " + parseFloat($("#maxCost").val().replace(/,/g, '')) + ")"
-      prjLocationPolygons.definitionExpression = polySql;
-      if ($("#division").val() == "All") {
-        mbtaLines.visible = true;
-        prjLocationPolygons.visible = true;
-      } else if ($("#division").val() == "MBTA") {
-        mbtaLines.visible = true;
-        prjLocationPolygons.visible = false;
-      } else if ($("#division").val() == "Transit") {
-        mbtaLines.visible = true;
-        prjLocationPolygons.visible = true;
-        prjLocationPolygons.definitionExpression = "Location_Type = 'RTA'";
-      } else {
-        mbtaLines.visible = false;
-        prjLocationPolygons.visible = true;
-      }
-      if (spatialFilter === true && projectSearchID == false) {
-        $('#loading').modal('show')
-        hideLoad = false;
-        queryFilter = new FeatureFilter({
-          where: sql,
-          geometry: extentForRegionOfInterest,
-          spatialRelationship: "intersects"
+
+      var sqlURL = sql.replace(/ /g, "+");
+      sqlURL = sqlURL.replace(/'/g, '%27');
+      sqlURL = sqlURL.replace(/"/g, '%27');
+      sqlURL = sqlURL.replace(/</g, '%3C');
+      sqlURL = sqlURL.replace(/=/g, '%3D');
+      sqlURL = sqlURL.replace(/>/g, '%3E');
+      // console.log(sqlURL);
+
+      var getLink = "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query?where=" +
+      sqlURL +
+      "&outFields=*&f=pjson";
+      // console.log(getLink);
+
+      $.get(getLink, function (data) {
+        var listContent = $("#projectList-content");
+        listContent.empty();
+        projects = JSON.parse(data);
+        // console.log(projects2);
+        $(projects.features).each(function () {
+          var projDesc = this.attributes.Project_Description;
+          var projDiv = this.attributes.Division;
+          projID = this.attributes.ProjectID;
+          var location = this.attributes.Location;
+          var textResult = projDesc.concat(" (").concat(location).concat(")");
+          // console.log(textResult);
+          listContent.append(
+            $("<option class='listItem'></option>").val(this.attributes.Division).html(textResult).attr('id', projID)
+          );
         });
-      } else if (projectSearchID !== false) {
-        queryFilter = new FeatureFilter({
-          where: "ProjectID = '" + projectSearchID + "'",
-        });
-      } else {
-        queryFilter = new FeatureFilter({
-          where: sql,
-        });
-      }
-      prjLocationLines.filter = queryFilter
-      prjLocationPoints.filter = queryFilter
+      })
+      .done(function (data) {
+        //console.log(listContent);
+        // $('#projectList-header').html(headerName.toUpperCase() + ' PROJECTS');
+        // $('#projectList-subheader').html(subHeaderName.toUpperCase());
+        listModal.style.display = "block";
+      });
+
+      //
+      // console.log("\nDivision: \t\t" + divisionFilter);
+      // console.log("Town: \t\t\t" + townFilter);
+      // console.log("MPO: \t\t\t" + mpoFilter);
+      // console.log("CIP Program: \t" + programFilter);
+      // // console.log("Header: \t" + headerName + " Projects");
+      // // console.log("Subheader: \t" + subHeaderName);
+      // console.log(sql);
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // prjLocationPolygons.definitionExpression = polySql;
+    // if ($("#division").val() == "All") {
+    //   mbtaLines.visible = true;
+    //   prjLocationPolygons.visible = true;
+    // } else if ($("#division").val() == "MBTA") {
+    //   mbtaLines.visible = true;
+    //   prjLocationPolygons.visible = false;
+    // } else if ($("#division").val() == "Transit") {
+    //   mbtaLines.visible = true;
+    //   prjLocationPolygons.visible = true;
+    //   prjLocationPolygons.definitionExpression = "Location_Type = 'RTA'";
+    // } else {
+    //   mbtaLines.visible = false;
+    //   prjLocationPolygons.visible = true;
+    // }
+    // if (spatialFilter === true && projectSearchID == false) {
+    //   $('#loading').modal('show')
+    //   hideLoad = false;
+    //   queryFilter = new FeatureFilter({
+    //     where: sql,
+    //     geometry: extentForRegionOfInterest,
+    //     spatialRelationship: "intersects"
+    //   });
+    // } else if (projectSearchID !== false) {
+    //   queryFilter = new FeatureFilter({
+    //     where: "ProjectID = '" + projectSearchID + "'",
+    //   });
+    // } else {
+    //   queryFilter = new FeatureFilter({
+    //     where: sql,
+    //   });
+    // }
+    // prjLocationLines.filter = queryFilter
+    // prjLocationPoints.filter = queryFilter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     $("#projectSearch").autocomplete("option", "select", function (event, ui) {
       view.popup.clear();
@@ -805,90 +956,11 @@ $(document).ready(function () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // $("select.filter").change(function(){ // begin Side Panel event listener
-    //   listModal.style.display = "block";
-    //   var splitProgramSelect = [];
-    //   var mySelect_List = $('#projectList-content').empty();
-    //
-    //   var str = $(this).children("option:selected").val(this.attributes.Program)[0].innerText;
-    //   console.log(str);
-    //
-    //   var programSelect = str.replace(/ /g, "+");
-    //   programSelect = programSelect.replace(/&/g, "%26");
-    //   if (programSelect=="All") {
-    //     programSelect = "1%3D1";
-    //     splitProgramSelect.push(str);
-    //   } else {
-    //     splitProgramSelect = str.split(" | ");
-    //     programSelect = "Program%3D%27" + programSelect + "%27"
-    //   }
-    //   // console.log(programSelect);
-    //   var getLink = "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query?where=" +
-    //   programSelect +
-    //   "&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson";
-    //
-    //   $.get(getLink, function (data) {
-    //     var programs = JSON.parse(data);
-    //     mySelect_List = $('#projectList-content');
-    //
-    //     $(programs.features).each(function () {
-    //       $('#projectList-header').empty();
-    //       $('#projectList-subheader').empty();
-    //       var projDesc = this.attributes.Project_Description;
-    //       var projDiv = this.attributes.Division;
-    //       var projID = this.attributes.ProjectID;
-    //       var location = this.attributes.Location;
-    //       var textResult = projDesc.concat(" (").concat(location).concat(")");
-    //
-    //       if(splitProgramSelect.length>1){
-    //         $('#projectList-header').html(projDiv.toUpperCase());
-    //         $('#projectList-subheader').html(splitProgramSelect[1].toUpperCase() + ' PROJECTS');
-    //       } else {
-    //         $('#projectList-header').html(splitProgramSelect[0].toUpperCase() + ' PROJECTS');
-    //       }
-    //       mySelect_List.append(
-    //         $('<div class="listItem"></div>').val(textResult).html(textResult).attr('id', projID)
-    //       );
-    //     });
-    //   });
-    // }); // end Side Panel event listener
-
-
-
-
-
-
-
-    // var highlightSelect = false;
-    // var highlightHover = false;
-    // const controller = new AbortController();
-    // const signal = controller.signal;
     //Function for hovering over project ID in list and highlighting project on map
     view.when(function() {
+      console.log(map.layers)
       var projectLayer = map.layers.getItemAt(1);
+      console.log(projectLayer)
 
       view.whenLayerView(projectLayer).then(function(layerView) {
         var queryProjects = projectLayer.createQuery();
@@ -898,10 +970,12 @@ $(document).ready(function () {
           $(this).addClass('selected');
           var projectName = this.innerText;
           var projectID = this.id;
+          console.log(projectID);
           queryProjects.where = "ProjectID='" + projectID + "'";
 
           projectLayer.queryFeatures(queryProjects).then(function(result) {
             var feature = result.features[0];
+            console.log(result.features);
             featureLat = Number(feature.geometry["latitude"].toFixed(6));
             featureLong = Number(feature.geometry["longitude"].toFixed(6));
             console.log(featureLong, featureLat);
@@ -972,33 +1046,6 @@ $(document).ready(function () {
 
           });
         });
-
-
-
-        // $(document).on("mouseover", ".listItem", function(e){
-        //   projectLayer
-        //     .queryFeatures(queryProjects, { signal })
-        //     .then(function(result) {
-        //       if (highlightHover) {
-        //         highlightHover.remove();
-        //       }
-        //       var feature = result.features[0];
-        //       highlightHover = layerView.highlight(
-        //         feature.attributes["OBJECTID"]
-        //       );
-        //     });
-        // });
-        //
-        // $(document).on("mouseout", ".listItem", function(e){
-        //   controller.abort();
-        //   if (highlightHover) {
-        //     highlightHover.remove();
-        //   }
-        // });
-
-
-
-
 
 
 

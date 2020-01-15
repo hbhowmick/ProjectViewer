@@ -23,8 +23,9 @@
 </head>
 
 <body>
-  <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
-    <nav class="navbar-expand-sm s-navbar navbar-custom w-100"> <!-- start Nav Bar -->
+  <div id="mainDiv" class="container-fluid d-flex flex-column">
+
+    <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
       <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
       <a class="navbar-brand">Project Viewer</a>
       <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
@@ -34,20 +35,23 @@
           <div id="google_translate_element"></div>
         </div>
       </div>
-    </nav> <!-- end Nav Bar -->
+    </nav>
 
-    <div id="aboutModal">  <!-- start About Modal -->
+    <!-- start About Modal -->
+    <div id="aboutModal">
       <div id="aboutModal-content">
         <span class="close">&times;</span>
         <h4 class="w-100 h-10">Welcome to the Project Viewer and Interactive Map!</h4>
         <p>This application displays all 2020-2024 Capital Investment Plan Projects in Massachusetts. Search for projects by location or filter by MassDOT division, town, or program using the dropdown menus on the left. Additionally filter by project cost, using the sliders.</p>
       </div>
-    </div>  <!-- end About Modal -->
+    </div>
+    <!-- end About Modal -->
 
     <div class="row container-fluid flex-fill">
       <main class="col" style="background-color: white">
-        <div class="row h-100">
-          <div class="col-xl-2 sideContents" >  <!-- start Side Panel-->
+        <div class="row fullScreen">
+          <!-- start Side Panel-->
+          <div class="col-xl-2 sideContents" >
             <h4 class="test1">Filter Projects</h4>
             <br>
             <label for="division">MassDOT Division</label>
@@ -68,7 +72,9 @@
                 <option value="All">All</option>
               </select>
             </div>
-            <div class="checkbox">  <!-- start checkboxes -->
+
+            <!-- start checkboxes -->
+            <!-- <div class="checkbox">
               <div class="filter mr-sm-2 w-100 ">
                 <input class="geomCheck" type="checkbox" id="townPrjs" checked>
                 <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
@@ -81,7 +87,9 @@
                 <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
                 <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
               </div>
-            </div> <!-- end checkboxes -->
+            </div> -->
+            <!-- end checkboxes -->
+
             <label for="programs">CIP Program</label>
             <div class="input-group mb-3">
               <select class="form-control custom-select filter" id="programs" multiple>
@@ -104,46 +112,49 @@
             <div class="filter mr-sm-2">
               <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
             </div> -->
-          </div> <!-- end  Side Panel -->
+          </div>
+          <!-- end  Side Panel -->
 
-          <div class="container listModal" id="listModal">  <!-- start List Modal -->
-            <div class="row">
-              <div class="col-11 noRightPadding">
-                <div class="row">
-                  <h4 class="w-100 leftHeader" id="projectList-header"></h4>
-                  <h4 class="w-100 leftHeader" id="projectList-subheader"></h4>
-                  <hr>
+          <!-- start List Modal -->
+          <div class="container listModal" id="listModal">
+            <div class="row h-auto">
+              <h4 class="w-100 leftHeader" id="projectList-header"></h4>
+              <h4 class="w-100 leftHeader" id="projectList-subheader"></h4>
+            </div>
+            <div class="row h-90pct">
+              <div class="col-11 descList break-word" id="projectList-content">
                 </div>
-                <div class="row" id="listModal-content">
-                  <div class="col-10 h-90" id="projectList">
-                    <div class="" id="projectList-content"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="col" id="hide">
-                <span class="closeList"><i class="fa fa-angle-double-left"></i></span>
+              <div class="col hideList" id="hideList">
+                <span class="closeList-btn"><i class="fa fa-angle-double-left"></i></span>
               </div>
             </div>
-          </div> <!-- end List Modal -->
+          </div>
+          <!-- end List Modal -->
 
-          <div class="col d-flex flex-column h-100 mapCol"> <!-- start Map col -->
+          <!-- start Map col -->
+          <div class="col d-flex flex-column mapCol">
             <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
             <div id="viewDiv" class="col"></div>
 
-            <div class="col col-offset-5" id="projectModal"> <!-- start Project Modal -->
+            <!-- start Project Modal -->
+            <div class="col col-offset-5" id="projectModal">
               <div id="projectModal-content">
-                <div class="row closeProject">
+                <div class="row closeProject-btn">
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
                 <div class="row w-100 justify-content-md-center projectContent">
-                  <div class="col-md leftCol"> <!-- start left col -->
+
+                  <!-- start left col -->
+                  <div class="col-md leftCol">
                     <div class="row">
                       <h6 id="projTitle"></h6>
                     </div>
                     <div class="row" id="projDesc"></div>
-                  </div> <!-- end left col -->
+                  </div>
+                  <!-- end left col -->
 
-                  <div class="col-md rightCol"> <!-- start right col -->
+                  <!-- start right col -->
+                  <div class="col-md rightCol">
                     <div class="tw-toggle">
                       <input checked type="radio" name="toggle" value="true">
                       <label class="toggle toggle-yes">
@@ -162,17 +173,22 @@
                     <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
                     </div>
-                  </div> <!-- end right col -->
+                  </div>
+                  <!-- end right col -->
+
                 </div>
               </div>
-            </div> <!-- end Project Modal -->
+            </div>
+            <!-- end Project Modal -->
 
-          </div> <!-- end Map col -->
+          </div>
+          <!-- end Map col -->
 
         </div>
       </main>
     </div>
   </div>
+
   <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
@@ -184,7 +200,7 @@
   <!-- <script src="js/aboutModal.js"></script> -->
   <script src="js/listModal.js"></script>
   <!-- <script src="js/projectModal.js"></script> -->
-  <!-- <script src="js/map.js"></script> -->
+  <script src="js/map.js"></script>
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize">
   </script> -->
 </body>
