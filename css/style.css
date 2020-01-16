@@ -124,6 +124,17 @@ span {
   /* margin-bottom: 10px; */
 }
 
+/* from Hit Test example */
+#info {
+  background-color: black;
+  opacity: 0.75;
+  color: orange;
+  font-size: 18pt;
+  padding: 8px;
+  visibility: hidden;
+  width: 200px;
+}
+
 .p-3 {
   padding: 0 !important;
 }

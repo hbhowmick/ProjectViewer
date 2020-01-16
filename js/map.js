@@ -111,7 +111,8 @@ $(document).ready(function () {
 
     projectLocationsLines = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
-      outFields: ["Project_Description", "ProjectID", "OBJECTID"],
+      // outFields: ["Project_Description", "ProjectID", "OBJECTID"],
+      outFields: ["*"],
       visible: true,
       title: "Linear Projects",
       popupEnabled: true,
@@ -310,7 +311,12 @@ $(document).ready(function () {
       });
     };
 
-    map.addMany([projectLocationsPolygons2, projectLocationsLines, projectLocationsPoints, projectLocationsMBTA]);
+    map.addMany([
+      // projectLocationsPolygons2,
+      projectLocationsLines,
+      // projectLocationsPoints,
+      // projectLocationsMBTA
+    ]);
 
 
     statewidePolygon = new Polygon({
@@ -337,11 +343,104 @@ $(document).ready(function () {
         wkid: 3857
       },
       highlightOptions: {
-        color: [0, 255, 255],
-        fillOpacity: 0.5
+        // color: [0, 255, 255],
+        // fillOpacity: 0.5,
+        color: "orange"
       }
     });
     view.goTo(statewidePolygon);
+
+
+
+
+
+
+
+
+
+    /* from Hit Test example */
+    // view.ui.add("info", "top-right");
+
+    view
+    .when()
+    .then(function() {
+      return projectLocationsLines.when();
+    })
+    .then(function(layer) {
+      return view.whenLayerView(layer);
+    })
+    .then(function(layerView) {
+      view.on("pointer-move", eventHandler);
+
+      function eventHandler(event) {
+        view.hitTest(event).then(getGraphics);
+      }
+
+      let highlight, hoverProjectID;
+
+      function getGraphics(response) {
+        if (response.results.length) {
+          const graphic = response.results.filter(function(result) {
+            return result.graphic.layer === projectLocationsLines;
+          })[0].graphic;
+
+          const attributes = graphic.attributes;
+          const attProjectID = attributes.ProjectID;
+          const attDivision = attributes.Division;
+          const attLocation = attributes.Location;
+
+          if (
+            highlight &&              hoverProjectID !== attProjectID
+          ) {
+            highlight.remove();
+            highlight = null;
+            return;
+          }
+
+          if (highlight) {
+            return;
+          }
+
+          const query = layerView.createQuery();
+          query.where = "ProjectID = '" + attProjectID + "'";
+          layerView.queryObjectIds(query).then(function(ids) {
+            if (highlight) {
+              highlight.remove();
+            }
+            highlight = layerView.highlight(ids);
+            hoverProjectID = attProjectID;
+          });
+        } else {
+          highlight.remove();
+          highlight = null;
+        }
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Example: Listen to the click event on the view
     view.watch("updating", function (event) {
@@ -409,12 +508,12 @@ $(document).ready(function () {
         layerInfos: [{
           layer: projectLocationsLines,
           title: "Linear Projects",
-        }, {
-          layer: projectLocationsPoints,
-          title: "Point Projects",
-        }, {
-          layer: projectLocationsPolygons,
-          title: "Project Areas"
+        // }, {
+        //   layer: projectLocationsPoints,
+        //   title: "Point Projects",
+        // }, {
+        //   layer: projectLocationsPolygons,
+        //   title: "Project Areas"
         }],
       }),
       view: view,
