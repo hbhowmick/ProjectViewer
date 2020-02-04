@@ -4,11 +4,6 @@ var aboutBtn = document.getElementById("aboutBtn");
 
 var span = document.getElementsByClassName("close")[0];
 
-// //Open modal on page load
-// window.onload = function() {
-//   aboutModal.style.display = "block";
-// }
-
 //To re-open modal, click the About button in the top right
 aboutBtn.onclick = function() {
   aboutModal.style.display = "block";

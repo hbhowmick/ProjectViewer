@@ -47,20 +47,12 @@ $(document).ready(function () {
       }
     }
     filterStart = false;
+    // runningCount = 0;
     townName = "";
     mpoName = "";
     townSQL = "(1=1)";
     mpoSQL = "(1=1)";
-    totalProj = 0;
-    projIdArr = [];
-    projDescArr = [];
-    resultArr = [];
-    lastProjArr = [];
-    listContent = $("#projectList-content");
-    linesCounted = false;
-    pointsCounted = false;
-    mbtaProjectString = "";
-    mbtaCounted = false;
+
 
 	/*
 	These are some ArcGIS JS objects useful for doing things within the map
@@ -106,7 +98,7 @@ $(document).ready(function () {
 
     projectLocations = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
-      outFields: ["*"],
+      outFields: ["Project_Description", "ProjectID", "OBJECTID"],
       visible: true,
       title: "Linear Projects",
       popupEnabled: true,
@@ -159,7 +151,7 @@ $(document).ready(function () {
 
     projectLocationsMBTA = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/7",
-      outFields: ["MBTA_Location", "route_desc", "route_long_name", "Location_Filter", ],
+      outFields: ["MBTA_Location", "route_desc", "route_long_name", "Location_Filter"],
       popupTemplate: {
         title: "MBTA Route: {MBTA_Location}",
         content: popupFunctionMbtaAsset
@@ -348,6 +340,7 @@ $(document).ready(function () {
     map = new Map({
       basemap: "gray-vector",
     });
+
     map.addMany([projectLocationsPolygonsMapImageLayer, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
     view = new MapView({
       map: map,
@@ -357,8 +350,8 @@ $(document).ready(function () {
         wkid: 3857
       }
     });
-    view.goTo(stateExtent);
 
+    view.goTo(stateExtent);
     view.watch("updating", function (event) {
       if (event == true) {} else if (event == false) {
         $('#loading').modal('hide') //Hide the loading wheel once all layers have finished updating
@@ -375,101 +368,29 @@ $(document).ready(function () {
       .then(function (layerView) {
         prjLocationLines = layerView
         prjLocationLines.watch("updating", function (val) {
-          if (val==false && linesCounted==false) {
+          if (val == false && filterStart == true) {
             hideLoad = true;
             $('#loading').modal('hide')
-            prjLocationLines.queryFeatures(
-              {
-              geometry: extentForRegionOfInterest,
-              spatialRelationship: "intersects",
-              returnGeometry: true,
-              outFields: ["*"],
-              }
-            )
-            .then(function(results) {
-              if (results.features.length == 0) {
-                linesCounted=true;
-                console.log("There are no Linear projects");
-              } else {
-                createList(results.features);
-              }
-            });
+            // console.log(prjLocationLines.layer.title, "is done updating");
+            // console.log(runningCount, "\n");s
+            filterStart == false;
           }
         });
+
       })
       .catch(function (error) {});
 
     view.whenLayerView(projectLocationsPoints)
       .then(function (layerView) {
         prjLocationPoints = layerView
-        prjLocationPoints.watch("updating", function (val) {
-          if (val==false && pointsCounted==false) {
-            hideLoad = true;
-            $('#loading').modal('hide')
-            prjLocationPoints.queryFeatures(
-              {
-              geometry: extentForRegionOfInterest,
-              spatialRelationship: "intersects",
-              returnGeometry: true,
-              outFields: ["*"],
-              orderByFields: 'Project_Description'
-              }
-            )
-            .then(function(results) {
-              if (results.features.length == 0) {
-                pointsCounted=true;
-                console.log("There are no Point projects");
-              } else {
-                createList(results.features);
-              }
-            })
-          }
-        })
       })
       .catch(function (error) {});
 
     view.whenLayerView(projectLocationsMBTA)
       .then(function (layerView) {
         mbtaLines = layerView
-        mbtaLines.watch("updating", function (val) {
-          if(val==false && mbtaCounted==false) {
-            hideLoad = true;
-            $('#loading').modal('hide')
-            projectLocationsMBTA.queryFeatures(
-              {
-                geometry: extentForRegionOfInterest,
-                outFields: ["*"],
-                where: "1=1",
-                spatialRelationship: "intersects",
-              }
-            )
-            .then(function(results) {
-              if (results.features.length == 0) {
-                mbtaCounted=true;
-                console.log("There are no MBTA projects")
-              } else {
-                createList(results.features);
-              }
-            })
-          }
-        })
       })
       .catch(function (error) {});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     projectLocationsPolygonsMapImageLayer.when(function () {
       prjLocationPolygons = projectLocationsPolygonsMapImageLayer.findSublayerById(4);
@@ -522,6 +443,8 @@ $(document).ready(function () {
 
 	//This listens for anytime a new feature is selected and displayed in the popup, or someone clicks the map and there is no feature there
     watchUtils.watch(view.popup, "selectedFeature", function (feature) {
+      $('.project_comment_success').hide()
+      $('.project_comment_failure').hide()
       $('#helpContents').show();
       $('#interactive').hide();
       if (feature) {
@@ -532,6 +455,9 @@ $(document).ready(function () {
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
           projId = feature.attributes.ProjectID;
+          showComments(projId);
+          liked = false;
+          $('#likeProject').prop('disabled', false);
         }
         if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District" || feature.attributes.Location_Type == "Statewide") {
           popupSelected.geometry = feature.geometry;
@@ -554,37 +480,20 @@ $(document).ready(function () {
     The following controls are used to filter projects within the map, based
 	on the user actions in the left hand side of the webpage.
     */
-
-    $(".filter").change(function(e){
-      listModal.style.display = "none";
-      linesCounted = false;
-      pointsCounted = false;
-      mbtaCounted = false;
-      // console.log(linesCounted, pointsCounted, mbtaCounted);
-      totalProj = 0;
-      lastProjArr = [];
-      listContent.empty();
-      filterStart = true;
-      projDescArr = [];
-      mbtaProjectString = "";
-      // console.log("filter?", filterStart);
-      if (e.target.id === "townPrjs") {
-        console.log("Do Not Apply feature view filter") //The reason for only checking the town checkbox and not RTA/Distrct, is that only towns show up in the map. RTA/District projects get displayed via the town popup.
-      } else if ($("#townSelect").val() == "0" || $("#mpoSelect").val() == "All") {
-      } else {
-        $('#loading').modal('show')
-        applyFeatureViewFilters();
-      }
-    });
-
-
+    mpoQuery = mpoLayer.createQuery();
 
     //The following event handlers listen for changes to the town input
     $("#townSelect").change(function () {
+      // runningCount = 0;
+      filterStart = true;
       var townID = $("#townSelect").val();
+      // console.log("\nTown: ", townID);
       $("#mpoSelect").val("");
+
       if ($("#townSelect").val() > 0) {
         townQuery = townLayer.createQuery();
+        // console.log(townQuery);
+        // console.log(townQuery.where);
         $('#loading').modal('show')
         hideLoad = false;
         townQuery.where = "TOWN_ID = " + $("#townSelect").val();
@@ -597,7 +506,16 @@ $(document).ready(function () {
             spatialFilter = true;
             extentForRegionOfInterest = response.features[0].geometry
             townName = response.features[0].attributes.TOWN;
-            console.log("Town Name:", townName);
+            console.log("Town Name: ", townName);
+            applyListFilters();
+            queryFilter = new FeatureFilter({
+              where: sql,
+              geometry: extentForRegionOfInterest,
+              spatialRelationship: "intersects"
+            });
+            // console.log("new query filter");
+            prjLocationLines.filter = queryFilter
+            prjLocationPoints.filter = queryFilter
             view.goTo(extentForRegionOfInterest);
             townGraphic = new Graphic({
               geometry: extentForRegionOfInterest,
@@ -612,6 +530,7 @@ $(document).ready(function () {
             });
             view.graphics.add(townGraphic);
         });
+
       } else {
         spatialFilter = false;
         console.log("All");
@@ -624,8 +543,9 @@ $(document).ready(function () {
     $("#mpoSelect").change(function () {
       $("#townSelect").val("");
       var selectedMPO = $(this).children("option:selected").val()
+      console.log("\nMPO: ", selectedMPO);
+
       if (selectedMPO != "All") {
-        mpoQuery = mpoLayer.createQuery();
         $('#loading').modal('show')
         hideLoad = false;
         mpoQuery.where = "Location like '%" + selectedMPO + "%' and Location_Type = 'MPO'";
@@ -638,22 +558,14 @@ $(document).ready(function () {
           .then(function (response) {
             spatialFilter = true;
             extentForRegionOfInterest = response.features[0].geometry;
-            mpoName = response.features[0].attributes.Location;
-            console.log("MPO Name:", mpoName);
-
-            view.goTo(extentForRegionOfInterest);
-            mpoGraphic = new Graphic({
+            queryFilter = new FeatureFilter({
+              where: sql,
               geometry: extentForRegionOfInterest,
-              symbol: {
-                type: "simple-fill",
-                color: [0, 0, 0, 0.1],
-                outline: {
-                  width: 1.5,
-                  color: [100, 100, 100, 0.2]
-                },
-              }
+              spatialRelationship: "intersects"
             });
-            view.graphics.add(mpoGraphic);
+            prjLocationLines.filter = queryFilter
+            prjLocationPoints.filter = queryFilter
+            view.goTo(extentForRegionOfInterest);
           });
       } else {
         spatialFilter = false;
@@ -689,9 +601,21 @@ $(document).ready(function () {
       applyFeatureViewFilters();
     });
 
+    $(".filter").change(function(e){
+      // listModal.style.display = "none";
+      if (e.target.id === "townPrjs") {
+        console.log("Do Not Apply feature view filter") //The reason for only checking the town checkbox and not RTA/Distrct, is that only towns show up in the map. RTA/District projects get displayed via the town popup.
+      } else if ($("#townSelect").val() == "0" || $("#mpoSelect").val() == "All") {
+      } else {
+        // console.log(".filter changed");
+        $('#loading').modal('show')
+        applyFeatureViewFilters();
+      }
+    });
 
   	//----------update map layers-----------//
     function applyFeatureViewFilters() {
+    // console.log("applyFeatureViewFilters");
 	  //Remove any existing graphics, close any existing popups, and reset the SQL statement
       view.popup.close();
       view.graphics.removeAll();
@@ -714,8 +638,10 @@ $(document).ready(function () {
       }
 		//Create the SQL statement for the projects
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total  >= " + parseFloat($("#minCost").val().replace(/,/g, '')) + " AND Total <= " + parseFloat($("#maxCost").val().replace(/,/g, '')) + ")"
+
 	  //Make sure the correct polygons are showing, based on the controls. It uses the polySql statement which gets towns/mpos/districts if needed
-	   prjLocationPolygons.definitionExpression = polySql;
+	  prjLocationPolygons.definitionExpression = polySql;
+
 	  //Show/hide MBTA lines and other polygons, based on division selections.
       if ($("#division").val() == "All") {
 		//Can show MBTA lines and polygons, since All divisions are selected
@@ -755,259 +681,57 @@ $(document).ready(function () {
       }
       prjLocationLines.filter = queryFilter
       prjLocationPoints.filter = queryFilter
-    }; // end applyFeatureViewFilters function
-
-
-
+    };
 
     //----------populate List Modal-----------//
-    function createList(features){
-      // console.log(features);
-      // console.log(filterStart)
-      if (filterStart==true) {
-        projIdArr = [];
-        if (features[0].layer.title == "Linear Projects" || features[0].layer.title == "Point Projects") {
-          var checkLength = features.length;
-          $(features).each(function () {
-            resultArr = [];
-            var prID = this.attributes.ProjectID;
-            projIdArr.push(prID);
-            var prDesc = this.attributes.Project_Description;
-            var prDiv = this.attributes.Division;
-            var location = this.attributes.Location;
-            var textResult = prDesc.concat(" (").concat(location).concat(")");
-            resultArr.push(textResult, prDiv, prID);
-            projDescArr.push(resultArr);
-          });
-        } else if (features[0].layer.title.includes("MBTA") && mbtaCounted==false) {
-          mbtaProjectString = "";
-          $(features).each(function(index, feature) {
-            console.log("Index: ", index, "Feature: ", feature)
-            if (index==0) {
-              mbtaProjectString = "MBTA_Location = '" + feature.attributes.MBTA_Location + "' OR MBTA_Location = 'System' ";
-            } else {
-              mbtaProjectString = mbtaProjectString + "OR MBTA_Location = '" + feature.attributes.MBTA_Location + "'";
-            }
-          })
-          console.log(mbtaProjectString);
-          if ($("#townSelect").val() !== "0" && $("#townSelect").val() !== "All") {
-            townSQL = "(Location = '" + townName + "' OR Location_Source = '" + townName + "')";
-          } else if ($("#mpoSelect").val() !== "" && $("#mpoSelect").val() !== "All") {
-            mpoSQL = "(Location like '%" + selectedMPO + "%' and Location_Type = 'MPO')"
-          }
-
-          var spatialSQL = townSQL + " AND " + mpoSQL;
-          sql = sql + " AND (Location_Source = 'MBTA' AND " + spatialSQL + ") OR (" + mbtaProjectString + ")";
-          console.log(sql)
-
-          projectList.queryFeatures(
-            {
-              where: sql,
-              outFields: ["Division", "Location", "ProjectID", "Project_Description"],
-            }
-          )
-          .then(function(results){
-            // console.log(results)
-            var checkLength = results.features.length;
-            $(results.features).each(function () {
-              resultArr = [];
-              var prID = this.attributes.ProjectID;
-              projIdArr.push(prID);
-              var prDesc = this.attributes.Project_Description;
-              var prDiv = this.attributes.Division;
-              var location = this.attributes.Location;
-              var textResult = prDesc.concat(" (").concat(location).concat(")");
-              resultArr.push(textResult, prDiv, prID);
-              projDescArr.push(resultArr);
-            });
-            console.log(projDescArr);
-            mbtaCounted=true;
-          })
-        }
-
-        if(features[0].layer.title == 'Linear Projects'){
-          linesCounted = true;
-        } else if (features[0].layer.title == 'Point Projects'){
-          pointsCounted = true;
-        }
-
-        // if (projIdArr !== lastProjArr) {
-          //   totalProj = totalProj + checkLength;
-          // }
-          // lastProjArr = projIdArr.slice();
-
-          if (linesCounted==true && pointsCounted==true && mbtaCounted==true && filterStart==true) {
-            projDescArr = projDescArr.sort();
-            console.log(projDescArr)
-            for(i=0; i<projDescArr.length; i++){
-              listContent.append(
-                $("<option class='listItem'></option>").val(projDescArr[i][1]).html(projDescArr[i][0]).attr('id', projDescArr[i][2])
-              );
-            }
-            document.getElementById("countProj").innerHTML = projDescArr.length;
-            listModal.style.display = "block";
-            filterStart = false;
-          }
-        }
-      }; // end createList function
-
-
-
-      //----------------------------Project Specific----------------------------//
-
-      // //----------Hover-----------//
-      // view.when().then(function() {
-      //   return projectLocationsLines.when();
-      // })
-      // .then(function(layer) {
-      //   return view.whenLayerView(layer);
-      // })
-      // .then(function(layerView) {
-      //   view.on("pointer-move", eventHandler);
-      //
-      //   function eventHandler(event) {
-      //     view.hitTest(event).then(getGraphics);
-      //   };
-      //
-      //   let highlight, hoverProjectID;
-      //
-      //   function getGraphics(response) {
-      //     if (response.results.length) {
-      //       const graphic = response.results.filter(function(result) {
-      //         return result.graphic.layer === projectLocationsLines;
-      //       })[0].graphic;
-      //       console.log(graphic)
-      //
-      //       const attributes = graphic.attributes;
-      //       const attProjectID = attributes.ProjectID;
-      //       const attDivision = attributes.Division;
-      //       const attLocation = attributes.Location;
-      //
-      //       // if (highlight && hoverProjectID !== attProjectID) {
-      //       //   highlight.remove();
-      //       //   highlight = null;
-      //       //   return;
-      //       // }
-      //
-      //       if (highlight) {
-      //         return;
-      //       }
-      //
-      //       const query = layerView.createQuery();
-      //       query.where = "ProjectID = '" + attProjectID + "'";
-      //       layerView.queryObjectIds(query).then(function(ids) {
-      //         if (highlight) {
-      //           // highlight.remove();
-      //         }
-      //         highlight = layerView.highlight(ids);
-      //         hoverProjectID = attProjectID;
-      //       });
-      //     } else {
-      //       // highlight.remove();
-      //       highlight = null;
-      //     }
-      //   }
-      //
-      // });
-
-      //----------Click-----------//
-      view.when(function() {
-        // var projectLayer = map.layers.getItemAt(1);
-        // console.log(map.layers.getItemAt(1));
-        // view.whenLayerView(projectLayer).then(function(layerView) {
-        view.whenLayerView(projectLocations).then(function(layerView) {
-          var queryProjects = projectList.createQuery();
-          $(document).on("click", ".listItem", function(e){
-            $('.listItem').removeClass('selected');
-            $(this).addClass('selected');
-            var listProjectName = this.innerText;
-            var listProjectID = this.id;
-            console.log(listProjectID);
-            queryProjects.where = "ProjectID='" + listProjectID + "'";
-
-            map.layers.getItemAt(1).queryFeatures(queryProjects).then(function(result) {
-            // projectLayer.queryFeatures(queryProjects).then(function(result) { ////****************
-              console.log(result);
-              var feature = result.features[0];
-              featureLat = Number(feature.geometry["latitude"].toFixed(6));
-              featureLong = Number(feature.geometry["longitude"].toFixed(6));
-              // console.log(featureLong, featureLat);
-              view.goTo(
-                {
-                  target: feature.geometry,
-                  tilt: 70
-                },
-                {
-                  duration: 2000,
-                  easing: "in-out-expo"
-                }
-              );
-              $("#projectModal").display() = "block";
-              var listItemAtts= result.features[0].attributes;
-              var listItemDesc = listItemAtts["Project_Description"];
-              $('#projTitle').html(listItemDesc);
-              var listItemDiv = listItemAtts["Division"];
-              var listItemProg = listItemAtts["Program"].split(' | ')[1];
-              var listItemLoc = listItemAtts["Location"];
-              var listItemPrior = listItemAtts["Priority"];
-              var listItemCost = numeral(listItemAtts["TotalCost"]).format('$0,0[.]00');
-              var mySelect_Project = $('#projDesc').empty();
-              mySelect_Project.append(
-                '<p><b>Project ID: </b>' + projectID + '</p>' +
-                '<p><b>Location: </b>' + listItemLoc + '</p>' +
-                '<p><b>MassDOT Division: </b>' + listItemDiv + '</p>' +
-                '<p><b>Program: </b>' + listItemProg + '</p>' +
-                '<p><b>Priority: </b>' + listItemPrior + '</p>' +
-                '<p><b>Total Cost: </b>' + listItemCost + '</p>'
-              );
-
-              //-------APIs--------//
-              $.get("https://a.mapillary.com/v3/images", {
-                client_id: 'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
-                closeto: [featureLong,featureLat],
-                per_page: 100,
-                radius: 10000,
-              })
-              .done(function (data) {
-                var featuresMapAPI = [];
-                featuresMapAPI = data.features;
-                var latMapAPI = featuresMapAPI[0].geometry.coordinates[1];
-                var longMapAPI = featuresMapAPI[0].geometry.coordinates[0];
-                // console.log(longMapAPI, latMapAPI);
-                var keyMapAPI = String(featuresMapAPI[0].properties.key);
-                // console.log(keyMapAPI);
-                var mlyCombined;
-                mlyCombined = {};
-                mlyCombined = new Mapillary.Viewer(
-                  'mly',
-                  'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
-                  keyMapAPI,
-                )
-              });
-            });
-          });
+    function applyListFilters() {
+      if ($("#townSelect").val() !== "0" && $("#townSelect").val() !== "All") {
+        townSQL = "(Location = '" + townName + "' OR Location_Source = '" + townName + "')";
+      } else if ($("#mpoSelect").val() !== "" && $("#mpoSelect").val() !== "All") {
+        mpoSQL = "(Location like '%" + selectedMPO + "%' and Location_Type = 'MPO')"
+      }
+      $.getJSON("config/urls.json")
+      .done(function (json) {
+        url = json.urls;
+        $.post(url.project_table + "/query", {
+          where: sql + " AND " + townSQL + " AND " + mpoSQL,
+          outFields: "Division, Program, Project_Description, ProjectID, Location",
+          returnGeometry: true,
+          orderByFields: 'Project_Description',
+          returnDistinctValues: true,
+          f: 'pjson'
         })
-      });
+        .done(function (data) {
+          var returnedList = $.parseJSON(data);
+          // console.log(returnedList.features);
+          var listContent = $("#projectList-content");
+          listContent.empty();
+          var featuresCounted = 0;
+          var checkLength = returnedList.features.length;
+          console.log(checkLength);
+          $(returnedList.features).each(function () {
+            var projDesc = this.attributes.Project_Description;
+            var projDiv = this.attributes.Division;
+            projID = this.attributes.ProjectID;
+            var location = this.attributes.Location;
+            var textResult = projDesc.concat(" (").concat(location).concat(")");
+            listContent.append(
+              $("<option class='listItem'></option>").val(this.attributes.Division).html(textResult).attr('id', projID)
+            );
+            featuresCounted++;
+          });
+          if(featuresCounted === checkLength){
+            listModal.style.display = "block";
+          }
+        });
+      })
+    };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  	/*
-      The following controls the project search bar. It defines it as an autopopulate
-  	input search. It also tells it what to search for when a user inputs some text.
-  	The second function is called when a project has been selected.
+	/*
+    The following controls the project search bar. It defines it as an autopopulate
+	input search. It also tells it what to search for when a user inputs some text.
+	The second function is called when a project has been selected.
     */
     $("#projectSearch").autocomplete({
       source: function (request, response) {
@@ -1200,4 +924,5 @@ $(document).ready(function () {
 
 
   });
+
 });
