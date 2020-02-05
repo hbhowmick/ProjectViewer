@@ -66,6 +66,182 @@
 
 
 
+    $(".filter").change(function(e){
+      console.log("A filter changed...");
+      // listModal.style.display = "none";
+      linesCounted = false;
+      pointsCounted = false;
+      mbtaCounted = false;
+      totalProj = 0;
+      lastProjArr = [];
+      listContent.empty();
+      filterStart = true;
+      mbtaProjectString = "";
+      view.graphics.removeAll();
+
+
+      if (e.target.id === "townPrjs") {
+        console.log("Do Not Apply feature view filter") //The reason for only checking the town checkbox and not RTA/Distrct, is that only towns show up in the map. RTA/District projects get displayed via the town popup.
+      // } else if ($("#townSelect").val() == "0" || $("#mpoSelect").val() == "All") {
+      } else {
+        $('#loading').modal('show')
+        applyFeatureViewFilters();
+      }
+
+
+
+
+
+
+
+
+
+
+      // costVal();
+
+    });
+
+    $("#townSelect").change(function () {
+      console.log("town changed");
+      townID = $("#townSelect").val();
+      $("#mpoSelect").val("")
+      townVal(townID);
+    })
+
+    $("#mpoSelect").change(function() {
+      console.log("mpo changed");
+      selectedMPO = $(this).children("option:selected").val()
+      $("#townSelect").val("TEST");
+      mpoVal(selectedMPO);
+    })
+
+
+
+
+
+    function townVal(townID) {
+      if (townID > 0) {
+        // $("#mpoSelect").val("All");
+        townQuery = townLayer.createQuery();
+        $('#loading').modal('show')
+        hideLoad = false;
+        townQuery.where = "TOWN_ID = " + $("#townSelect").val();
+        townQuery.returnGeometry = true;
+        townQuery.outFields = ["TOWN_ID", "TOWN"];
+        townQuery.outSpatialReference = view.spatialReference;
+        townLayer.geometryPrecision = 0;
+        townLayer.queryFeatures(townQuery)
+        .then(function (response) {
+          spatialFilter = true;
+          extentForRegionOfInterest = response.features[0].geometry
+          townName = response.features[0].attributes.TOWN;
+
+          queryFilter = new FeatureFilter({
+            where: sql,
+            geometry: extentForRegionOfInterest,
+            spatialRelationship: "intersects"
+          });
+          prjLocationLines.filter = queryFilter
+          prjLocationPoints.filter = queryFilter
+          console.log("Town selection:", townName);
+
+          view.goTo(extentForRegionOfInterest);
+          townGraphic = new Graphic({
+            geometry: extentForRegionOfInterest,
+            symbol: {
+              type: "simple-fill",
+              color: [0, 0, 0, 0.1],
+              outline: {
+                width: 1.5,
+                color: [100, 100, 100, 0.2]
+              },
+            }
+          });
+          view.graphics.add(townGraphic);
+        });
+      } else {
+        spatialFilter = false;
+        console.log("All");
+        applyFeatureViewFilters();
+        view.goTo(stateExtent);
+      }
+    };
+
+    function mpoVal(selectedMPO) {
+      if (selectedMPO !== "All" && selectedMPO !== '') {
+        // $("#townSelect").val("All");
+        mpoQuery = mpoLayer.createQuery();
+        $('#loading').modal('show')
+        hideLoad = false;
+        mpoQuery.where = "Location like '%" + selectedMPO + "%' and Location_Type = 'MPO'";
+        mpoQuery.returnGeometry = true;
+        mpoQuery.outFields = ["Location"];
+        mpoQuery.outSpatialReference = view.spatialReference;
+        mpoQuery.returnExtentOnly = true;
+        mpoQuery.geometryPrecision = 0;
+        mpoLayer.queryFeatures(mpoQuery)
+        .then(function (response) {
+          spatialFilter = true;
+          extentForRegionOfInterest = response.features[0].geometry;
+          mpoName = response.features[0].attributes.Location;
+
+          queryFilter = new FeatureFilter({
+            where: sql,
+            geometry: extentForRegionOfInterest,
+            spatialRelationship: "intersects"
+          });
+          prjLocationLines.filter = queryFilter
+          prjLocationPoints.filter = queryFilter
+          console.log("MPO selection:", mpoName);
+
+          view.goTo(extentForRegionOfInterest);
+          mpoGraphic = new Graphic({
+            geometry: extentForRegionOfInterest,
+            symbol: {
+              type: "simple-fill",
+              color: [0, 0, 0, 0.1],
+              outline: {
+                width: 1.5,
+                color: [100, 100, 100, 0.2]
+              },
+            }
+          });
+          view.graphics.add(mpoGraphic);
+        });
+      } else {
+        spatialFilter = false;
+        console.log("All");
+        applyFeatureViewFilters();
+        view.goTo(stateExtent);
+      }
+
+    };
+
+	//The following is the cost slider. It is used to configure the input and do something when the value is changed
+    $("#cost-range").slider({
+      range: true,
+      min: 0,
+      max: 5000000000,
+      values: [0, 5000000000],
+      slide: function (event, ui) {
+        $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
+        $("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
+        applyFeatureViewFilters();
+      }
+    });
+
+    function costVal() {
+      minValue = numeral($("#minCost").val()).value();
+      maxValue = numeral($("#maxCost").val()).value();
+      if (minValue > maxValue) {
+        maxValue = minValue
+      };
+      $("#minCost").val(numeral(minValue).format('0,0[.]00'));
+      $("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
+      $("#cost-range").slider("values", [minValue, maxValue]);
+      applyFeatureViewFilters();
+    }
+
 
 
 //----------spatialQuery-----------//

@@ -446,6 +446,7 @@ $(document).ready(function () {
               geometry: extentForRegionOfInterest,
               spatialRelationship: "intersects"
             });
+            console.log("Line Projects filter from town selection: ", queryFilter)
             prjLocationLines.filter = queryFilter
             prjLocationPoints.filter = queryFilter
             view.goTo(extentForRegionOfInterest);
@@ -488,6 +489,7 @@ $(document).ready(function () {
 
 
     function applyFeatureViewFilters() {
+      console.log("applyFeatureViewFilters")
       view.popup.close();
       view.graphics.removeAll();
 
@@ -540,6 +542,7 @@ $(document).ready(function () {
           where: sql,
         });
       }
+      console.log("Line Projects filter from applyFeatureViewFilters function: ", queryFilter)
       prjLocationLines.filter = queryFilter
       prjLocationPoints.filter = queryFilter
       applyListFilters(sql);

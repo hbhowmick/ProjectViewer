@@ -97,6 +97,11 @@ span {
   float: right;
 }
 
+.divHeading {
+  font-size: 24px;
+  padding-top: 20px;
+}
+
 #mainDiv{
   padding-right: 0px;
   padding-left: 0px;
@@ -118,14 +123,18 @@ span {
 #viewDiv {
   width: 100% !important;
   height: 100% !important;
-  min-height: 1000px;
+  min-height: 800px; /* controls where the project modal will start */
   margin: 0;
   margin-top: 10px;
-  /* margin-bottom: 10px; */
+  margin-bottom: 10px;
 }
 
 .p-3 {
   padding: 0 !important;
+}
+
+.boldText {
+  font-weight: bold;
 }
 
 #projectSearch {
@@ -279,6 +288,7 @@ span {
   background-color: #e6e6e6;
   border: solid 5px #f2f2f2;
   padding: 0px 15px;
+  height: 500px;
 }
 
 #projectModal-content {
@@ -310,6 +320,7 @@ span {
   background-color: white;
   margin-right: 7.5px;
   padding: 15px;
+  /* height: 300px; */
 }
 
 .rightCol {
