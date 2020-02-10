@@ -65,6 +65,29 @@
 // }
 
 
+// view.when(function() {
+  // view.whenLayerView(projectLocations).then(function(layerView) {
+    // $("option").mouseenter(function(){
+    //   console.log("HOVER");
+    // })
+    // $("option").hover(function(){
+    //   console.log("HOVER");
+    // })
+    // $(".listItem").mouseenter(function(e){
+    //   console.log("HOVER", e.type);
+    // })
+    $(".listModal").on("mouseenter", ".listItem", function(e){
+      console.log("HOVER");
+      var listProjectID = this.id;
+      console.log(listProjectID);
+    })
+    // $(".listModal").on("click", ".listItem", function(e){
+    //   console.log("CLICK");
+    // })
+  // })
+// });
+
+
 
     $(".filter").change(function(e){
       console.log("A filter changed...");

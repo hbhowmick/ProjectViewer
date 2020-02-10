@@ -74,6 +74,7 @@ $(document).ready(function () {
     };
     resultKeys = [];
     resultVals = [];
+    // let listHighlight;
     currentProjectID = null;
     clickGraphic = null;
     mbtaHighlight = null;
@@ -671,7 +672,6 @@ $(document).ready(function () {
       console.log("Town: ", $("#townSelect").val())
       console.log("MPO: ", $("#mpoSelect").val())
       console.log("\n")
-      console.log("SQL: ", sql);
 
       if (e.target.id === "townPrjs") {
         console.log("Do Not Apply feature view filter") //The reason for only checking the town checkbox and not RTA/Distrct, is that only towns show up in the map. RTA/District projects get displayed via the town popup.
@@ -702,143 +702,88 @@ $(document).ready(function () {
 
 
 
-    // ____________________Carl started helping___________________
-var listHighlight;
 
-    $(".listModal").on("mouseenter", ".listItem", function(e){
-      highlightProject = this.id;
-      console.log(highlightProject)
-      highlightREMOVE(highlightProject)
+
+
+
+
+
+    $.when(
+      $(".listModal").on("mouseenter", ".listItem", function(e){
+      var listProjectID = this.id;
+      // console.log(listProjectID);
+      // listHighlight = null;
+      return listProjectID;
+
+
+
+      //
+      // // console.log(listHighlight)
+      // if (currentProjectID) {
+      //   console.log("Previous highlight")
+      //   listHighlight.remove();
+      //   currentProjectID = null;
+      //
+      // // if (listHighlight && currentProjectID !== listProjectID) {
+      // //   console.log("Previous highlight & new hover...")
+      // //   listHighlight.remove();
+      // //   listHighlight = null;
+      // // } else if (listHighlight) {
+      // //   console.log("Previous highlight (same hover?)...")
+      // //   listHighlight.remove();
+      // //   listHighlight = null;
+      // }
+      //
+      // var hoverQuery = projectList.createQuery();
+      // hoverQuery.where =  "ProjectID = '" + listProjectID.split("|")[0] + "'";
+      // // console.log(hoverQuery)
+      //
+      // projectList.queryFeatures(hoverQuery).then(function(response) {
+      //   return response
+      // }).then(function(response){
+      //   let layerView;
+      //   var hoverLocSource = response.features[0].attributes.Location_Source;
+      //   // console.log("Location_Source: ", hoverLocSource)
+      //   var hoverMBTA_Loc = response.features[0].attributes.MBTA_Location;
+      //   // console.log("MBTA_Location: ", hoverMBTA_Loc)
+      //   if (hoverLocSource == "LINE") {
+      //     layerView = prjLocationLines;
+      //   } else if (hoverLocSource == "POINT") {
+      //     layerView = prjLocationPoints;
+      //       // hoverLocSource will be MBTA for MBTA...don't need System from MBTA_Location
+      //   } else if (hoverMBTA_Loc !== null) {
+      //     layerView = mbtaLines;
+      //   }
+      //   // console.log("LayerView: ", layerView.layer.title)
+      //
+      //   var layerViewQuery = layerView.createQuery();
+      //   if(layerView !== mbtaLines){
+      //     layerViewQuery.where = "ProjectID = '" + listProjectID.split("|")[0] + "'";
+      //     // console.log(listProjectID);
+      //   } else {
+      //     if(hoverMBTA_Loc !== "System") {
+      //       layerViewQuery.where = "MBTA_Location = '" + hoverMBTA_Loc + "'";
+      //     } else {
+      //       layerViewQuery.where = "(1=1)"
+      //     }
+      //   }
+      //   console.log(layerViewQuery)
+      //   layerView.queryObjectIds(layerViewQuery).then(function(ids) {
+      //     // console.log(ids)
+      //     listHighlight = layerView.highlight(ids);
+      //     // console.log(listHighlight)
+      //     currentProjectID = listProjectID.split("|")[0];
+      //     // console.log(currentProjectID)
+      //   });
+      // })
+
+
+
+
+    }))
+    .then(function(id){
+      console.log("ID: ", id)
     })
-
-    function highlightREMOVE(projectID){
-      if(listHighlight){
-        listHighlight.remove()
-        listHighlight = null;
-        console.log(listHighlight)
-        //highlightADD(projectID)
-      } else {
-        highlightADD(projectID)
-      }
-    }
-
-    function highlightADD(projectID){
-      var hoverQuery = projectList.createQuery();
-      hoverQuery.where =  "ProjectID = '" + projectID.split("|")[0] + "'";
-      // console.log(hoverQuery)
-
-      projectList.queryFeatures(hoverQuery).then(function(response) {
-        return response
-      }).then(function(response){
-        let layerView;
-        var hoverLocSource = response.features[0].attributes.Location_Source;
-        // console.log("Location_Source: ", hoverLocSource)
-        var hoverMBTA_Loc = response.features[0].attributes.MBTA_Location;
-        // console.log("MBTA_Location: ", hoverMBTA_Loc)
-        if (hoverLocSource == "LINE") {
-          layerView = prjLocationLines;
-        } else if (hoverLocSource == "POINT") {
-          layerView = prjLocationPoints;
-          // hoverLocSource will be MBTA for MBTA...don't need System from MBTA_Location
-        } else if (hoverMBTA_Loc !== null) {
-          layerView = mbtaLines;
-        }
-        // console.log("LayerView: ", layerView.layer.title)
-
-        var layerViewQuery = layerView.createQuery();
-        if(layerView !== mbtaLines){
-          layerViewQuery.where = "ProjectID = '" + projectID.split("|")[0] + "'";
-          // console.log(projectID);
-        } else {
-          if(hoverMBTA_Loc !== "System") {
-            layerViewQuery.where = "MBTA_Location = '" + hoverMBTA_Loc + "'";
-          } else {
-            layerViewQuery.where = "(1=1)"
-          }
-        }
-        console.log(layerViewQuery)
-        layerView.queryObjectIds(layerViewQuery).then(function(ids) {
-          // console.log(ids)
-          listHighlight = layerView.highlight(ids);
-        })
-      })
-    }
-    // ____________________Carl stopped helping___________________
-
-    // $(".listModal").on("mouseenter", ".listItem", function(e){
-    //   var listProjectID = this.id;
-    //   // console.log(listProjectID);
-    //   // listHighlight = null;
-    //
-    //
-    //   // console.log(listHighlight)
-    //
-    //
-    //   if (listHighlight) {
-    //     console.log("Previous highlight")
-    //     listHighlight.remove();
-    //     currentProjectID = null;
-    //   }
-    //
-    //   // if (currentProjectID) {
-    //   //   console.log("Previous highlight")
-    //   //   listHighlight.remove();
-    //   //   currentProjectID = null;
-    //   // }
-    //
-    //   // if (listHighlight && currentProjectID !== listProjectID) {
-    //   //   console.log("Previous highlight & new hover...")
-    //   //   listHighlight.remove();
-    //   //   listHighlight = null;
-    //   // } else if (listHighlight) {
-    //   //   console.log("Previous highlight (same hover?)...")
-    //   //   listHighlight.remove();
-    //   //   listHighlight = null;
-    //   // }
-    //
-    //   var hoverQuery = projectList.createQuery();
-    //   hoverQuery.where =  "ProjectID = '" + listProjectID.split("|")[0] + "'";
-    //   // console.log(hoverQuery)
-    //
-    //   projectList.queryFeatures(hoverQuery).then(function(response) {
-    //     return response
-    //   }).then(function(response){
-    //     let layerView;
-    //     var hoverLocSource = response.features[0].attributes.Location_Source;
-    //     // console.log("Location_Source: ", hoverLocSource)
-    //     var hoverMBTA_Loc = response.features[0].attributes.MBTA_Location;
-    //     // console.log("MBTA_Location: ", hoverMBTA_Loc)
-    //     if (hoverLocSource == "LINE") {
-    //       layerView = prjLocationLines;
-    //     } else if (hoverLocSource == "POINT") {
-    //       layerView = prjLocationPoints;
-    //         // hoverLocSource will be MBTA for MBTA...don't need System from MBTA_Location
-    //     } else if (hoverMBTA_Loc !== null) {
-    //       layerView = mbtaLines;
-    //     }
-    //     // console.log("LayerView: ", layerView.layer.title)
-    //
-    //     var layerViewQuery = layerView.createQuery();
-    //     if(layerView !== mbtaLines){
-    //       layerViewQuery.where = "ProjectID = '" + listProjectID.split("|")[0] + "'";
-    //       // console.log(listProjectID);
-    //     } else {
-    //       if(hoverMBTA_Loc !== "System") {
-    //         layerViewQuery.where = "MBTA_Location = '" + hoverMBTA_Loc + "'";
-    //       } else {
-    //         layerViewQuery.where = "(1=1)"
-    //       }
-    //     }
-    //     console.log(layerViewQuery)
-    //     layerView.queryObjectIds(layerViewQuery).then(function(ids) {
-    //       // console.log(ids)
-    //       listHighlight = layerView.highlight(ids);
-    //       console.log(listHighlight)
-    //       currentProjectID = listProjectID.split("|")[0];
-    //       // console.log(currentProjectID)
-    //     });
-    //   })
-    // })
 
     //
     // $(".listModal").on("mouseleave", ".listItem", function(e){
@@ -849,29 +794,6 @@ var listHighlight;
     //     console.log("remove highlight")
     //   }
     // })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -976,6 +898,7 @@ var listHighlight;
           .then(function (response) {
             spatialFilter = true;
             extentForRegionOfInterest = response.features[0].geometry
+            // console.log("sql", sql),
             queryFilter = new FeatureFilter({
               where: sql,
               geometry: extentForRegionOfInterest,
