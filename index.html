@@ -4,6 +4,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <<<<<<< HEAD
+<<<<<<< HEAD
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -13,6 +14,25 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script> 
+=======
+<script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js'> -->
+<!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet"/> -->
+<link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
+<!-- <script src="https://js.arcgis.com/4.13/"></script>
+<script src="js/map.js"></script>
+<script src="js/controls.js"></script> -->
+>>>>>>> origin/Heather
 =======
 <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest"></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
@@ -63,9 +83,12 @@
     <div class="row container-fluid flex-fill">
       <main class="col" style="background-color: white">
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div class="row h-100 w-100 justify-content-md-center">
           <div class="col-2 sideContents" >
 =======
+=======
+>>>>>>> origin/Heather
         <div class="row fullScreen">
           <!-- start Side Panel-->
           <div class="col-xl-2 sideContents" >
@@ -79,6 +102,7 @@
               </select>
             </div>
             <label for="townSelect">Town</label>
+<<<<<<< HEAD
 <<<<<<< HEAD
             <select class="form-control town-filter" id="townSelect">
   	          <option value="0">All</option>
@@ -177,6 +201,62 @@
           </div>
           <!-- end  Side Panel -->
 
+=======
+            <div class="input-group mb-3">
+              <select class="form-control dropdown filter" id="townSelect">
+    	          <option value="0">All</option>
+              </select>
+  		      </div>
+            <label for="mpoSelect">MPO</label>
+            <div class="input-group mb-3">
+              <select class="form-control dropdown filter" id="mpoSelect">
+                <option value="All">All</option>
+              </select>
+            </div>
+
+            <!-- start checkboxes -->
+            <div class="checkbox">
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="townPrjs" checked>
+                <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
+              </div>
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="rtaPrjs" checked>
+                <label class="form-check-label" for="rtaPrjs"> RTA-wide projects </label>
+              </div>
+              <div class="filter mr-sm-2 w-100 ">
+                <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
+                <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
+              </div>
+            </div>
+            <!-- end checkboxes -->
+
+            <label for="programs">CIP Program</label>
+            <div class="input-group mb-3">
+              <select class="form-control custom-select filter" id="programs" multiple>
+                <option value="All" division= "All" selected>All</option>
+              </select>
+            </div>
+            <div>
+              <label for="amount">Cost Range</label>
+              <form class="form">
+                <div class="filter form-inline flex-grow-1">Min:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
+                </div>
+                <div class="filter form-inline ">Max:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+                </div>
+              </form>
+              <div class="filter" id="cost-range"></div>
+            </div>
+            <br>
+            <div class="mr-sm-2">
+              <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
+            </div>
+          </div>
+          <!-- end  Side Panel -->
+
+>>>>>>> origin/Heather
           <!-- start List Modal -->
           <div class="container listModal" id="listModal">
             <!-- <h4 id="countProj"></h4> -->
@@ -188,6 +268,7 @@
             </div>
           </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
           <div class="col noPadding">
           <label for="projectSearch">Project Search</label>
           <input class="form-control mr-sm-2 input w-100" id="projectSearch" type="text" placeholder="Search for a project. E.g. Red-Blue Connector">
@@ -196,6 +277,9 @@
         </div>
 
 
+=======
+          <!-- end List Modal -->
+>>>>>>> origin/Heather
 =======
           <!-- end List Modal -->
 >>>>>>> origin/Heather
@@ -258,8 +342,11 @@
     </div>
   </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
   <script src="js/map.js"></script>
 =======
+=======
+>>>>>>> origin/Heather
   <!-- <div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div> -->
   <script type="text/javascript">
   function googleTranslateElementInit() {
@@ -268,6 +355,9 @@
   </script>
   <script src="https://js.arcgis.com/4.13/"></script>
   <script src="js/page_contents.js"></script>
+<<<<<<< HEAD
+>>>>>>> origin/Heather
+=======
 >>>>>>> origin/Heather
   <script src="js/controls.js"></script>
   <script src="js/aboutModal.js"></script>

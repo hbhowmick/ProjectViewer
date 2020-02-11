@@ -58,6 +58,7 @@ $(document).ready(function () {
         });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   });
 
 	
@@ -135,6 +136,9 @@ $(document).ready(function () {
           $('<option></option>').val(this.attributes.TOWN_ID).html(this.attributes.TOWN)
         );
       });
+=======
+			programList = [];
+>>>>>>> origin/Heather
 =======
 			programList = [];
 >>>>>>> origin/Heather
