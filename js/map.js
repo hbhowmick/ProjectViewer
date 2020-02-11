@@ -32,6 +32,7 @@ $(document).ready(function () {
     townsSql = "Town";
     rtaSql = "RTA";
     distSql = "Highway District";
+    
 
     sql = "1=1";
     filterStart = false;
