@@ -29,14 +29,17 @@ $(document).ready(function () {
 	*/
     searchedProject = false;
     theCurrentProject = false;
+    liked = false;
     townsSql = "Town";
     rtaSql = "RTA";
     distSql = "Highway District";
-
-    sql = "1=1";
-    filterStart = false;
-    spatialFilter = false;
     polySql = "1=1";
+    spatialFilter = false;
+    sql = "1=1";
+    projectSearchID = false;
+    extentForRegionOfInterest = false;
+    highlight = true;
+    hideLoad = false;
     polySymbol = {
       type: "simple-fill",
       style: "none",
@@ -45,18 +48,11 @@ $(document).ready(function () {
         width: "2.5px"
       }
     }
-    extentForRegionOfInterest = false;
-
-    projectSearchID = false;
-
-    highlight = true;
-    hideLoad = false;
-
+    filterStart = false;
     townName = "";
     mpoName = "";
     townSQL = "(1=1)";
     mpoSQL = "(1=1)";
-
     lastProjArr = [];
     listContent = $("#projectList-content");
     linesCounted = false;
@@ -88,10 +84,13 @@ $(document).ready(function () {
     popupSelected = new Graphic({
       symbol: polySymbol
     });
+
     statewideSelected = new Graphic({
       symbol: polySymbol,
     });
-    loadExtent = new Polygon({
+
+
+    stateExtent = new Polygon({
       rings: [
         [
           [-73, 41],
@@ -104,19 +103,8 @@ $(document).ready(function () {
         wkid: 4326
       }
     });
-    stateExtent = new Polygon({
-      rings: [
-        [
-          [-74, 41],
-          [-74, 43],
-          [-69.5, 43],
-          [-69.5, 41]
-        ]
-      ],
-      spatialReference: {
-        wkid: 4326
-      }
-    });
+    // console.log(stateExtent)
+
 
     /*
     The following are feature layers and one map image layer
@@ -195,6 +183,7 @@ $(document).ready(function () {
         content: popupFunctionMbtaAsset
       }
     });
+
 
     queryProjectTask = new QueryTask({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6"
@@ -393,27 +382,7 @@ $(document).ready(function () {
         fillOpacity: 0.4
       }
     });
-
-    //--------------------Load Layers---------------------//
-    view.when()
-    .then(function(){
-      // view.extent = loadExtent;
-      // console.log(view.extent)
-      view.goTo(loadExtent);
-      prjListQuery = projectList.createQuery();
-      // extentForRegionOfInterest = stateExtent;
-      //if commented out, highway projects = 589; if not, = 476
-    });
-
-    // view.on("layerview-create", function(event) {
-    //   if (event.layer.title == "Linear Projects") {
-    //     console.log("Lines: ", linesCounted)
-    //   } else if (event.layer.title == "Point Projects") {
-    //     console.log("Points: ", pointsCounted)
-    //   } else if (event.layer.title == "CIPCommentToolTest - MBTA System") {
-    //     console.log("MBTA: ", mbtaCounted, "\nFilter: ", filterStart)
-    //   }
-    // });
+    view.goTo(stateExtent);
 
     view.watch("updating", function (event) {
       if (event == true) {} else if (event == false) {
@@ -427,16 +396,15 @@ $(document).ready(function () {
       }
     })
 
-
     view.whenLayerView(projectLocations)
       .then(function (layerView) {
         prjLocationLines = layerView
-        prjLocationLinesQuery = prjLocationLines.createQuery();
-        console.log("initial LINES loaded");
         prjLocationLines.watch("updating", function (val) {
-          if (val==false && linesCounted==false && filterStart==true) { // only called if filter has changed
-            linesCounted=true;
-            console.log("LINES UPDATED");
+          console.log(val, linesCounted, filterStart)
+          if (
+            // val==false &&
+            linesCounted==false && filterStart==true) {
+              console.log("TEST")
             hideLoad = true;
             $('#loading').modal('hide')
             var projQuery = projectLocations.createQuery();
@@ -451,13 +419,15 @@ $(document).ready(function () {
             .then(function(results) {
               // console.log(results)
               if (results.features.length == 0) {
+                linesCounted=true;
                 console.log("Lines: (0)");
                 // console.log("Lines: ", linesCounted, "\nPoints: ", pointsCounted, "\nMBTA: ", mbtaCounted, "\nFilter: ", filterStart)
-                openListModal()
+                // openListModal()
+                createList(results.features);
               } else {
                 // mbtaLines.visible = true;
                 mbtaProjectString = "1=1";
-                console.log(results.features);
+                // console.log(results.features);
                 createList(results.features);
               }
             });
@@ -466,17 +436,12 @@ $(document).ready(function () {
       })
       .catch(function (error) {});
 
-
-
     view.whenLayerView(projectLocationsPoints)
       .then(function (layerView) {
         prjLocationPoints = layerView
-        prjLocationPointsQuery = prjLocationPoints.createQuery();
-        console.log("initial POINTS loaded");
         prjLocationPoints.watch("updating", function (val) {
-          if (val==false && pointsCounted==false && filterStart==true) { // only called if filter has changed
-            pointsCounted=true;
-            console.log("POINTS UPDATED");
+          // console.log(extentForRegionOfInterest)
+          if (val==false && pointsCounted==false && filterStart==true) {
             hideLoad = true;
             $('#loading').modal('hide')
             var projQuery = projectLocationsPoints.createQuery();
@@ -490,14 +455,15 @@ $(document).ready(function () {
             prjLocationPoints.queryFeatures(projQuery)
             .then(function(results) {
               if (results.features.length == 0) {
+                pointsCounted=true;
                 console.log("Points: (0)");
-
-                // console.log("Lines: ", linesCounted, "\nPoints: ", pointsCounted, "\nMBTA: ", mbtaCounted, "\nFilter: ", filterStart)
-                openListModal()
+                console.log("Lines: ", linesCounted, "\nPoints: ", pointsCounted, "\nMBTA: ", mbtaCounted, "\nFilter: ", filterStart)
+                // openListModal()
+                createList(results.features);
               } else {
                 // mbtaLines.visible = true;
                 mbtaProjectString = "1=1";
-                console.log(results.features);
+                // console.log(results.features);
                 createList(results.features);
               }
             })
@@ -506,16 +472,11 @@ $(document).ready(function () {
       })
       .catch(function (error) {});
 
-
     view.whenLayerView(projectLocationsMBTA)
       .then(function (layerView) {
         mbtaLines = layerView
-        prjLocationMBTAQuery = mbtaLines.createQuery();
-        console.log("initial MBTA loaded");
         mbtaLines.watch("updating", function (val) {
-          if(val==false && mbtaCounted==false && filterStart==true) { // only called if filter has changed
-            mbtaCounted=true;
-            console.log("MBTA UPDATED");
+          if(val==false && mbtaCounted==false && filterStart==true) {
             hideLoad = true;
             $('#loading').modal('hide')
             projectLocationsMBTA.queryFeatures(
@@ -528,8 +489,12 @@ $(document).ready(function () {
             )
             .then(function(results) {
               if (results.features.length == 0) {
+                mbtaCounted=true;
                 // mbtaLines.visible = false;
                 // console.log("MBTA: (0)")
+                // console.log("Lines: ", linesCounted, "\nPoints: ", pointsCounted, "\nMBTA: ", mbtaCounted, "\nFilter: ", filterStart)
+                // openListModal()
+                createList(results.features);
               } else {
                 mbtaLines.visible = true;
                 mbtaProjectString = "";
@@ -566,6 +531,7 @@ $(document).ready(function () {
                 )
                 .then(function(results){
                   // console.log(results.features)
+                  mbtaCounted=true;
                   createList(results.features);
                 })
               }
@@ -575,11 +541,9 @@ $(document).ready(function () {
       })
       .catch(function (error) {});
 
-
     projectLocationsPolygonsMapImageLayer.when(function () {
       prjLocationPolygons = projectLocationsPolygonsMapImageLayer.findSublayerById(4);
     })
-
 
     searchWidget = new Search({
       view: view
@@ -588,6 +552,13 @@ $(document).ready(function () {
     homeBtn = new Home({
       view: view
     });
+
+    view.when()
+    .then(function(){
+      // view.extent = stateExtent;
+      extentForRegionOfInterest = stateExtent;
+      // console.log(view.extent)
+    })
 
 
     $(document).on("click", ".esri-home", function(e){
@@ -683,9 +654,6 @@ $(document).ready(function () {
     $(".filter").change(function(e){
       view.popup.close();
       view.graphics.removeAll();
-      lastProjArr = [];
-      listContent.empty();
-      mbtaProjectString = "";
       resultObject = {
         "Division":
         [
@@ -699,18 +667,11 @@ $(document).ready(function () {
           {"Transit":[]},
         ]
       };
+      filterStart = true;
+      console.log("*************************");
       linesCounted = false;
       pointsCounted = false;
       mbtaCounted = false;
-      filterStart = true;
-      console.log("*************************");
-      console.log(
-        "Division: ", $("#division").val(),
-        "\nProgram(s): ", $("#programs").val(),
-        "\nCost Range: $", $("#minCost").val(), " - ", $("#maxCost").val(),
-        "\nTown: ", $("#townSelect").val(),
-        "\nMPO: ", $("#mpoSelect").val()
-      )
       // console.log(e.target.id)
       if(e.target.id === "townSelect") {
         $("#mpoSelect").val("All");
@@ -722,12 +683,13 @@ $(document).ready(function () {
       listModal.style.display = "none";
       projectModal.style.display = "none";
 
+      lastProjArr = [];
+      listContent.empty();
+      mbtaProjectString = "";
 
       nonSpatialChange();
     });
 
-
-    //--------------------NonSpatial Filter---------------------//
     function nonSpatialChange() {
       sql = "1=1"
       divisionsSQL = "1=1";
@@ -736,6 +698,7 @@ $(document).ready(function () {
       if ($("#division").val() !== "All") {
       divisionsSQL = "Division='" + $("#division").val() + "'";
     };
+      console.log("Division: ", $("#division").val())
 
       if ($("#programs").val()[0] !== 'All') {
         $($("#programs").val()).each(function () {
@@ -747,6 +710,7 @@ $(document).ready(function () {
           }
         });
       };
+      console.log("Program(s): ", $("#programs").val())
       //Create the SQL statement for the projects
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND (Total  >= " + parseFloat($("#minCost").val().replace(/,/g, '')) + " AND Total <= " + parseFloat($("#maxCost").val().replace(/,/g, '')) + ")"
 
@@ -766,8 +730,6 @@ $(document).ready(function () {
         prjLocationPolygons.definitionExpression = "Location_Type = 'RTA'";
       } else { // Hide MBTA lines
         mbtaLines.visible = false;
-        mbtaCounted = true;
-        console.log("MBTA: (0)");
         prjLocationPolygons.visible = true;
       };
 
@@ -780,6 +742,7 @@ $(document).ready(function () {
       $("#minCost").val(numeral(minValue).format('0,0[.]00'));
       $("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
       $("#cost-range").slider("values", [minValue, maxValue]);
+      console.log("Cost Range: $", $("#minCost").val(), " - ", $("#maxCost").val())
 
 
       // console.log("Checkboxes: ", $("").val())
@@ -787,8 +750,6 @@ $(document).ready(function () {
       spatialChange()
     };
 
-
-    //--------------------Spatial Filter---------------------//
     function spatialChange() {
       // Project Search Bar
       if (spatialFilter === true && projectSearchID == false) {
@@ -815,7 +776,7 @@ $(document).ready(function () {
 
       if ($("#townSelect").val() == 0 && $("#mpoSelect").val() == "All") {
         spatialFilter = false;
-        view.goTo(loadExtent);
+        view.goTo(stateExtent);
       } else {
         if ($("#townSelect").val() > 0) {
           $('#loading').modal('show')
@@ -888,7 +849,15 @@ $(document).ready(function () {
           });
         }
       }
+
+      console.log("Town: ", $("#townSelect").val())
+      console.log("MPO: ", $("#mpoSelect").val())
+
     };
+
+
+
+
 
 
 
@@ -910,9 +879,8 @@ $(document).ready(function () {
 
 
 
-    //--------------------Create List---------------------//
+    //----------populate List Modal-----------//
     function createList(features){
-      console.log("Entered...createList")
       // console.log(sql);
       // console.log(filterStart)
       if (filterStart==true) {
@@ -965,47 +933,36 @@ $(document).ready(function () {
                   console.log("Division needs to be added to resultObject.")
                   // }
           }
+
+
         });
         console.log(features)
-        // if(features[0].layer.title == 'Linear Projects'){
-        //   linesCounted=true;
-        //   openListModal();
-        //   // console.log('lines: ', currentProject);
-        // } else if (features[0].layer.title == 'Point Projects'){
-        //   pointsCounted=true;
-        //   openListModal();
-        //   // console.log('points: ', currentProject);
-        // } else if (features[0].layer.title.includes('Project List')){
-        //   mbtaCounted=true;
-        //   openListModal();
-        //   // console.log('mbta:', currentProject);
-        // }
+        if(features[0].layer.title == 'Linear Projects'){
+          linesCounted=true;
+          console.log('lines: ', currentProject);
+        } else if (features[0].layer.title == 'Point Projects'){
+          pointsCounted=true;
+          console.log('points: ', currentProject);
+        } else if (features[0].layer.title.includes('Project List')){
+          mbtaCounted=true;
+          console.log('mbta:', currentProject);
+        }
+        // console.log("Sending to openListModal()");
         openListModal();
       }
     }; // end createList function
 
 
-    //--------------------Open List Modal---------------------//
     function openListModal() {
-      console.log("Entered...openListModal")
       // console.log(resultObject)
       console.log("Lines: ", linesCounted, "\nPoints: ", pointsCounted, "\nMBTA: ", mbtaCounted, "\nFilter: ", filterStart)
-      if (linesCounted==true && pointsCounted==true &&
-        mbtaCounted==true &&
-        filterStart==true) {
+      if (linesCounted==true && pointsCounted==true && mbtaCounted==true && filterStart==true) {
+        console.log("OPEN");
         resultKeys = [];
         resultVals = [];
         $(resultObject.Division).each(function () {
           resultKeys = Object.keys(this)
-          // console.log(resultKeys)
           resultVals = Object.values(this)
-          // console.log(resultVals)
-          for(h=0; h<resultVals.length; h++) {
-            if(resultVals[h].length>0){
-              console.log("Grabbed keys and vals for", resultKeys[0])
-            }
-          };
-
           for(i=0; i<resultKeys.length; i++){
             if(resultVals[i].length>0){
               var divHeading = resultKeys[i].concat(" Projects (").concat(resultVals[i].length).concat(")")
@@ -1027,12 +984,15 @@ $(document).ready(function () {
                 locSource = this.Location_Source;
                 idResult = this.Project_Description.concat("|").concat(this.ProjectID).concat("|").concat(locResult).concat("|").concat(locSource);
 
+
                 arr1.push(idResult)
+                // console.log(arr1);
                 arrFinal.push(arr1)
               })
               arrFinal.sort();
+              // console.log(arrFinal);
+              // console.log(arrFinal[0][0]);
 
-              console.log("sorted final array");
               for(j=0; j<arrFinal.length; j++) {
                 // var test = arrFinal[j][0];
                 // console.log(test);
@@ -1044,23 +1004,34 @@ $(document).ready(function () {
                 listContent.append(
                   $("<option class='listItem'></option>").html(itemDesc).attr('id', itemID).attr('location', itemLoc).attr('location_source', itemLocSource));
                 }
+
               }
             }
           })
 
           // document.getElementById("countProj").innerHTML = projDescArr.length;
           listModal.style.display = "block";
-          console.log("...actually opened LIST")
           filterStart = false;
         }
       }; // end openListModal function
 
 
 
-      //--------------------Hover Highlight---------------------//
+
+
+
+
+
+
+
+
+
+
+
+  // ____________________Carl started helping GRAPHIC___________________
       var pointHighlight = new Graphic();
       pointHighlight.symbol = {
-        type: "simple-marker", // autocasts as SimpleLineSymbol()
+        type: "simple-line", // autocasts as SimpleLineSymbol()
         color: [226, 119, 40],
         width: 8
       };
@@ -1078,217 +1049,225 @@ $(document).ready(function () {
       };
 
       $(".listModal").on("mouseleave", ".listItem", function (e) {
-        view.graphics.removeAll();
-        // view.graphics.add(townGraphic);
-        // view.graphics.add(mpoGraphic);
-        // view.graphics.remove(pointHighlight, lineHighlight, tHighlight);
+        // view.graphics.removeAll();
+        view.graphics.remove(pointHighlight, lineHighlight, tHighlight);
       })
 
 
       $(".listModal").on("mouseenter", ".listItem", function (e) {
-        view.graphics.removeAll();
-        // view.graphics.add(townGraphic);
-        // view.graphics.add(mpoGraphic);
-        // view.graphics.remove(pointHighlight, lineHighlight, tHighlight);
+        // view.graphics.removeAll();
+        view.graphics.remove(pointHighlight, lineHighlight, tHighlight);
         var itemID = this.id;
         var itemLocSource = $(this).attr('location_source');
-        // console.log(itemID, itemLocSource);
-
-
+        console.log(itemID, itemLocSource);
+        var highlightSearch = prjLocationLines.createQuery();
         if (itemLocSource === "POINT") {
-          prjLocationPointsQuery.where = "ProjectID = '" + itemID + "'";
-          // prjLocationPoints.queryObjectIds(prjLocationPointsQuery).then(function (ids) {
-          //   // console.log(ids);
-          //   pointHighlight = prjLocationPoints.highlight(ids);
-          // });
-          prjLocationPoints.queryFeatures(prjLocationPointsQuery).then(function (ids) {
-            // console.log(ids);
-            pointHighlight.geometry = ids.features[0].geometry;
-            // console.log(lineHighlight);
-            view.graphics.add(pointHighlight)
+          highlightSearch.where = "ProjectID = '" + itemID + "'";
+          prjLocationPoints.queryObjectIds(highlightSearch).then(function (ids) {
+            console.log(ids);
+            pointHighlight = prjLocationPoints.highlight(ids);
+            console.log(listHighlight);
           });
-
         } else if (itemLocSource === "LINE") {
-          prjLocationLinesQuery.where = "ProjectID = '" + itemID + "'";
-          prjLocationLines.queryFeatures(prjLocationLinesQuery).then(function (ids) {
-            // console.log(ids);
+          highlightSearch.where = "ProjectID = '" + itemID + "'";
+          prjLocationLines.queryFeatures(highlightSearch).then(function (ids) {
+            console.log(ids);
             lineHighlight.geometry = ids.features[0].geometry;
-            // console.log(lineHighlight);
+            console.log(lineHighlight);
             view.graphics.add(lineHighlight)
           });
         } else if (itemLocSource === "MBTA") {
-          prjListQuery.where = "ProjectID = '" + itemID + "'";
-          projectList.queryFeatures(prjListQuery).then(function (response) {
+          console.log()
+          var tQueryHighlight = projectList.createQuery();
+          tQueryHighlight.where = "ProjectID = '" + itemID + "'";
+          projectList.queryFeatures(tQueryHighlight).then(function (response) {
             return response
           }).then(function (response) {
-            // console.log(response.features[0].attributes.MBTA_Location);
+            console.log(response.features[0].attributes.MBTA_Location);
             theAsset = response.features[0].attributes.MBTA_Location
-            prjLocationLinesQuery.where = "Location like '%" + theAsset + "%'";
-            mbtaLines.queryFeatures(prjLocationLinesQuery).then(function (ids) {
+            highlightSearch.where = "Location_Filter like '%" + theAsset + "%'";
+            mbtaLines.queryFeatures(highlightSearch).then(function (ids) {
               console.log(ids);
               tHighlight.geometry = ids.features[0].geometry;
-              // console.log(tHighlight);
+              console.log(tHighlight);
               view.graphics.add(tHighlight)
             });
 
           });
         }
-        // console.log(highlightSearch)
-      }); // end Hover Highlighting
+        console.log(highlightSearch)
+      })
 
 
 
 
-      //--------------------Click Project Item---------------------//
-      $(document).on("click", ".listItem", function(e){
-        $('.listItem').removeClass('selected');
-        $(this).addClass('selected');
 
-        if(clickGraphic) {
-          view.goTo(extentForRegionOfInterest);
-          view.graphics.remove(clickGraphic);
-        }
+      //----------------------------Project Specific----------------------------//
 
-        var itemID = this.id;
-        var itemLocation = this.location;
-        var itemLocSource = this.location_source;
+      //----------Click-----------//
+      view.when(function() {
+        view.whenLayerView(projectLocations).then(function(layerView) {
 
+          $(document).on("click", ".listItem", function(e){
+            $('.listItem').removeClass('selected');
+            $(this).addClass('selected');
 
-        if (itemLocSource == "POINT") {
-          if(mbtaHighlight !== null) {
-            mbtaHighlight.remove();
-          }
-          var projQuery = projectLocationsPoints.createQuery();
-          projQuery.returnGeometry = true;
-          console.log(projectLocationsPoints)
-          projectLocationsPoints.renderer.uniqueValueInfos
-          var symbol = {
-            type: "simple-marker",
-            color: "orange",
-            size: "10px",
-            outline: {
-              width: 0,
-              color: "orange"
+            if(clickGraphic) {
+              view.goTo(extentForRegionOfInterest);
+              view.graphics.remove(clickGraphic);
             }
-          }
-        } else if (itemLocSource == "LINE") {
-          if(mbtaHighlight !== null) {
-            mbtaHighlight.remove();
-          }
-          var projQuery = projectLocations.createQuery();
-          projQuery.returnGeometry = true;
-          var symbol = {
-            type: "simple-line",
-            color: "orange",
-            width: 4
-          }
 
 
-        } else if (itemLocSource == "MBTA") {
-          // var projQuery = projectList.createQuery();
-
-          var layerViewQuery = mbtaLines.createQuery();
-          if (itemLocation == "System"){
-            layerViewQuery.where = "(1=1)";
-          } else {
-            console.log("need MBTA line")
-          }
-          mbtaLines.queryObjectIds(layerViewQuery).then(function(ids) {
-            // console.log(ids)
-            mbtaHighlight = mbtaLines.highlight(ids);
-            // currentProjectID = itemID;
-          })
-        }
+            // var listProjectID = this.id.split("|")[0];
+            // var listProjectLocation = this.innerText.split("(")[1].split(")")[0];
+            // var listProjectLocSource = this.id.split("|")[1];
+            var listProjectID = this.id;
+            var listProjectLocation = this.location;
+            var listProjectLocSource = this.location_source;
+            console.log(listProjectID);
+            console.log(listProjectLocation);
+            console.log(listProjectLocSource);
 
 
-        console.log(itemID)
-        prjListQuery.where = "ProjectID='" + itemID + "'";
-        // projQuery.returnGeometry = true;
-        projectList.queryFeatures(prjListQuery)
-        .then(function(response) {
-          // console.log(response)
-          return response;
-        })
-        .then(zoomToProj)
-        .then(openProjectModal)
+            if (listProjectLocSource == "POINT") {
+              if(mbtaHighlight !== null) {
+                mbtaHighlight.remove();
+              }
+              var sourceLayer = projectLocationsPoints;
+              var projQuery = sourceLayer.createQuery();
+              projQuery.returnGeometry = true;
+              console.log(sourceLayer)
+              sourceLayer.renderer.uniqueValueInfos
+              var symbol = {
+                type: "simple-marker",
+                color: "orange",
+                size: "10px",
+                outline: {
+                  width: 0,
+                  color: "orange"
+                }
+              }
+            } else if (listProjectLocSource == "LINE") {
+              if(mbtaHighlight !== null) {
+                mbtaHighlight.remove();
+              }
+              var sourceLayer = projectLocations;
+              var projQuery = sourceLayer.createQuery();
+              projQuery.returnGeometry = true;
+              var symbol = {
+                type: "simple-line",
+                color: "orange",
+                width: 4
+              }
 
 
-      //--------------------Zoom to Project Item---------------------//
-      function zoomToProj(response) {
-        console.log(response)
-        if(itemLocSource !== "MBTA") {
-          view.goTo(response.features[0].geometry,
-            {
-              duration: 1000,
-              easing: "in-out-expo"
+            } else if (listProjectLocSource == "MBTA") {
+              var sourceLayer = projectList;
+              var projQuery = sourceLayer.createQuery();
+              // console.log(listProjectLocation);
+
+              var layerViewQuery = mbtaLines.createQuery();
+              if (listProjectLocation == "System"){
+                layerViewQuery.where = "(1=1)";
+              } else {
+                console.log("need MBTA line")
+              }
+              mbtaLines.queryObjectIds(layerViewQuery).then(function(ids) {
+                // console.log(ids)
+                mbtaHighlight = mbtaLines.highlight(ids);
+                // currentProjectID = listProjectID;
+              })
+            }
+
+
+            projQuery.where = "ProjectID='" + listProjectID + "'";
+            // projQuery.returnGeometry = true;
+            sourceLayer.queryFeatures(projQuery)
+            .then(function(response) {
+              return response;
             })
-          clickGraphic = new Graphic({
-            geometry: response.features[0].geometry,
-            symbol: symbol,
+            .then(zoomToProj)
+            .then(openProjectModal)
+
+          function zoomToProj(response) {
+            if(listProjectLocSource !== "MBTA") {
+              view.goTo(response.features[0].geometry,
+                {
+                  duration: 1000,
+                  easing: "in-out-expo"
+                })
+              clickGraphic = new Graphic({
+                geometry: response.features[0].geometry,
+                symbol: symbol,
+              });
+              view.graphics.add(clickGraphic);
+            } else {
+              view.goTo(extentForRegionOfInterest)
+            }
+            return response;
+          }  // end zoomToProj function
+
+
+
+          function openProjectModal(response) {
+            projectModal.style.display = "block";
+            var listItemAtts= response.features[0].attributes;
+            console.log(listItemAtts);
+            var listItemDesc = listItemAtts["Project_Description"];
+            $('#projTitle').html(listItemDesc);
+            var listItemArray = [];
+            var listItemID = listItemAtts["ProjectID"];
+            var listItemDiv = listItemAtts["Division"];
+            var listItemProg = listItemAtts["Program"].split(' | ')[1];
+            var listItemLoc = listItemAtts["Location"];
+            var listItemPrior = listItemAtts["Priority"];
+            var listItemCost = numeral(listItemAtts["Total"]).format('$0,0[.]00');
+            listItemArray = [listItemDiv, listItemProg, listItemLoc, listItemPrior, listItemCost];
+            $('#projDesc').empty();
+            $('#projDesc').append(
+              '<p><b>Project ID: </b>' + listItemID + '</p>' +
+              '<p><b>Location: </b>' + listItemLoc + '</p>' +
+              '<p><b>MassDOT Division: </b>' + listItemDiv + '</p>' +
+              '<p><b>Program: </b>' + listItemProg + '</p>' +
+              '<p><b>Priority: </b>' + listItemPrior + '</p>' +
+              '<p><b>Total Cost: </b>' + listItemCost + '</p>'
+            );
+          }  // end openListModal function
+
+
+
+
+              // //-------APIs--------//
+              // $.get("https://a.mapillary.com/v3/images", {
+              //   client_id: 'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
+              //   closeto: [featureLong,featureLat],
+              //   per_page: 100,
+              //   radius: 10000,
+              // })
+              // .done(function (data) {
+              //   var featuresMapAPI = [];
+              //   featuresMapAPI = data.features;
+              //   var latMapAPI = featuresMapAPI[0].geometry.coordinates[1];
+              //   var longMapAPI = featuresMapAPI[0].geometry.coordinates[0];
+              //   // console.log(longMapAPI, latMapAPI);
+              //   var keyMapAPI = String(featuresMapAPI[0].properties.key);
+              //   // console.log(keyMapAPI);
+              //   var mlyCombined;
+              //   mlyCombined = {};
+              //   mlyCombined = new Mapillary.Viewer(
+              //     'mly',
+              //     'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
+              //     keyMapAPI,
+              //   )
+              // });
+
+
           });
-          view.graphics.add(clickGraphic);
-        } else {
-          view.goTo(extentForRegionOfInterest)
-        }
-        return response;
-      };  // end zoomToProj function
 
-
-      //--------------------Open Project Modal---------------------//
-      function openProjectModal(response) {
-        projectModal.style.display = "block";
-        var listItemAtts= response.features[0].attributes;
-        // console.log(listItemAtts);
-        var listItemDesc = listItemAtts["Project_Description"];
-        $('#projTitle').html(listItemDesc);
-        var listItemArray = [];
-        var listItemID = listItemAtts["ProjectID"];
-        var listItemDiv = listItemAtts["Division"];
-        var listItemProg = listItemAtts["Program"].split(' | ')[1];
-        var listItemLoc = listItemAtts["Location"];
-        var listItemPrior = listItemAtts["Priority"];
-        var listItemCost = numeral(listItemAtts["Total"]).format('$0,0[.]00');
-        listItemArray = [listItemDiv, listItemProg, listItemLoc, listItemPrior, listItemCost];
-        $('#projDesc').empty();
-        $('#projDesc').append(
-          '<p><b>Project ID: </b>' + listItemID + '</p>' +
-          '<p><b>Location: </b>' + listItemLoc + '</p>' +
-          '<p><b>MassDOT Division: </b>' + listItemDiv + '</p>' +
-          '<p><b>Program: </b>' + listItemProg + '</p>' +
-          '<p><b>Priority: </b>' + listItemPrior + '</p>' +
-          '<p><b>Total Cost: </b>' + listItemCost + '</p>'
-        )
-      };  // end openProjectModal function
-
-
-
-
-          // //-------APIs--------//
-          // $.get("https://a.mapillary.com/v3/images", {
-          //   client_id: 'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
-          //   closeto: [featureLong,featureLat],
-          //   per_page: 100,
-          //   radius: 10000,
-          // })
-          // .done(function (data) {
-          //   var featuresMapAPI = [];
-          //   featuresMapAPI = data.features;
-          //   var latMapAPI = featuresMapAPI[0].geometry.coordinates[1];
-          //   var longMapAPI = featuresMapAPI[0].geometry.coordinates[0];
-          //   // console.log(longMapAPI, latMapAPI);
-          //   var keyMapAPI = String(featuresMapAPI[0].properties.key);
-          //   // console.log(keyMapAPI);
-          //   var mlyCombined;
-          //   mlyCombined = {};
-          //   mlyCombined = new Mapillary.Viewer(
-          //     'mly',
-          //     'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
-          //     keyMapAPI,
-          //   )
-          // });
-
-
+        })
       });
+
+
 
 
   	/*
@@ -1402,7 +1381,7 @@ $(document).ready(function () {
             HighlightRemove: "false"
           }
           view.popup.open({
-            location: loadExtent.extent.center,
+            location: stateExtent.extent.center,
             features: [statewideSelected],
             highlightEnabled: true
           });
