@@ -45,11 +45,11 @@ span {
   visibility: hidden;
 }
 
-.esri-popup__header-title {
+.esri-popup__header-title, #projTitle {
   font-weight: bold;
 }
 
-.esri-popup__header-title:after{
+.esri-popup__header-title:after, #projTitle:after {
   content:'';
   display: block;
   margin: 0 auto;
@@ -58,6 +58,15 @@ span {
   padding-top: 10px;
   border-bottom:1px solid #BDBDBD;
 }
+
+/* .esri-popup--is-docked {
+  margin-bottom: 0px;
+}
+
+.esri-view-width-xlarge .esri-popup__main-container {
+  width: 1000px;
+  height: 500px;
+} */
 
 .navbar-custom {
   background-color: #14558f;
@@ -116,18 +125,86 @@ span {
 
 .mapCol {
   width: 100%;
+  height: 100% !important;
   margin: 0 auto;
   padding: 10px 0px 0px 0px !important;
 }
 
 #viewDiv {
   width: 100% !important;
-  height: 100% !important;
-  min-height: 800px; /* controls where the project modal will start */
+  height: 100%;
+  /* min-height: 800px; */
   margin: 0;
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+#projectModal {
+  display: none;
+  /* min-height: 20%;
+  max-height: 40%; */
+  height: auto;
+  max-height: 35%;
+  -webkit-animation-name: projectDesc; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 0.25s; /* Safari 4.0 - 8.0 */
+  -webkit-animation-direction: reverse; /* Safari 4.0 - 8.0 */
+  animation-name: projectDesc;
+  animation-duration: 0.25s;
+  animation-direction: reverse;
+  z-index: 6;
+  width: 100%;
+  background-color: #e6e6e6;
+  border: solid 5px #f2f2f2;
+  padding: 0px 15px;
+  /* height: auto; */
+  /* height: 500px; */
+  /* min-height: 500px; */
+}
+
+#projectModal-content {
+  height: 100%;
+  /* padding-bottom: 20px !important; */
+}
+
+#projectContent {
+  max-height: 90% !important;
+}
+
+.leftCol {
+  background-color: white;
+  margin-right: 7.5px;
+  padding: 15px;
+  min-height: 350px !important;
+  max-height: 400px !important;
+}
+
+#projDesc {
+  margin: 5px;
+  display: block;
+  height: 85%;
+  overflow-y: auto;
+  font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 16px;
+  line-height: 1.3em;
+  margin: 0 0 1.2em;
+}
+
+#projDesc>p {
+  margin: 0;
+}
+
+.rightCol {
+  background-color: white;
+  margin-left: 7.5px;
+  max-height: 100%;
+}
+
+
+
+
+
+
+
 
 .p-3 {
   padding: 0 !important;
@@ -199,7 +276,7 @@ span {
 }
 
 .listModal {
-  display: none;
+  /* display: none; */
   background-color: #e6e6e6;
   z-index: 1;
   width: 20%;
@@ -277,60 +354,30 @@ span {
   color: black;
 }
 
-#projectModal {
-  display: none;
-  -webkit-animation-name: projectDesc; /* Safari 4.0 - 8.0 */
-  -webkit-animation-duration: 0.25s; /* Safari 4.0 - 8.0 */
-  -webkit-animation-direction: reverse; /* Safari 4.0 - 8.0 */
-  animation-name: projectDesc;
-  animation-duration: 0.25s;
-  animation-direction: reverse;
-  z-index: 6;
-  height: auto;
-  min-height: 500px;
-  width: 100%;
-  background-color: #e6e6e6;
-  border: solid 5px #f2f2f2;
-  padding: 0px 15px;
-  height: 500px;
+div.esri-component.esri-popup {
+  position: absolute !important;
+  bottom: 0;
 }
 
-#projectModal-content {
-  height: 100%;
-  padding-bottom: 20px !important;
-}
-
-#projTitle {
+/* #projTitle {
   font-weight: bold;
-}
+} */
 
-.row>#projTitle{
+/* .row>#projTitle{
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  width:100%;
+  border-bottom:1px solid #BDBDBD;
+} */
+
+.esri-feature__title {
+  font-weight: bold;
   margin-bottom: 15px;
   padding-bottom: 15px;
   width:100%;
   border-bottom:1px solid #BDBDBD;
 }
 
-#projDesc {
-  margin: 5px;
-  display: block;
-}
-
-#projDesc>p {
-  margin: 0;
-}
-
-.leftCol {
-  background-color: white;
-  margin-right: 7.5px;
-  padding: 15px;
-  /* height: 300px; */
-}
-
-.rightCol {
-  background-color: white;
-  margin-left: 7.5px;
-}
 
 /* #viewMini {
   width: 100%;
@@ -467,16 +514,28 @@ span {
   padding: 15px 0px;
 }
 
+/* .google_map, .google_streetview {
+  width: 100%;
+  height: 100%;
+  padding: 15px 0px;
+} */
+
 /* #pano {
 float: left;
 height: 100%;
 width: 100%;
 } */
 
-#gm_map, #pano {
+/* #g_map, #pano {
   float: left;
   height: 100%;
   width: 50%;
+} */
+
+#g_map {
+  float: left;
+  height: 100%;
+  width: 100%;
 }
 
 #content {

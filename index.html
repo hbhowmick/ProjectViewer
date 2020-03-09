@@ -3,21 +3,27 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest"></script>
+<script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest" SameSite=None Secure></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" SameSite=None Secure></script>
 <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" SameSite=None Secure></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" SameSite=None Secure />
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" SameSite=None Secure />
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
-<!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js'> -->
-<!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet"/> -->
-<link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
-<!-- <script src="https://js.arcgis.com/4.13/"></script>
+<script async defer
+<!-- src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback"> -->
+</script> <!--does callback need parameter? (e.g. callback=googleMap) -->
+<!-- <script async defer
+src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofmassachusetts&channel=dotsv&key=AIzaSyA0mcp-iQYjhrR6JUDF4w_8H8FA9JjFIK8&callback">
+</script> -->
+<!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js' SameSite=None Secure> -->
+<!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
+<link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure />
+<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css" SameSite=None Secure />
+<!-- <script src="https://js.arcgis.com/4.13/" SameSite=None Secure></script>
 <script src="js/map.js"></script>
 <script src="js/controls.js"></script> -->
 <link rel="stylesheet" href="css/style.css"/>
@@ -30,7 +36,7 @@
       <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
       <a class="navbar-brand">Project Viewer</a>
       <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
-        <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip">2020-2024 CIP<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" SameSite=None Secure>2020-2024 CIP<span class="sr-only">(current)</span></a>
         <a class="nav-link" id="aboutBtn">ABOUT</a>
         <div class="btn my-2 my-sm-0 m-2">
           <div id="google_translate_element"></div>
@@ -91,6 +97,7 @@
             </div>
             <!-- end checkboxes -->
 
+            <!-- start CIP Program -->
             <label for="programs">CIP Program</label>
             <div class="input-group mb-3">
               <select class="form-control custom-select filter" id="programs" multiple>
@@ -113,6 +120,7 @@
             <div class="mr-sm-2">
               <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
             </div>
+            <!-- end CIP Program -->
           </div>
           <!-- end  Side Panel -->
 
@@ -139,15 +147,10 @@
                 <div class="row closeProject-btn">
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
-                <div class="row w-100 justify-content-md-center projectContent">
+                <div class="row w-100 justify-content-md-center" id="projectContent">
 
                   <!-- start left col -->
-                  <div class="col-md leftCol">
-                    <div class="row">
-                      <h6 id="projTitle"></h6>
-                    </div>
-                    <div class="row" id="projDesc"></div>
-                  </div>
+                  <div class="col-md leftCol" id="popupDock"></div>
                   <!-- end left col -->
 
                   <!-- start right col -->
@@ -164,9 +167,9 @@
                       <span></span>
                     </div>
                     <div class="gm_streetview">
-                      <div id="gm_map"></div>
-                      <div id="pano"></div>
+                      <div id="g_map"></div>
                     </div>
+                    <!-- <div id="g_streetview"></div> -->
                     <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
                     </div>
@@ -191,16 +194,15 @@
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
   </script>
-  <script src="https://js.arcgis.com/4.13/"></script>
+  <script src="https://js.arcgis.com/4.13/" SameSite=None Secure></script>
   <script src="js/page_contents.js"></script>
   <script src="js/controls.js"></script>
   <script src="js/aboutModal.js"></script>
   <script src="js/listModal.js"></script>
   <script src="js/projectModal.js"></script>
   <script src="js/map.js"></script>
-  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize">
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure>
   </script> -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts">
   </script>
 </body>
 </html>
