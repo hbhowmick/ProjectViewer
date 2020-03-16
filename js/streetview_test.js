@@ -36,7 +36,87 @@ function googleStreetView(lat, long) {
   }
   // var gMap = new google.maps.Map(document.getElementById('g_map'), {
   //   zoom: 14,
-  //   center: mapCenter
+  //   center: mapCenter,
+  styles: [
+    {elementType: 'geometry', stylers: [{color: '#242f3e'}]}, // #F5F5F5
+    {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]}, // #F5F5F5
+    {elementType: 'labels.text.fill', stylers: [{color: '#DADADA'}]}, // #DADADA
+    // {
+    //   featureType: 'administrative.locality',
+    //   elementType: 'labels.text.fill',
+    //   stylers: [{color: '#d59563'}] // #none
+    // },
+    // {
+    //   featureType: 'poi',
+    //   elementType: 'labels.text.fill',
+    //   stylers: [{color: '#d59563'}] // #none
+    // },
+    // {
+    //   featureType: 'poi.park',
+    //   elementType: 'geometry',
+    //   stylers: [{color: '#263c3f'}] // #E5E5E5
+    // },
+    // {
+    //   featureType: 'poi.park',
+    //   elementType: 'labels.text.fill',
+    //   stylers: [{color: '#6b9a76'}] // #none
+    // },
+    {
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [{color: '#38414e'}] // #
+    },
+    {
+      featureType: 'road',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#212a37'}] // #
+    },
+    {
+      featureType: 'road',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#9ca5b3'}] // #
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry',
+      stylers: [{color: '#9CA5B3'}] // #616161
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'geometry.stroke',
+      stylers: [{color: '#1f2835'}] // #
+    },
+    {
+      featureType: 'road.highway',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#DADADA'}] // #
+    },
+    {
+      featureType: 'transit',
+      elementType: 'geometry',
+      stylers: [{color: '#2f3948'}] // #
+    },
+    // {
+    //   featureType: 'transit.station',
+    //   elementType: 'labels.text.fill',
+    //   stylers: [{color: '#d59563'}] // #none
+    // },
+    {
+      featureType: 'water',
+      elementType: 'geometry',
+      stylers: [{color: '#17263c'}] // #C9C9C9
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.fill',
+      stylers: [{color: '#515c6d'}] // #
+    },
+    {
+      featureType: 'water',
+      elementType: 'labels.text.stroke',
+      stylers: [{color: '#17263c'}] // #C9C9C9
+    }
+  ]
   // })
   var gPanorama = new google.maps.StreetViewPanorama(document.getElementById('g_streetview'), {
     position: mapCenter,

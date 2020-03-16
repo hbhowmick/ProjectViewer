@@ -179,6 +179,18 @@ $(document).ready(function () {
       sublayers: [{
         id: 4,
         opacity: 0.3,
+        renderer: {
+          type: "simple",
+          symbol: {
+            type: "simple-fill",
+            color: [0,0,0,0],
+            style: "solid",
+            outline: {
+              color: [0,0,0,0.1],
+              width: 1
+            }
+          }
+        },
         popupEnabled: true,
         definitionExpression: "Location_Type <> 'MPO'",
         popupTemplate: {
@@ -407,7 +419,9 @@ $(document).ready(function () {
     map = new Map({
       basemap: "gray-vector",
     });
-    map.addMany([projectLocationsPolygonsMapImageLayer, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
+    map.addMany([
+      // projectLocationsPolygonsMapImageLayer, 
+      projectLocations, projectLocationsPoints, projectLocationsMBTA]);
     view = new MapView({
       map: map,
       scale: 1155581.108577,
@@ -480,7 +494,8 @@ $(document).ready(function () {
         $("#projDesc").html(popupContent);
       });
 
-      projectModal.style.display = "block";
+      // projectModal.style.display = "block";
+      // console.log("should have brought up projectModal");
     };
 
     // Event handler that fires each time an action is clicked.
@@ -488,13 +503,36 @@ $(document).ready(function () {
       // console.log(event)
       // Execute the openProjectModal() function if the more-info action is clicked
       if (event.action.id === "more-info") {
+        console.log("ProjectModal: ", $("#projectModal").css("display"));
+        console.log("ListModal: ", $("#listModal").css("display"));
+
+
+        if($("#projectModal").css("display") == "block" && $("#listModal").css("display") == "block") {
+          $("#viewDiv").css("height", "46%");
+          $("#projectModal").css("height", "37%");
+        } else if ($("#listModal").css("display") == "block"){
+          $("#viewDiv").css("height", "46%");
+          $("#projectModal").css("height", "37%");
+          $("#projectModal").css("display", "block");
+        } else {
+          $("#viewDiv").css("height", "58%");
+          $("#projectModal").css("height", "35%");
+          $("#projectModal").css("display", "block");
+        }
+
+
         // var popupIndex = view.popup.selectedFeatureIndex;
         // var popupID = view.popup.features[popupIndex].attributes.ProjectID;
         // openProjectModal(popupID);
-
         selectedFeature = view.popup.selectedFeature;
+        // console.log(selectedFeature);
+        view.goTo({
+          center: selectedFeature.geometry,
+          zoom: view.zoom
+          },
+          {duration: 1000}
+        );
         openProjectModal(selectedFeature);
-
       }
 
       var geomType = selectedFeature.geometry.type
@@ -804,7 +842,7 @@ $(document).ready(function () {
     watchUtils.whenTrue(view, "stationary", function() {
     // Get the new extent of the view only when view is stationary.
     if (view.extent) {
-      listContent.empty();
+      // listContent.empty();
       var info =
         "The view extent changed: " +
         " xmin:" +
@@ -919,9 +957,10 @@ $(document).ready(function () {
         $("#townSelect").val(0);
         $("#programs").val("All");
       }
-      listModal.style.display = "none";
-      projectModal.style.display = "none";
 
+      $("#projectModal").css("display", "none");
+      $("#viewDiv").css("height", "95%");
+      $("#listModal").css("display", "block");
 
       nonSpatialChange();
     });
@@ -1254,7 +1293,7 @@ $(document).ready(function () {
           })
 
           // document.getElementById("countProj").innerHTML = projDescArr.length;
-          listModal.style.display = "block";
+          // listModal.style.display = "block";
           // console.log("...actually opened LIST")
           filterStart = false;
         }
@@ -1460,27 +1499,104 @@ $(document).ready(function () {
 
       //-------APIs--------//
 
-      function googleStreetView(lat, long) {
-        var test_lat = 42.344;
-        var test_lng = -71.036;
-        console.log(test_lat, test_lng, typeof(test_lat))
-        console.log(lat, long, typeof(lat))
+      function googleStreetView(lat, long, status) {
+        // console.log(lat, long, typeof(lat))
         var mapCenter = {
           lat: lat, // 42.344
           lng: long // -71.036
         }
         var gMap = new google.maps.Map(document.getElementById('mly'), {
           zoom: 14,
-          center: mapCenter
+          center: mapCenter,
+          styles: [
+            {elementType: 'geometry', stylers: [{color: '#F5F5F5'}]},
+            {elementType: 'labels.text.stroke', stylers: [{color: '#F5F5F5'}]},
+            {elementType: 'labels.text.fill', stylers: [{color: '#DADADA'}]},
+            // {
+            //   featureType: 'administrative.locality',
+            //   elementType: 'labels.text.fill',
+            //   stylers: [{color: '#d59563'}]
+            // },
+            // {
+            //   featureType: 'poi',
+            //   elementType: 'labels.text.fill',
+            //   stylers: [{color: '#d59563'}]
+            // },
+            // {
+            //   featureType: 'poi.park',
+            //   elementType: 'geometry',
+            //   stylers: [{color: '#263c3f'}]
+            // },
+            // {
+            //   featureType: 'poi.park',
+            //   elementType: 'labels.text.fill',
+            //   stylers: [{color: '#6b9a76'}]
+            // },
+            {
+              featureType: 'road',
+              elementType: 'geometry',
+              stylers: [{color: '#FFFFFF'}]
+            },
+            // {
+            //   featureType: 'road',
+            //   elementType: 'geometry.stroke',
+            //   stylers: [{color: '#212a37'}]
+            // },
+            {
+              featureType: 'road',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#9ca5b3'}]
+            },
+            {
+              featureType: 'road.highway',
+              elementType: 'geometry',
+              stylers: [{color: '#F5F5F5'}]
+            },
+            // {
+            //   featureType: 'road.highway',
+            //   elementType: 'geometry.stroke',
+            //   stylers: [{color: '#1f2835'}]
+            // },
+            {
+              featureType: 'road.highway',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#DADADA'}]
+            },
+            {
+              featureType: 'transit',
+              elementType: 'geometry',
+              stylers: [{color: '#F5F5F5'}]
+            },
+            // {
+            //   featureType: 'transit.station',
+            //   elementType: 'labels.text.fill',
+            //   stylers: [{color: '#d59563'}]
+            // },
+            {
+              featureType: 'water',
+              elementType: 'geometry',
+              stylers: [{color: '#C9C9C9'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.fill',
+              stylers: [{color: '#515c6d'}]
+            },
+            {
+              featureType: 'water',
+              elementType: 'labels.text.stroke',
+              stylers: [{color: '#C9C9C9'}]
+            }
+          ]
         })
-        var gPanorama = new google.maps.StreetViewPanorama(document.getElementById('g_map'), {
+        var gPanorama = new google.maps.StreetViewPanorama(document.getElementById('g_stview'), {
           position: {
             lat: lat,
             lng: long
           },
           pov: {
             heading: 34,
-            pitch: 10
+            pitch: 2
           },
           // fov: 20,
           visible: true
