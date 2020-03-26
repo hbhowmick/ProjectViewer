@@ -36,7 +36,6 @@ $(document).ready(function () {
               $('<option></option>').val(this.attributes.MPO).html(this.attributes.MPO)
             );
           });
-
         });
 
 			$.post(url.Towns + "/query", {
@@ -51,11 +50,44 @@ $(document).ready(function () {
           var townsSelect = $('#townSelect');
           $(towns.features).each(function () {
             townsSelect.append(
-              $('<option></option>').val(this.attributes.TOWN_ID).html(this.attributes.TOWN)
+              $('<option></option>').val(this.attributes.TOWN).html(this.attributes.TOWN)
             );
           });
-
         });
+
+				$.post(url.RTAs + "/query", {
+						where: "1=1",
+						outFields: "RTA, RTA_NAME",
+						returnGeometry: false,
+						orderByFields: 'RTA',
+						f: 'pjson'
+					})
+					.done(function (data) {
+						var rtas = $.parseJSON(data);
+						var rtasSelect = $('#rtaSelect');
+						$(rtas.features).each(function () {
+							rtasSelect.append(
+								$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
+							);
+						});
+					});
+
+					$.post(url.Districts + "/query", {
+							where: "1=1",
+							outFields: "DistrictName",
+							returnGeometry: false,
+							orderByFields: 'DistrictName',
+							f: 'pjson'
+						})
+						.done(function (data) {
+							var districts = $.parseJSON(data);
+							var districtsSelect = $('#distSelect');
+							$(districts.features).each(function () {
+								districtsSelect.append(
+									$('<option></option>').val(this.attributes.DistrictName).html(this.attributes.DistrictName)
+								);
+							});
+						});
 
 			programList = [];
 
@@ -86,10 +118,28 @@ $(document).ready(function () {
 		    });
 		  };
 
-		  $("#division").change(function () {
-		    getPrograms();
-		  });
+			$("#division").change(function () {
+				getPrograms();
+			});
 
+			$("#cost-range").slider({
+				range: true,
+				min: 0,
+				max: 5000000000,
+				values: [0, 5000000000],
+				slide: function (event, ui) {
+					$("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
+					$("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
+				}
+			});
+			minValue = numeral($("#minCost").val()).value();
+			maxValue = numeral($("#maxCost").val()).value();
+			if (minValue > maxValue) {
+				maxValue = minValue
+			};
+			$("#minCost").val(numeral(minValue).format('0,0[.]00'));
+			$("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
+			$("#cost-range").slider("values", [minValue, maxValue]);
 		})
 
     .fail(function (jqxhr, textStatus, error) {

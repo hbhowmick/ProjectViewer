@@ -72,6 +72,12 @@ $(document).ready(function () {
         {"Rail":[]},
         {"RMV":[]},
         {"Transit":[]},
+      ],
+      "Source":
+      [
+        {"CIP":[]},
+        {"MapIT":[]},
+        {"STIP":[]},
       ]
     };
     resultKeys = [];
@@ -420,7 +426,7 @@ $(document).ready(function () {
       basemap: "gray-vector",
     });
     map.addMany([
-      // projectLocationsPolygonsMapImageLayer, 
+      projectLocationsPolygonsMapImageLayer,
       projectLocations, projectLocationsPoints, projectLocationsMBTA]);
     view = new MapView({
       map: map,
@@ -503,8 +509,8 @@ $(document).ready(function () {
       // console.log(event)
       // Execute the openProjectModal() function if the more-info action is clicked
       if (event.action.id === "more-info") {
-        console.log("ProjectModal: ", $("#projectModal").css("display"));
-        console.log("ListModal: ", $("#listModal").css("display"));
+        // console.log("ProjectModal: ", $("#projectModal").css("display"));
+        // console.log("ListModal: ", $("#listModal").css("display"));
 
 
         if($("#projectModal").css("display") == "block" && $("#listModal").css("display") == "block") {
@@ -552,8 +558,7 @@ $(document).ready(function () {
 
 
     //--------------------Load Layers---------------------//
-    view.when()
-    .then(function(){
+    view.when().then(function(){
       // view.extent = loadExtent;
       // console.log(view.extent)
       // view.goTo(loadExtent); // turn back on?
@@ -839,64 +844,70 @@ $(document).ready(function () {
 
 
     //Watching for change in extent once view is stationary
-    watchUtils.whenTrue(view, "stationary", function() {
-    // Get the new extent of the view only when view is stationary.
-    if (view.extent) {
-      // listContent.empty();
-      var info =
-        "The view extent changed: " +
-        " xmin:" +
-        view.extent.xmin.toFixed(2) +
-        " xmax: " +
-        view.extent.xmax.toFixed(2) +
-        " ymin:" +
-        view.extent.ymin.toFixed(2) +
-        " ymax: " +
-        view.extent.ymax.toFixed(2);
-      // console.log(info);
-
-      extentForRegionOfInterest = view.extent;
-      // console.log(view.extent)
-
-
-        // view.popup.close();
-        // view.graphics.removeAll();
-        lastProjArr = [];
-        mbtaProjectString = "";
-        resultObject = {
-          "Division":
-          [
-            {"Aeronautics":[]},
-            {"Highway":[]},
-            {"IT":[]},
-            {"MBTA":[]},
-            {"Planning":[]},
-            {"Rail":[]},
-            {"RMV":[]},
-            {"Transit":[]},
-          ]
-        };
-        linesCounted = false;
-        pointsCounted = false;
-        mbtaCounted = false;
-        filterStart = true;
-        // console.log("*************************");
-        // console.log(
-        //   "Division: ", $("#division").val(),
-        //   "\nProgram(s): ", $("#programs").val(),
-        //   "\nCost Range: $", $("#minCost").val(), " - ", $("#maxCost").val(),
-        //   "\nTown: ", $("#townSelect").val(),
-        //   "\nMPO: ", $("#mpoSelect").val()
-        // )
-
-        // listModal.style.display = "none";
-        // projectModal.style.display = "none";
-
-        // nonSpatialChange();
-
-    }
-
-  });
+  //   watchUtils.whenTrue(view, "stationary", function() {
+  //   // Get the new extent of the view only when view is stationary.
+  //   if (view.extent) {
+  //     // listContent.empty();
+  //     var info =
+  //       "The view extent changed: " +
+  //       " xmin:" +
+  //       view.extent.xmin.toFixed(2) +
+  //       " xmax: " +
+  //       view.extent.xmax.toFixed(2) +
+  //       " ymin:" +
+  //       view.extent.ymin.toFixed(2) +
+  //       " ymax: " +
+  //       view.extent.ymax.toFixed(2);
+  //     // console.log(info);
+  //
+  //     extentForRegionOfInterest = view.extent;
+  //     // console.log(view.extent)
+  //
+  //
+  //       // view.popup.close();
+  //       // view.graphics.removeAll();
+  //       lastProjArr = [];
+  //       mbtaProjectString = "";
+  //       resultObject = {
+  //         "Division":
+  //         [
+  //           {"Aeronautics":[]},
+  //           {"Highway":[]},
+  //           {"IT":[]},
+  //           {"MBTA":[]},
+  //           {"Planning":[]},
+  //           {"Rail":[]},
+  //           {"RMV":[]},
+  //           {"Transit":[]},
+  //         ],
+  //         "Source":
+  //         [
+  //           {"CIP":[]},
+  //           {"MapIT":[]},
+  //           {"STIP":[]},
+  //         ]
+  //       };
+  //       linesCounted = false;
+  //       pointsCounted = false;
+  //       mbtaCounted = false;
+  //       filterStart = true;
+  //       // console.log("*************************");
+  //       // console.log(
+  //       //   "Division: ", $("#division").val(),
+  //       //   "\nProgram(s): ", $("#programs").val(),
+  //       //   "\nCost Range: $", $("#minCost").val(), " - ", $("#maxCost").val(),
+  //       //   "\nTown: ", $("#townSelect").val(),
+  //       //   "\nMPO: ", $("#mpoSelect").val()
+  //       // )
+  //
+  //       // listModal.style.display = "none";
+  //       // projectModal.style.display = "none";
+  //
+  //       // nonSpatialChange();
+  //
+  //   }
+  //
+  // });
 
 
   //------------
@@ -935,6 +946,12 @@ $(document).ready(function () {
           {"Rail":[]},
           {"RMV":[]},
           {"Transit":[]},
+        ],
+        "Source":
+        [
+          {"CIP":[]},
+          {"MapIT":[]},
+          {"STIP":[]},
         ]
       };
       linesCounted = false;
@@ -1240,6 +1257,10 @@ $(document).ready(function () {
         filterStart==true) {
         resultKeys = [];
         resultVals = [];
+
+
+        // console.log("Aero: ", resultObject.Division[0].Aeronautics.length);
+
         $(resultObject.Division).each(function () {
           resultKeys = Object.keys(this)
           // console.log(resultKeys)
@@ -1276,7 +1297,8 @@ $(document).ready(function () {
                 arrFinal.push(arr1)
               })
               arrFinal.sort();
-
+              console.log(divHeading);
+              // console.log(arrFinal.length);
               // console.log("sorted final array");
               for(j=0; j<arrFinal.length; j++) {
                 // var test = arrFinal[j][0];
@@ -1291,6 +1313,9 @@ $(document).ready(function () {
               }
             }
           })
+
+
+
 
           // document.getElementById("countProj").innerHTML = projDescArr.length;
           // listModal.style.display = "block";

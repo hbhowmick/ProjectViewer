@@ -10,9 +10,9 @@ aboutBtn.onclick = function() {
 }
 
 //To close modal, either click X in top right or anywhere else in window
-span.onclick = function() {
-  aboutModal.style.display = "none";
-}
+// span.onclick = function() {
+//   aboutModal.style.display = "none";
+// }
 
 window.onclick = function(event) {
   if (event.target == aboutModal) {

@@ -32,131 +32,167 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
 
 <body>
   <div id="outsideContainer" class="container-fluid d-flex flex-column">
-
-    <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
-      <!-- <img src="images/massdot_logo_dark.png" class="img-fluid" alt="MassDOT Logo"> -->
-      <a class="navbar-brand">Project Viewer</a>
-      <!-- <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
-        <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" SameSite=None Secure>2020-2024 CIP<span class="sr-only">(current)</span></a>
-        <a class="nav-link" id="aboutBtn">ABOUT</a>
-        <div class="btn my-2 my-sm-0 m-2">
-          <button class='nav-link btn btn-info' id="aboutBtn">ABOUT</button>
-        </div>
-        <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
-          <div id="google_translate_element"></div>
-        </div>
-      </div> -->
-    </nav>
-
-
-    <!-- <div class="container"> -->
-    <div class="row main">
-        <!-- start Side Panel-->
-        <div class="col-2" id="sidePanel">
-          <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
-          <!-- <h4 class="test1">Filter Projects</h4> -->
-          <br>
-          <label class="filterLabel" for="division">Division</label>
-          <div class="input-group mb-3">
-            <select class="form-control dropdown filter" id="division">
-              <option>All</option>
-            </select>
+    <!-- NAVBAR -->
+      <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
+        <!-- <img src="images/massdot_logo_dark.png" class="img-fluid" alt="MassDOT Logo"> -->
+        <a class="navbar-brand">Project Viewer</a>
+        <!-- <div class="topnav topnav-right collapse navbar-collapse" id="navbarCollapse">
+          <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" SameSite=None Secure>2020-2024 CIP<span class="sr-only">(current)</span></a>
+          <a class="nav-link" id="aboutBtn">ABOUT</a>
+          <div class="btn my-2 my-sm-0 m-2">
+            <button class='nav-link btn btn-info' id="aboutBtn">ABOUT</button>
           </div>
-          <label class="filterLabel" for="townSelect">Town</label>
-          <div class="input-group mb-3">
-            <select class="form-control dropdown filter" id="townSelect">
-  	          <option value="0">All</option>
-            </select>
-		      </div>
-          <label class="filterLabel" for="mpoSelect">MPO</label>
-          <div class="input-group mb-3">
-            <select class="form-control dropdown filter" id="mpoSelect">
-              <option value="All">All</option>
-            </select>
-          </div>
-
-          <!-- start checkboxes -->
-          <div class="checkbox">
-            <div class="filter mr-sm-2 w-100 ">
-              <input class="geomCheck" type="checkbox" id="townPrjs" checked>
-              <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
-            </div>
-            <div class="filter mr-sm-2 w-100 ">
-              <input class="geomCheck" type="checkbox" id="rtaPrjs" checked>
-              <label class="form-check-label" for="rtaPrjs"> RTA-wide projects </label>
-            </div>
-            <div class="filter mr-sm-2 w-100 ">
-              <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
-              <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
-            </div>
-          </div>
-          <!-- end checkboxes -->
-
-          <!-- start CIP Program -->
-          <label class="filterLabel" for="programs">Program</label>
-          <div class="input-group mb-3">
-            <select class="form-control custom-select filter" id="programs" multiple>
-              <option value="All" division= "All" selected>All</option>
-            </select>
-          </div>
-          <div>
-            <label class="filterLabel" id="costRange" for="amount">Cost Range</label>
-            <form class="form">
-              <div class="filter form-inline flex-grow-1">Min:  $
-                <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
-              </div>
-              <div class="filter form-inline ">Max:  $
-                <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
-              </div>
-            </form>
-            <div class="filter" id="costSlider"></div>
-          </div>
-          <br>
-          <div class="mr-sm-2">
-            <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
-          </div>
-          <!-- end CIP Program -->
-
-          <div class="btn my-2 my-sm-0 m-2 noLeft floatBottom">
-            <button class='nav-link btn btn-about' id="aboutBtn">ABOUT</button>
+          <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
             <div id="google_translate_element"></div>
           </div>
-
+        </div> -->
+      </nav>
+    <!-- MAIN PAGE -->
+    <div class="row main">
+      <!-- SIDE PANEL -->
+      <div class="col-3" id="sidePanel">
+        <!-- massDOT logo -->
+        <div class="w-100">
+          <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
         </div>
-        <!-- end  Side Panel -->
-
-        <!-- start Main Panel -->
-        <div class= "col-10" id="mainPanel">
-          <div class="row fullHeight">
-            <!-- start List Modal -->
-            <div class="col-3" id="listModal">
-              <!-- <h4 id="countProj"></h4> -->
-              <div class="row mostHeight">
-                <div class="col-11 break-word" id="projectList-content"></div>
-                <div class="col hideList">
-                  <span class="closeList-btn"><i class="fa fa-angle-double-left"></i></span>
-                </div>
+        <!-- FILTERS -->
+        <div class="row overflowScroll" id="sideFilters">
+          <!-- ATTRIBUTE Filters -->
+          <div class="w-100 rounded filterBox" id="attrFilters">
+            <h4 class="filterHeading">Category Filters</h4>
+            <!-- Division Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="division">Division</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="division">
+                  <option>All</option>
+                </select>
               </div>
             </div>
-            <!-- end List Modal -->
 
-            <!-- start Map col -->
-            <div class="col" id="mapCol">
+            <!-- Program Filter -->
+            <div class="row w-100">
+              <label class="filterLabel" for="programs">Program</label>
+              <div class="input-group mb-3">
+                <select class="form-control custom-select filter" id="programs" multiple>
+                  <option value="All" division= "All" selected>All</option>
+                </select>
+              </div>
+            </div>
+            <!-- Cost Filter -->
+            <div class="w-100">
+              <label class="filterLabel" id="costRange" for="amount">Cost Range</label>
+              <form class="form">
+                <div class="filter form-inline flex-grow-1">Min:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
+                </div>
+                <div class="filter form-inline ">Max:  $
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+                </div>
+              </form>
+              <div class="filter" id="costSlider"></div>
+            </div>
+            <!-- Source Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="sources">Project Source</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="sources">
+                  <option>CIP</option><!-- change CIP to ALL once additional sources added (e.g. MapIT, STIP, etc.) -->
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SPATIAL Filters -->
+          <div class="w-100 rounded filterBox" id="spatialFilters">
+            <h4 class="filterHeading">Location Filters</h4>
+            <!-- **Limit one location at a time -->
+            <!-- Town Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="townSelect">Town</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="townSelect">
+                  <option value="0">All</option>
+                </select>
+              </div>
+            </div>
+            <!-- MPO Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="mpoSelect">MPO</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="mpoSelect">
+                  <option value="All">All</option>
+                </select>
+              </div>
+            </div>
+            <!-- RTA Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="rtaSelect">RTA</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="rtaSelect">
+                  <option value="All">All</option>
+                </select>
+              </div>
+            </div>
+            <!-- District Filter -->
+            <div class="w-100">
+              <label class="filterLabel" for="distSelect">District</label>
+              <div class="input-group mb-3">
+                <select class="form-control dropdown filter" id="distSelect">
+                  <option value="All">All</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Search/Reset BUTTONS -->
+        <div class="row noLeft">
+          <div class="btn my-2 my-sm-0 zeroPadding">
+            <button class='nav-link btn filterLabel' id="searchBtn">SEARCH PROJECTS</button>
+          </div>
+          <div class="btn my-2 my-sm-0 zeroPadding">
+            <button class='nav-link btn filterLabel' id="resetBtn">RESET FILTERS</button>
+          </div>
+        </div>
+        <!-- About/Google Translate -->
+        <!-- <div class="row noLeft floatBottom btn my-2 my-sm-0 zeroPadding">
+          <button class='nav-link btn btn-about' id="aboutBtn">ABOUT</button>
+          <div id="google_translate_element"></div>
+        </div> -->
+      </div>
+      <!-- MAIN PANEL -->
+      <div class= "col" id="mainPanel">
+        <div class="row fullHeight">
+          <!-- LIST MODAL -->
+          <div class="col-3" id="listModal">
+            <!-- <h4 id="countProj"></h4> -->
+            <div class="row mostHeight">
+              <div class="col-11 break-word" id="projectList-content"></div>
+              <div class="col hideList">
+                <span class="closeList-btn"><i class="fa fa-angle-double-left"></i></span>
+              </div>
+            </div>
+          </div>
+          <!-- MAP -->
+          <div class="col" id="mapCol">
+            <!-- Project Search Bar -->
+            <div class="w-100">
               <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
-              <div class="col mapFull" id="viewDiv"></div>
-
-              <!-- start Project Modal -->
-              <div class="col col-offset-5" id="projectModal">
-                <div class="row" id="projectModal-content">
-                <!----------------------------------------------------->
+            </div>
+            <!-- View -->
+            <div class="col mapFull" id="viewDiv"></div>
+            <!-- PROJECT MODAL -->
+            <div class="col col-offset-5" id="projectModal">
+              <div class="row" id="projectModal-content">
+                <!-- Close Button -->
                 <div class="row w-100 closeProject-btn">
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
+                <!-- Popup Content -->
                 <div class="row justify-content-md-center" id="projectContent">
-                  <!-- start left col -->
+                  <!-- POPUP -->
                   <div class="col-md" id="popupDock"></div>
-                  <!-- end left col -->
-                  <!-- start right col -->
+                  <!-- APIs -->
                   <div class="col-md" id="imageryAPI">
                     <div class="tw-toggle">
                       <input checked type="radio" name="toggle" value="true">
@@ -176,23 +212,13 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                       <div id="mly" class="mapillary-js"></div>
                     </div>
                   </div>
-                  <!-- end right col -->
                 </div>
-                <!-- </div> -->
-                <!----------------------------------------------------->
               </div>
-              <!-- end Project Modal -->
-
             </div>
-            <!-- end Map col -->
-
           </div>
         </div>
-        <!-- end Main Panel -->
-
-
+      </div>
     </div>
-    <!-- </div> -->
   </div>
   <!-- <div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div> -->
   <script type="text/javascript">
@@ -203,10 +229,11 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
   <script src="https://js.arcgis.com/4.13/" SameSite=None Secure></script>
   <script src="js/page_contents.js"></script>
   <script src="js/controls.js"></script>
-  <script src="js/aboutModal.js"></script>
+  <!-- <script src="js/aboutModal.js"></script> -->
   <script src="js/listModal.js"></script>
   <script src="js/projectModal.js"></script>
-  <script src="js/map.js"></script>
+  <script src="js/map_testing.js"></script>
+  <!-- <script src="js/map.js"></script> -->
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure>
   </script> -->
   </script>

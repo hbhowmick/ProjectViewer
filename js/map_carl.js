@@ -408,9 +408,7 @@ $(document).ready(function () {
               outFields: ["*"],
               where: sql,
               }
-            )
-            prjLocationLines.queryFeatures()
-            .then(function(results) {
+            ).then(function(results) {
               // console.log(results)
               if (results.features.length == 0) {
                 linesCounted=true;
@@ -434,18 +432,16 @@ $(document).ready(function () {
           if (val==false && pointsCounted==false && filterStart==true) {
             hideLoad = true;
             $('#loading').modal('hide')
-            // prjLocationPoints.queryFeatures(
-            //   {
-            //   // geometry: extentForRegionOfInterest,
-            //   // spatialRelationship: "intersects",
-            //   // returnGeometry: true,
-            //   outFields: ["*"],
-            //   orderByFields: 'Project_Description',
-            //   where: sql,
-            //   }
-            // )
-            prjLocationPoints.queryFeatures()
-            .then(function(results) {
+            prjLocationPoints.queryFeatures(
+              {
+              // geometry: extentForRegionOfInterest,
+              // spatialRelationship: "intersects",
+              // returnGeometry: true,
+              outFields: ["*"],
+              orderByFields: 'Project_Description',
+              where: sql,
+              }
+            ).then(function(results) {
               if (results.features.length == 0) {
                 pointsCounted=true;
                 console.log("Points: (0)");
@@ -476,9 +472,7 @@ $(document).ready(function () {
                 where: "1=1",
                 spatialRelationship: "intersects",
               }
-            )
-            // projectLocationsMBTA.queryFeatures()
-            .then(function(results) {
+            ).then(function(results) {
               if (results.features.length == 0) {
                 mbtaCounted=true;
                 // mbtaLines.visible = false;
@@ -704,7 +698,7 @@ $(document).ready(function () {
 
 
 
-
+$(".listModal").on("mouseenter", ".listItem", function(e){console.log(e)})
 
 
 
@@ -794,6 +788,30 @@ $(document).ready(function () {
     //     console.log("remove highlight")
     //   }
     // })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
