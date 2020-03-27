@@ -59,7 +59,7 @@ $(document).ready(function () {
       }
     });
 
-    spatialSQL = "(Location_Source<>'POINT' AND Location_Source<>'LINE' AND Location_Source<>'MBTA')";
+    spatialSQL = "(1=1)";
     extentForRegionOfInterest = stateExtent.extent;
     townName = "All";
     townSQL = "(1=1)";
@@ -541,92 +541,93 @@ $(document).ready(function () {
       .catch(function (error) {});
 
 
-      if($("#division").val() == 'MBTA' || $("#division").val() == 'All'){
         view.whenLayerView(projectLocationsMBTA)
         .then(function (layerView) {
           mbtaLayerView = layerView
-          mbtaQuery = projectLocationsMBTA.createQuery();
-          mbtaQuery.where = "(1=1)";
-          // mbtaQuery.returnGeometry = true;
-          mbtaQuery.outFields = ["*"];
-          // mbtaQuery.outSpatialReference = view.spatialReference;
-          mbtaQuery.spatialRelationship = "intersects";
-          mbtaQuery.geometry = extentForRegionOfInterest;
+          if($("#division").val() == 'MBTA' || $("#division").val() == 'All'){
+            mbtaQuery = projectLocationsMBTA.createQuery();
+            mbtaQuery.where = "(1=1)";
+            // mbtaQuery.returnGeometry = true;
+            mbtaQuery.outFields = ["*"];
+            // mbtaQuery.outSpatialReference = view.spatialReference;
+            mbtaQuery.spatialRelationship = "intersects";
+            mbtaQuery.geometry = extentForRegionOfInterest;
 
-          projectLocationsMBTA.queryFeatures(mbtaQuery)
-          .then(function(results) {
-            mbtaProjectString = "";
-            mbtaNames = [];
-            mbtaModes = [];
-            console.log("MBTA Lines: (", results.features.length, ") ", results.features);
-            if (results.features.length == 0) {
-              mbtaProjectString = "0";
-              console.log("No MBTA Lines intersect location")
-              createList(results.features);
-              checkedLayers.push("mbta");
-              checkLayers();
-            } else {
-              // mbtaLayerView.filter
-              mbtaLayerView.visible = true;
-
-              $(results.features).each(function(index, feature) {
-                var mbtaLocation = feature.attributes.MBTA_Location;
-                var route_desc = feature.attributes.route_desc;
-                if (mbtaNames.includes(mbtaLocation)) {
-                } else {
-                  mbtaNames.push(mbtaLocation)
-                }
-                if (mbtaModes.includes(route_desc)) {
-                } else {
-                  mbtaModes.push(route_desc)
-                }
-              })
-              // console.log(mbtaNames, mbtaModes);
-              mbtaNames.map(addToQuery);
-              mbtaModes.map(addToQuery);
-              function addToQuery(value) {
-                mbtaProjectString = mbtaProjectString + "MBTA_Location LIKE '%" + value + "%' OR ";
-              }
-              mbtaProjectString = "(" + mbtaProjectString + "MBTA_Location = 'System') AND (" + sqlQuery + ")";
-              // console.log(mbtaProjectString);
-
-              listQuery.where = mbtaProjectString;
-              listQuery.outFields = ["*"];
-              projectList.queryFeatures(listQuery).then(function(results){
-                console.log("MBTA Projects: ", results.features)
+            projectLocationsMBTA.queryFeatures(mbtaQuery)
+            .then(function(results) {
+              mbtaProjectString = "";
+              mbtaNames = [];
+              mbtaModes = [];
+              console.log("MBTA Lines: (", results.features.length, ") ", results.features);
+              if (results.features.length == 0) {
+                mbtaProjectString = "0";
+                console.log("No MBTA Lines intersect location")
                 createList(results.features);
                 checkedLayers.push("mbta");
                 checkLayers();
-              })
-            }
-          })
-          queryFilter = new FeatureFilter({
-            where: "(1=1)",
-            geometry: extentForRegionOfInterest,
-            spatialRelationship: "intersects"
-          });
-          mbtaLayerView.filter = queryFilter;
+              } else {
+                // mbtaLayerView.filter
+                mbtaLayerView.visible = true;
 
+                $(results.features).each(function(index, feature) {
+                  var mbtaLocation = feature.attributes.MBTA_Location;
+                  var route_desc = feature.attributes.route_desc;
+                  if (mbtaNames.includes(mbtaLocation)) {
+                  } else {
+                    mbtaNames.push(mbtaLocation)
+                  }
+                  if (mbtaModes.includes(route_desc)) {
+                  } else {
+                    mbtaModes.push(route_desc)
+                  }
+                })
+                // console.log(mbtaNames, mbtaModes);
+                mbtaNames.map(addToQuery);
+                mbtaModes.map(addToQuery);
+                function addToQuery(value) {
+                  mbtaProjectString = mbtaProjectString + "MBTA_Location LIKE '%" + value + "%' OR ";
+                }
+                mbtaProjectString = "(" + mbtaProjectString + "MBTA_Location = 'System') AND (" + sqlQuery + ")";
+                // console.log(mbtaProjectString);
+
+                listQuery.where = mbtaProjectString;
+                listQuery.outFields = ["*"];
+                projectList.queryFeatures(listQuery).then(function(results){
+                  console.log("MBTA Projects: ", results.features)
+                  createList(results.features);
+                  checkedLayers.push("mbta");
+                  checkLayers();
+                })
+              }
+            })
+            queryFilter = new FeatureFilter({
+              where: "(1=1)",
+              geometry: extentForRegionOfInterest,
+              spatialRelationship: "intersects"
+            });
+            mbtaLayerView.filter = queryFilter;
+
+          } else {
+            checkedLayers.push("mbta");
+            checkLayers();
+            mbtaLayerView.visible = false;
+            // map.remove(projectLocationsMBTA);
+            // view.graphics.remove(mbtaLayerView)
+            // // projectLocationsMBTA.visible = false;
+            // console.log(view.graphics);
+            // queryFilter = new FeatureFilter({
+            //   where: "",
+            //   geometry: extentForRegionOfInterest,
+            //   spatialRelationship: "intersects"
+            // });
+            // mbtaLayerView.filter = queryFilter;
+          }
         })
-        .catch(function (error) {});
-      } else {
-        checkedLayers.push("mbta");
-        checkLayers();
-        mbtaLayerView.visible = false;
-        // map.remove(projectLocationsMBTA);
-        // view.graphics.remove(mbtaLayerView)
-        // // projectLocationsMBTA.visible = false;
-        // console.log(view.graphics);
-        // queryFilter = new FeatureFilter({
-        //   where: "",
-        //   geometry: extentForRegionOfInterest,
-        //   spatialRelationship: "intersects"
-        // });
-        // mbtaLayerView.filter = queryFilter;
-      }
+      .catch(function (error) {});
 
-      listQuery.where = spatialSQL;
-      console.log(spatialSQL)
+      listSQL = sqlQuery + " AND ((" + spatialSQL + " OR (Location='Statewide' OR Location_Source='Statewide')) AND (Location_Source<>'POINT' AND Location_Source<>'LINE' AND Location_Source<>'MBTA'))"
+      listQuery.where = listSQL;
+      console.log(listSQL)
       projectList.queryFeatures(listQuery).then(function(results){
         console.log("Polygon Projects: ", results.features)
         createList(results.features);
