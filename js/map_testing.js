@@ -28,7 +28,7 @@ $(document).ready(function () {
     filterStart = false;
     spatialFilter = false;
 
-    nonSpatialSQL = "";
+    sqlQuery = "";
     divisionSQL = "(1=1)";
     programSQL = "(1=1)";
 
@@ -59,7 +59,7 @@ $(document).ready(function () {
       }
     });
 
-    spatialSQL = "";
+    spatialSQL = "(Location_Source<>'POINT' AND Location_Source<>'LINE' AND Location_Source<>'MBTA')";
     extentForRegionOfInterest = stateExtent.extent;
     townName = "All";
     townSQL = "(1=1)";
@@ -189,10 +189,12 @@ $(document).ready(function () {
     mpoQuery = mpoLayer.createQuery();
     rtaQuery = rtaLayer.createQuery();
     distQuery = distLayer.createQuery();
+    listQuery = projectList.createQuery();
 
     map = new Map({
-      basemap: "gray-vector",
+      basemap: "streets-night-vector",
     });
+
     map.addMany([
       projectLocationsPolygonsMapImageLayer,
       projectLocationsMBTA,
@@ -225,9 +227,11 @@ $(document).ready(function () {
 
     //------FUNCTIONS------//
     function updateSQL() {
-      nonSpatialSQL = divisionSQL  + " AND "
-      // + townSQL + " AND "
-      + programSQL + " AND " + "(Total>=" + numeral($("#minCost").val()).value() + " AND Total<=" + numeral($("#maxCost").val()).value() + ")";
+      sqlQuery = divisionSQL
+      + " AND " + programSQL
+      + " AND " + "(Total>=" + numeral($("#minCost").val()).value()
+      + " AND Total<=" + numeral($("#maxCost").val()).value()
+      + ")";
 
       console.log("*************************\n",
       // '\nDiv: ', $("#division").val(),
@@ -239,8 +243,7 @@ $(document).ready(function () {
       // '\nRTA: ', $("#rtaSelect").val(),
       // '\nDistrict: ', $("#distSelect").val(),
       // '\n*************************\n',
-      nonSpatialSQL,
-      '\n', spatialSQL
+      sqlQuery
       )
     };
 
@@ -286,11 +289,11 @@ $(document).ready(function () {
           townGeometry = response.features[0].geometry;
           extentForRegionOfInterest = townGeometry;
         })
+        townSQL = "(Location='" + townName + "' OR Location_Source='" + townName + "' OR Location='Statewide' OR Location_Source='Statewide')"
+        ;
       }
 
-      townSQL = "(Location='" + townName + "' OR Location_Source='" + townName + "' OR Location='Statewide' OR Location_Source='Statewide')";
-
-      spatialSQL = townSQL;
+      spatialSQL = spatialSQL + " AND " + townSQL;
 
     })
 
@@ -312,11 +315,11 @@ $(document).ready(function () {
           mpoGeometry = response.features[0].geometry;
           extentForRegionOfInterest = mpoGeometry;
         })
+        mpoSQL = "(Location='" + mpoName + "' OR Location_Source='" + mpoName + "' OR Location='Statewide' OR Location_Source='Statewide')"
+        ;
       }
 
-      mpoSQL = "(Location='" + mpoName + "' OR Location_Source='" + mpoName + "' OR Location='Statewide' OR Location_Source='Statewide')";
-
-      spatialSQL = mpoSQL;
+      spatialSQL = spatialSQL + " AND " + mpoSQL;
     })
 
     $("#rtaSelect").change(function() {
@@ -343,11 +346,12 @@ $(document).ready(function () {
           extentForRegionOfInterest = rtaGeometry;
           console.log(extentForRegionOfInterest)
         })
+        rtaSQL = "(Location='" + rtaName + "' OR Location_Source='" + rtaName
+        + "' OR Location='Statewide' OR Location_Source='Statewide')"
+        ;
       }
 
-      rtaSQL = "(Location='" + rtaName + "' OR Location_Source='" + rtaName + "' OR Location='Statewide' OR Location_Source='Statewide')";
-
-      spatialSQL = rtaSQL;
+      spatialSQL = spatialSQL + " AND " + rtaSQL;
     })
 
     $("#distSelect").change(function() {
@@ -368,11 +372,11 @@ $(document).ready(function () {
           distGeometry = response.features[0].geometry;
           extentForRegionOfInterest = distGeometry;
         })
+        distSQL = "(Location='" + distName + "' OR Location_Source='" + distName + "' OR Location='Statewide' OR Location_Source='Statewide')"
+        ;
       }
 
-      distSQL = "(Location='" + distName + "' OR Location_Source='" + distName + "' OR Location='Statewide' OR Location_Source='Statewide')";
-
-      spatialSQL = distSQL;
+      spatialSQL = spatialSQL + " AND " + distSQL;
     })
 
 
@@ -484,15 +488,14 @@ $(document).ready(function () {
       .then(function (layerView) {
         prjLocationLines = layerView
         var queryFilter = new FeatureFilter({
-          where: nonSpatialSQL,
+          where: sqlQuery,
           geometry: extentForRegionOfInterest,
           spatialRelationship: "intersects"
         });
         prjLocationLines.filter = queryFilter;
 
-
         linesQuery = projectLocations.createQuery();
-        linesQuery.where = nonSpatialSQL;
+        linesQuery.where = sqlQuery;
         linesQuery.returnGeometry = true;
         linesQuery.outFields = ["*"];
         linesQuery.outSpatialReference = view.spatialReference;
@@ -513,14 +516,14 @@ $(document).ready(function () {
       .then(function (layerView) {
         prjLocationPoints = layerView
         var queryFilter = new FeatureFilter({
-          where: nonSpatialSQL,
+          where: sqlQuery,
           geometry: extentForRegionOfInterest,
           spatialRelationship: "intersects"
         });
         prjLocationPoints.filter = queryFilter;
 
         pointQuery = projectLocationsPoints.createQuery();
-        pointQuery.where = nonSpatialSQL;
+        pointQuery.where = sqlQuery;
         pointQuery.returnGeometry = true;
         pointQuery.outFields = ["*"];
         pointQuery.outSpatialReference = view.spatialReference;
@@ -584,30 +587,27 @@ $(document).ready(function () {
               function addToQuery(value) {
                 mbtaProjectString = mbtaProjectString + "MBTA_Location LIKE '%" + value + "%' OR ";
               }
-              mbtaProjectString = "(" + mbtaProjectString + "MBTA_Location = 'System') AND (" + nonSpatialSQL + ")";
-              console.log(mbtaProjectString);
-              projectList.queryFeatures(
-                  {
-                      where: mbtaProjectString,
-                      outFields: ["*"],
-                    }
-                  )
-                  .then(function(results){
-                      console.log("MBTA Projects: ", results.features)
-                      createList(results.features);
-                      checkedLayers.push("mbta");
-                      checkLayers();
-                    })
-                  }
-                })
-                queryFilter = new FeatureFilter({
-                  where: "(1=1)",
-                  geometry: extentForRegionOfInterest,
-                  spatialRelationship: "intersects"
-                });
-                mbtaLayerView.filter = queryFilter;
+              mbtaProjectString = "(" + mbtaProjectString + "MBTA_Location = 'System') AND (" + sqlQuery + ")";
+              // console.log(mbtaProjectString);
 
+              listQuery.where = mbtaProjectString;
+              listQuery.outFields = ["*"];
+              projectList.queryFeatures(listQuery).then(function(results){
+                console.log("MBTA Projects: ", results.features)
+                createList(results.features);
+                checkedLayers.push("mbta");
+                checkLayers();
               })
+            }
+          })
+          queryFilter = new FeatureFilter({
+            where: "(1=1)",
+            geometry: extentForRegionOfInterest,
+            spatialRelationship: "intersects"
+          });
+          mbtaLayerView.filter = queryFilter;
+
+        })
         .catch(function (error) {});
       } else {
         checkedLayers.push("mbta");
@@ -625,6 +625,15 @@ $(document).ready(function () {
         // mbtaLayerView.filter = queryFilter;
       }
 
+      listQuery.where = spatialSQL;
+      console.log(spatialSQL)
+      projectList.queryFeatures(listQuery).then(function(results){
+        console.log("Polygon Projects: ", results.features)
+        createList(results.features);
+        checkedLayers.push("list");
+        checkLayers();
+      })
+
       projectLocationsPolygonsMapImageLayer.when(function () {
         prjLocationPolygons = projectLocationsPolygonsMapImageLayer.findSublayerById(4);
       })
@@ -632,7 +641,7 @@ $(document).ready(function () {
 
 
     function checkLayers() {
-      if(checkedLayers.length == 3) {
+      if(checkedLayers.length == 4) {
         console.log(checkedLayers);
         $("#listModal").css("display", "none");
         listContent.empty();
