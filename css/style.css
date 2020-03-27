@@ -1,75 +1,47 @@
 html, body {
   margin: 0;
   height: 100%;
-	/* width: 100%; */
+	width: 100%;
   color: #4d4d4d;
   overflow-y: hidden;
-  /* font-family: "Helvetica Neue",sans-serif; */
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-}
-
-#outsideContainer{
-  padding: 0px;
-  height: 100%;
-  width: 100%;
-  /* background-color: #1B2831; */
-}
-
-nav {
-  display: table-cell;
-  vertical-align: middle;
-  background-color: #14558f !important;
-}
-
-/* div {
-  width: 100%;
-} */
-
-.main {
-  padding: 0px 15px;
-  height: 100%;
-}
-
-.col {
-  height: auto;
-}
-
-.row {
-  margin: 0;
-}
-
-.goog-te-menu-value {
-  padding: 1px 2px !important;
-  font-size: 13px !important;
 }
 
 img {
-  /* padding-bottom: 0.3%;
-  padding-left: 0.3%; */
+  padding-bottom: 0.3%;
+  padding-left: 0.3%;
 }
+
+/**/
 
 span {
   margin: 0 auto;
+}
+
+.row {
+  margin: 0 !important;
 }
 
 .justify-content-md-center {
   margin-left: 0px;
 }
 
-.esri-view, .esri-view-root, .esri-view-surface {
-  width: 100% !important;
+.esri-view-surface {
+  width: auto !important;
 }
+
+/* .esri-view-root {
+  width: 100% !important;
+} */
 
 .esri-attribution {
   visibility: hidden;
 }
 
-.esri-popup__header-title, #projTitle {
+.esri-popup__header-title {
   font-weight: bold;
 }
 
-.esri-popup__header-title:after, #projTitle:after {
+.esri-popup__header-title:after{
   content:'';
   display: block;
   margin: 0 auto;
@@ -79,204 +51,92 @@ span {
   border-bottom:1px solid #BDBDBD;
 }
 
-/* .esri-popup--is-docked {
-  margin-bottom: 0px;
-}
-
-.esri-view-width-xlarge .esri-popup__main-container {
-  width: 1000px;
-  height: 500px;
-} */
-
 .navbar-custom {
-  /* background-color: #1D2933; /* MassDOT blue: #14558f */
-  /* background-color: #14558f; */
-	color: white;
-  text-align: center;
+  background-color: #14558f;
+	height: auto;
+  padding: 10px;
+	color: #FFFFFF;
 }
 
 .nav-link {
   color: #FFFFFF;
-  padding: 6px;
 }
 
 .navbar-brand {
-  position: relative;
+  font-size: 26px;
+  padding-left: 20px;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
   text-align: center;
-  font-size: 320%;
-  /* padding: 10px; */
-  /* margin-right: 0px; */
-  color: white !important;
-  font-family: 'Roboto Condensed', sans-serif;
-  text-transform: uppercase;
-  text-shadow: 3px 3px rgba(120,120,120,0.2);
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 500;
 }
 
-.img-fluid {
-  max-width: 12%;
-  position: absolute;
-  left: 0px;
-  /* float: left; */
-  padding: 15px 20px 0px 35px;
+.topnav a:hover {
+  color: #2C2C2C;
+  transition: .3s;
 }
 
-.topnav-support {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px 0px;
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
 }
 
-.divHeading {
-  font-size: 24px;
-  padding-top: 20px;
+.topnav-right {
+  float: right;
+}
+
+#mainDiv{
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.mapCol {
+  margin: 0 auto;
+  padding: 10px;
+}
+
+#viewDiv {
+  width: 100% !important;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .p-3 {
   padding: 0 !important;
 }
 
-.boldText {
-  font-weight: bold;
+#projectSearch {
+  margin: 0 auto;
 }
 
-#sidePanel {
-  display: block;
-  max-width: 330px;
-  padding-left: 20px;
-  padding-right: 0px !important;
-  height: 100%;
-  /* background-color: #1B2831; */
+.sideContents{
+  padding-top: 20px;
+  padding-left: 30px;
+  margin-right: 20px;
+  width: 200px;
 }
 
-#sidePanel h4, #sidePanel p, .form-inline {
-  /* color: white; */
-}
-
-#sidePanel label {
-  color: white;
-}
-
-.overflowScroll {
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-#sideFilters {
-  height: 93%;
-  width: 100%;
-  padding-right: 10px;
-  margin: 20px auto;
-}
-
-.filterBox {
-  /* background-color: rgba(250,250,250,0.3); */
-  padding: 15px 0px;
-  /* margin: 0px 0px 5px 0px; */
-  /* box-shadow: 5px 5px 10px rgba(250,250,250,0.3); */
-}
-
-.filterHeading {
-  font-weight: bold;
-}
-
-.filterLabel {
-  color: black !important;
-  font-family: Verdana, Geneva, sans-serif;
-  font-weight: bold;
-  font-size: 11px;
-  /* font-variant: small-caps; */
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  /* background-color: #14cccc; */
-  background-color: #e8e8e8;
-  border-radius: 6px;
-  padding: 8px 8px 12px 8px;
-  margin-bottom: 0;
-  position: relative;
-  top: 8px;
-}
-
-.searchLabel {
-  /* background-color: rgb(226, 119, 40); */
-  color: white !important;
-  background-color: #14558f;
-}
-
-.checkbox {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-#costRange {
-  margin-bottom: 10px;
-  padding: 6px;
-}
-
-#costSlider {
+#cost-range {
   margin: 15px 0px 10px 10px;
   width: 94%;
 }
 
-.zeroPadding {
-  padding: 0 !important;
-}
-
-.btn-about {
-  /* background-color: #14cccc; */
-  background-color: #fff;
-  color: #1b2831;
-  border: none;
-}
-
-.btn-about:hover {
-  /* background-color: #1b2831; */
-  background-color: #14cccc;
-  border: none;
+#aboutBtn:hover {
+  color: #2C2C2C;
   transition: .3s;
-}
-
-/* .searchBottom {
-  position: fixed;
-  bottom: 0;
-  padding-bottom: 50px;
-} */
-
-#searchBtn, #resetBtn {
-  padding: 6px !important;
-}
-
-#aboutBtn {
-  display: block;
-  float: left;
-  margin: 0px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-#google_translate_element {
-  display: block;
-  float: left;
-  margin: 0px 10px;
-}
-
-.noLeft {
-  display: block;
-  float: left;
-  margin-left: 0px !important;
-  padding-left: 0px !important;
-}
-
-.floatBottom {
-  position: fixed;
-  bottom: 25px;
 }
 
 #aboutModal {
   display: none;
   position: fixed;
-  z-index: 4;
+  z-index: 5;
   padding-top: 16%;
   left: 0;
   top: 0;
@@ -296,211 +156,69 @@ span {
   height: auto;
 }
 
-.mostHeight {
-  height: 85%;
+.noRightPadding {
+  padding-right: 0;
 }
 
-#mainPanel {
-  display: block;
-  /* float: left; */
-  height: 100%;
-  padding: 0px 20px;
-  /* overflow-y: scroll; */
+.leftHeader {
+  text-align: left;
+  padding: 50px 10px 10px 15px;
+  font-size: 30px;
 }
 
-.fullHeight {
-  height: 100%;
-}
-
-#listModal {
+.listModal {
   display: none;
-  height: 100%;
   background-color: #e6e6e6;
-  /* background-color: #3b434c; */
-  padding: 0px 15px;
-  margin-right: 22px;
+  z-index: 1;
+  width: 20%;
+  margin-right: 30px;
+}
+
+#listModal-content {
+  /* display: inline-block; */
+  overflow-y: auto;
+  max-height: 1050px;
+  padding-bottom: 10px;
+}
+
+#projectList {
+  margin: 10px 0px 45px 0px;
+  /* height: 100%; */
 }
 
 #projectList-content {
-  /* display: inline-block; */
-  /* float: left; */
-  overflow-y: auto;
-  height: 100%;
-  margin-top: 30px;
-  padding: 0px 20px;
+  /* height: 90%; */
+  /* overflow-y: auto; */
+}
+
+.projectContent {
+  /* background-color: blue; */
+  /* height: 100%; */
+}
+
+#projectList-header {
+
+}
+
+#projectList-subheader {
+  padding-top: 0;
+  font-size: 20px;
 }
 
 .listItem {
   font-size: 14px;
   color: #4d4d4d;
-  white-space: normal;
-  padding: 5px;
-  /* margin-top: 8px; */
-  /* margin-right: 20px; */
+  margin-top: 8px;
 }
 
 .listItem:hover, .selected {
   color: black;
   text-decoration: none;
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255,255,255,0.6);
 }
 
-.hideList {
-  width: 5%;
-  display: inline-block;
-  height: 100%;
-  /* padding-left: 7%; */
-  padding-right: 0px !important;
-}
-
-.closeList-btn {
-  color: #b5b5b5;
-  font-size: 20px;
-  font-weight: bold;
-  position: fixed;
-  top: 54%;
-}
-
-#mapCol {
-  /* display: block; */
-  height: 100%;
-  /* width: 100%; */
-  /* margin: 0 auto; */
-  padding-top: 1% !important;
-  overflow-y: auto;
-}
-
-#projectSearch {
-  width: 100%;
-  height: 3.5%;
-  margin: 0 auto;
-}
-
-#viewDiv {
-  margin: 0;
-  margin-top: 0.75%;
-  /* background-color: yellow; */
-  height: 95%;
-}
-
-/* .mapFull {
-  height: 95% !important;
-} */
-
-.mapListProject {
-  height: 48% !important;
-  transition: top 5s;
-}
-
-.mapProject {
-  height: 56% !important;
-}
-
-#projectModal {
-  display: none;
-  -webkit-animation-name: projectDesc; /* Safari 4.0 - 8.0 */
-  -webkit-animation-duration: 0.25s; /* Safari 4.0 - 8.0 */
-  -webkit-animation-direction: reverse; /* Safari 4.0 - 8.0 */
-  animation-name: projectDesc;
-  animation-duration: 0.25s;
-  animation-direction: reverse;
-  background-color: #E6E6E6;
-  border: solid 5px rgba(0,0,0,0.1);
-  padding: 0px 7.5px;
-  margin-top: 0.75%;
-  height: 37%;
-}
-
-#projectModal-content {
-  margin: 0px auto;
-  /* background-color: yellow; */
-  height: 100%;
-}
-
-.close,
-.closeProject-btn {
-  color: #aaaaaa;
-  height: 25px !important;
-}
-
-.close:hover,
-.close:focus,
-.closeList-btn:hover,
-.closeList-btn:focus,
-.closeProject-btn:hover,
-.closeProject-btn:focus {
-  /* color: #000; */
-  color: #fff;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.closeProject-btn {
-  margin: 0.5% auto !important;
-  font-size: 128%; /* 20px */
-  font-weight: bold;
-}
-
-#projectContent {
-  position: relative;
-  width: 100%;
-  /* background-color: blue; */
-  height: 87.6%;
-  /* background-color: yellow; */
-}
-
-#popupDock {
-  background-color: white;
-  margin: 0px 7.5px;
-  padding: 15px;
-  height: 96%;
-  overflow-y: auto;
-  /* transform: translate(-50%); */
-}
-
-#projDesc {
-  margin: 5px;
-  display: block;
-  /* height: 85%; */
-  overflow-y: auto;
-  font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 16px;
-  line-height: 1.3em;
-  margin: 0 0 1.2em;
-  height: 100%;
-}
-
-#projDesc>p {
-  margin: 0;
-}
-
-.mapillary {
-  background-color: grey;
-  /* width: 100%; */
-  height: 94%;
-  margin: 15px 0;
-}
-
-.mapillary-js {
-  height: 100%;
-  /* width: 100%; */
-}
-
-#imageryAPI {
-  background-color: white;
-  margin: 0px 7.5px;
-  height: 96%;
-}
-.h-auto {
-  height: auto;
-  min-height: 8%;
-}
-
-.leftHeader {
-  text-align: left;
-  padding: 20px 10px 10px 15px;
-  font-size: 30px;
-  margin-bottom: 0 !important;
+#hide {
+  width: 25px;
 }
 
 #pinfoLink {
@@ -514,17 +232,67 @@ span {
   color: black;
 }
 
-div.esri-component.esri-popup {
-  position: absolute !important;
-  bottom: 0;
+#projectModal {
+  display: none;
+  -webkit-animation-name: projectDesc; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 0.25s; /* Safari 4.0 - 8.0 */
+  -webkit-animation-direction: reverse; /* Safari 4.0 - 8.0 */
+  animation-name: projectDesc;
+  animation-duration: 0.25s;
+  animation-direction: reverse;
+  z-index: 2;
+  height: auto;
+  min-height: 500px;
+  width: 100%;
+  background-color: #e6e6e6;
+  border: solid 5px #f2f2f2;
+  padding: 0px 15px;
 }
 
-.esri-feature__title {
+#projectModal-content {
+  height: 100%;
+  padding-bottom: 20px !important;
+}
+
+.projectContent {
+  height: 93%;
+}
+
+#projTitle {
   font-weight: bold;
+}
+
+.row>#projTitle{
   margin-bottom: 15px;
   padding-bottom: 15px;
   width:100%;
   border-bottom:1px solid #BDBDBD;
+}
+
+#projDesc {
+  margin: 5px;
+  display: block;
+}
+
+#projDesc>p {
+  margin: 0;
+}
+
+.leftCol {
+  background-color: white;
+  margin-right: 7.5px;
+  padding: 15px;
+}
+
+.rightCol {
+  background-color: white;
+  margin-left: 7.5px;
+}
+
+#viewMini {
+  width: 100%;
+  height: 100%;
+  padding: 15px 0px;
 }
 
 /* Safari 4.0 - 8.0 */
@@ -537,117 +305,184 @@ div.esri-component.esri-popup {
   100%  {left:15px; top:700px;}
 }
 
-.tw-toggle {
-  background: #e6e6e6;
-  display: inline-block;
-  padding: 2px 2px;
-  margin: 0 0 20px 10px;
-  border-radius: 20px;
-  position: absolute;
-  left: 10;
-  bottom: 0;
-  border: 2px solid #fff;
-  line-height: 1.5;
-  z-index: 3;
+.close,
+.closeProject {
+  color: #aaaaaa;
 }
 
-.tw-toggle label {
-  text-align: center;
-  font-family: sans-serif;
-  display: inline-block;
-  color: #95A5A6;
-  position:relative;
-  z-index: 1;
-  margin: 0;
-  text-align: center;
-  padding: 2px 7px;
-  font-size: 15px;
-  width: 28px;
+.closeList {
+  color: #b5b5b5;
+  font-size: 20px;
+  font-weight: bold;
+  position: fixed;
+  top: 54%;
 }
 
-.tw-toggle input {
-  /* display: none; */
-  position: absolute;
-  z-index: 2;
-  opacity: 0;
+.close:hover,
+.close:focus,
+.closeList:hover,
+.closeList:focus,
+.closeProject:hover,
+.closeProject:focus {
+  color: #000;
+  text-decoration: none;
   cursor: pointer;
-  padding: 50px;
-  width: 28px;
-  height: 28px;
 }
 
-.tw-toggle span {
-  height: 25px;
-  width: 25px;
-  line-height: 25px;
+.closeProject {
+  margin: 7px auto !important;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*---TESTING---*/
+.floatLeft {
+  float: left;
+}
+
+.yellow {
+  background-color: yellow;
+}
+.green {
+  background-color: green;
+}
+.blue {
+  background-color: blue;
+}
+.red {
+  background-color: red;
+}
+.pink {
+  background-color: pink;
+}
+
+
+
+
+.lorem {
+  color: white;
+}
+
+.grayFont {
+  color: lightgray;
+}
+
+
+
+
+
+
+.mly-wrapper {
+  background-color: grey;
+  width: 100%;
+  height: 94%;
+  margin: 15px 0;
+}
+.mapillary-js {
+  height: 100%;
+  width: 100%;
+}
+
+.toggleGroup {
+  z-index: 4;
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0 0 12px 25px;
+}
+
+.labelWrapper {
+  z-index: 3;
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0 0 12px 25px;
+}
+
+.toggleLabel {
+  float: right;
+  padding-left: 40px;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.whiteFont {
+  color: white;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  float: left;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 4px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(11px);
+  -ms-transform: translateX(11px);
+  transform: translateX(11px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
   border-radius: 50%;
-  background:#2197F5;
-  display:block;
-  position:absolute;
-  left: 5px;
-  top: 2px;
-  transition:all 0.3s ease-in-out;
-}
-
-.tw-toggle input[value="true"]:checked ~ span{
-  background:#2197F5;
-  left: 5px;
-  color:#fff;
-}
-
-.tw-toggle input[value="false"]:checked ~ span{
-  background:#2197F5;
-  left: 36px;
-}
-
-.tw-toggle input[value="true"]:checked + label,.tw-toggle input[value="false"]:checked + label{
-  color:#fff;
-}
-
-.gm_streetview {
-  /* width: 100%; */
-  height: 100%;
-  padding: 15px 0px;
-}
-
-/* .google_map, .google_streetview {
-  width: 100%;
-  height: 100%;
-  padding: 15px 0px;
-} */
-
-/* #pano {
-float: left;
-height: 100%;
-width: 100%;
-} */
-
-/* #g_stview, #pano {
-  float: left;
-  height: 100%;
-  width: 50%;
-} */
-
-#g_stview {
-  float: left;
-  height: 100%;
-  width: 100%;
-}
-
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  border-style: solid;
-  width: 95%;
-  height: 4.5em;
-  text-align: center;
-}
-
-#pictometry {
-  margin-left: auto;
-  margin-right: auto;
-  padding: 5px;
-  /* width: 95%; */
-  height: 650px;
-  border-style: hidden;
 }
