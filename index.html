@@ -3,6 +3,9 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+
 <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest" SameSite=None Secure></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" SameSite=None Secure></script>
@@ -22,9 +25,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
 <!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js' SameSite=None Secure> -->
 <!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
 <link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure />
-<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css" SameSite=None Secure />
+<link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css" SameSite=None Secure />
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
-<!-- <script src="https://js.arcgis.com/4.13/" SameSite=None Secure></script>
+<!-- <script src="https://js.arcgis.com/4.14/" SameSite=None Secure></script>
 <script src="js/map.js"></script>
 <script src="js/controls.js"></script> -->
 <link rel="stylesheet" href="css/style.css"/>
@@ -38,9 +41,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
         <a class="navbar-brand">Project Viewer</a>
         <!-- About/Google Translate -->
         <div class="topnav topnav-support" id="navbarCollapse">
-          <div class="btn my-2 my-sm-0 m-2">
+          <!-- <div class="btn my-2 my-sm-0 m-2">
             <button class='nav-link btn btn-about' id="aboutBtn">ABOUT</button>
-          </div>
+          </div> -->
           <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
             <div id="google_translate_element"></div>
           </div>
@@ -154,14 +157,19 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
       <div class= "col" id="mainPanel">
         <div class="row fullHeight">
           <!-- LIST MODAL -->
+          <!-- List Content -->
           <div class="col-3" id="listModal">
-            <!-- <h4 id="countProj"></h4> -->
             <div class="row mostHeight">
-              <div class="col-11 break-word" id="projectList-content"></div>
-              <div class="col hideList">
-                <span class="closeList-btn"><i class="fa fa-angle-double-left"></i></span>
-              </div>
+              <div class="col-11 break-word" id="listContent"></div>
             </div>
+          </div>
+          <!-- Close List Button -->
+          <div class="col" id="closeList-btn">
+            <span><i class="fa fa-angle-double-left"></i></span>
+          </div>
+          <!-- Re-Open List Button -->
+          <div class="col" id="reopenList-btn">
+            <span><i class="fa fa-angle-double-right"></i></span>
           </div>
           <!-- MAP -->
           <div class="col" id="mapCol">
@@ -170,16 +178,20 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
               <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
             </div>
             <!-- View -->
-            <div class="col mapFull" id="viewDiv"></div>
+            <div class="w-100" id="viewDiv"></div>
             <!-- PROJECT MODAL -->
-            <div class="col col-offset-5" id="projectModal">
-              <div class="row" id="projectModal-content">
-                <!-- Close Button -->
-                <div class="row w-100 closeProject-btn">
+            <!-- Re-Open Popup Button -->
+            <div class="col" id="reopenPopup-btn">
+              <span><i class="fa fa-angle-double-up"></i></span>
+            </div>
+            <div class="w-100 col-offset-5" id="projectModal">
+              <div class="row" id="projectContent">
+                <!-- Close Popup Button -->
+                <div class="row w-100" id="closePopup-btn">
                   <span><i class="fa fa-angle-double-down"></i></span>
                 </div>
                 <!-- Popup Content -->
-                <div class="row justify-content-md-center" id="projectContent">
+                <div class="row justify-content-md-center" id="popupContent">
                   <!-- POPUP -->
                   <div class="col-md" id="popupDock"></div>
                   <!-- APIs -->
@@ -216,14 +228,10 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
   </script>
-  <script src="https://js.arcgis.com/4.13/" SameSite=None Secure></script>
+  <script src="https://js.arcgis.com/4.14/" SameSite=None Secure></script>
   <script src="js/page_contents.js"></script>
   <script src="js/controls.js"></script>
-  <!-- <script src="js/aboutModal.js"></script> -->
-  <script src="js/listModal.js"></script>
-  <script src="js/projectModal.js"></script>
-  <script src="js/map_testing.js"></script>
-  <!-- <script src="js/map.js"></script> -->
+  <script src="js/map.js"></script>
   <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure>
   </script> -->
   </script>

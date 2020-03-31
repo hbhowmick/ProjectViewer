@@ -55,31 +55,31 @@ $(document).ready(function () {
           });
         });
 
-				$.post(url.RTAs + "/query", {
-						where: "1=1",
-						outFields: "RTA, RTA_NAME",
-						returnGeometry: false,
-						orderByFields: 'RTA',
-						f: 'pjson'
-					})
-					.done(function (data) {
-						var rtas = $.parseJSON(data);
-						var rtasSelect = $('#rtaSelect');
-						$(rtas.features).each(function () {
-							rtasSelect.append(
-								$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
-							);
-						});
+			$.post(url.RTAs + "/query", {
+					where: "1=1",
+					outFields: "RTA, RTA_NAME",
+					returnGeometry: false,
+					orderByFields: 'RTA',
+					f: 'pjson'
+				})
+				.done(function (data) {
+					var rtas = $.parseJSON(data);
+					var rtasSelect = $('#rtaSelect');
+					$(rtas.features).each(function () {
+						rtasSelect.append(
+							$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
+						);
 					});
+				});
 
-					$.post(url.Districts + "/query", {
-							where: "1=1",
-							outFields: "DistrictName",
-							returnGeometry: false,
-							orderByFields: 'DistrictName',
-							f: 'pjson'
-						})
-						.done(function (data) {
+			$.post(url.Districts + "/query", {
+					where: "1=1",
+					outFields: "DistrictName",
+					returnGeometry: false,
+					orderByFields: 'DistrictName',
+					f: 'pjson'
+				})
+				.done(function (data) {
 							var districts = $.parseJSON(data);
 							var districtsSelect = $('#distSelect');
 							$(districts.features).each(function () {
@@ -145,5 +145,46 @@ $(document).ready(function () {
     .fail(function (jqxhr, textStatus, error) {
       var err = textStatus + ", " + error;
     });
+
+		$("#closeList-btn").click(function() {
+      $("#listModal").css("display", "none");
+			$("#closeList-btn").css("display", "none");
+			$("#reopenList-btn").css("display", "inline-block");
+      if($("#projectModal").css("display") == "block") {
+        $("#viewDiv").css("height", "58%");
+        $("#projectModal").css("height", "35%");
+      }
+    })
+
+		$("#reopenList-btn").click(function() {
+			$("#listModal").css("display", "block");
+			$("#closeList-btn").css("display", "inline-block");
+			$("#reopenList-btn").css("display", "none");
+		})
+
+		$("#closePopup-btn").click(function() {
+		  $("#projectModal").css("display", "none");
+			$("#closePopup-btn").css("display", "none");
+		  $("#viewDiv").css("height", "82%");
+			$("#reopenPopup-btn").css("display", "block");
+			$("#reopenPopup-btn").css("height", "25px");
+		})
+
+		$("#reopenPopup-btn").click(function() {
+			$("#projectModal").css("display", "block");
+			$("#viewDiv").css("height", "58%");
+			$("#projectModal").css("height", "35%");
+			$("#closePopup-btn").css("display", "block");
+			$("#reopenPopup-btn").css("display", "none");
+		})
+
+		$('.mapillary').hide();
+		$('.tw-toggle').click(function(){
+		  $('.gm_streetview, .mapillary').toggle();
+		});
+
+		$("#aboutBtn").click(function() {
+			$("#aboutModal").css("display", "block")
+		})
 
 });
