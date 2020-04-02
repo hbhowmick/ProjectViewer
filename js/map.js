@@ -1164,10 +1164,10 @@ $(document).ready(function () {
               });
               console.log(results)
               if (event.results.length > 1) {
-                $(".navArrows").css("display", "inline-block");
+                $("#navigationArrows").css("display", "inline-block");
                 $("#popupTotal").html(event.results.length)
               } else {
-                $(".navArrows").css("display", "none");
+                $("#navigationArrows").css("display", "none");
                 // console.log(popupIndex,popupIndexVal)
               }
               replacePopupGraphic(popupIndex);
@@ -1268,91 +1268,91 @@ $(document).ready(function () {
         };
       };
     });
-    //
-    // view.whenLayerView(projectLocations)
-    // .then(function (layerView) {
-    //   view.on("pointer-move", hoverEventHandler);
-    //   function hoverEventHandler(event) {
-    //     view.hitTest(event).then(getGraphics);
-    //   };
-    //   let highlightL, hoverProjectID;
-    //   function getGraphics(response) {
-    //     if (response.results.length) {
-    //       const graphic = response.results.filter(function(result) {
-    //         return result.graphic.layer === projectLocations;
-    //       })[0].graphic;
-    //       const attributes = graphic.attributes;
-    //       const attProjectID = attributes.ProjectID;
-    //       const attDivision = attributes.Division;
-    //       const attLocation = attributes.Location;
-    //
-    //       if (highlightL && hoverProjectID !== attProjectID) {
-    //         highlightL.remove();
-    //         highlightL = null;
-    //         return;
-    //       }
-    //       if (highlightL) {
-    //         return;
-    //       }
-    //
-    //       const query = layerView.createQuery();
-    //       query.where = "ProjectID = '" + attProjectID + "'";
-    //       layerView.queryObjectIds(query).then(function(ids) {
-    //         if (highlightL) {
-    //           highlightL.remove();
-    //         }
-    //         highlightL = layerView.highlight(ids);
-    //         hoverProjectID = attProjectID;
-    //       });
-    //     } else {
-    //       highlightL.remove();
-    //       highlightL = null;
-    //     };
-    //   };
-    // });
-    //
-    // view.whenLayerView(projectLocationsMBTA)
-    // .then(function (layerView) {
-    //   view.on("pointer-move", hoverEventHandler);
-    //   function hoverEventHandler(event) {
-    //     view.hitTest(event).then(getGraphics);
-    //   };
-    //   let highlightT, hoverProjectID;
-    //   function getGraphics(response) {
-    //     if (response.results.length) {
-    //       const graphic = response.results.filter(function(result) {
-    //         return result.graphic.layer === projectLocationsMBTA;
-    //       })[0].graphic;
-    //       const attributes = graphic.attributes;
-    //       const attDivision = "MBTA";
-    //       const attMBTAline = attributes.MBTA_Location;
-    //       // const attProjectID = attributes.ProjectID;
-    //       // const attLocation = attributes.Location;
-    //
-    //       if (highlightT && hoverMBTAline !== attMBTAline) {
-    //         highlightT.remove();
-    //         highlightT = null;
-    //         return;
-    //       }
-    //       if (highlightT) {
-    //         return;
-    //       }
-    //
-    //       const query = layerView.createQuery();
-    //       query.where = "MBTA_Location LIKE '%" + attMBTAline + "%'";
-    //       layerView.queryObjectIds(query).then(function(ids) {
-    //         if (highlightT) {
-    //           highlightT.remove();
-    //         }
-    //         highlightT = layerView.highlight(ids);
-    //         hoverMBTAline = attMBTAline;
-    //       });
-    //     } else {
-    //       highlightT.remove();
-    //       highlightT = null;
-    //     };
-    //   };
-    // });
+
+    view.whenLayerView(projectLocations)
+    .then(function (layerView) {
+      view.on("pointer-move", hoverEventHandler);
+      function hoverEventHandler(event) {
+        view.hitTest(event).then(getGraphics);
+      };
+      let highlightL, hoverProjectID;
+      function getGraphics(response) {
+        if (response.results.length) {
+          const graphic = response.results.filter(function(result) {
+            return result.graphic.layer === projectLocations;
+          })[0].graphic;
+          const attributes = graphic.attributes;
+          const attProjectID = attributes.ProjectID;
+          const attDivision = attributes.Division;
+          const attLocation = attributes.Location;
+
+          if (highlightL && hoverProjectID !== attProjectID) {
+            highlightL.remove();
+            highlightL = null;
+            return;
+          }
+          if (highlightL) {
+            return;
+          }
+
+          const query = layerView.createQuery();
+          query.where = "ProjectID = '" + attProjectID + "'";
+          layerView.queryObjectIds(query).then(function(ids) {
+            if (highlightL) {
+              highlightL.remove();
+            }
+            highlightL = layerView.highlight(ids);
+            hoverProjectID = attProjectID;
+          });
+        } else {
+          highlightL.remove();
+          highlightL = null;
+        };
+      };
+    });
+
+    view.whenLayerView(projectLocationsMBTA)
+    .then(function (layerView) {
+      view.on("pointer-move", hoverEventHandler);
+      function hoverEventHandler(event) {
+        view.hitTest(event).then(getGraphics);
+      };
+      let highlightT, hoverProjectID;
+      function getGraphics(response) {
+        if (response.results.length) {
+          const graphic = response.results.filter(function(result) {
+            return result.graphic.layer === projectLocationsMBTA;
+          })[0].graphic;
+          const attributes = graphic.attributes;
+          const attDivision = "MBTA";
+          const attMBTAline = attributes.MBTA_Location;
+          // const attProjectID = attributes.ProjectID;
+          // const attLocation = attributes.Location;
+
+          if (highlightT && hoverMBTAline !== attMBTAline) {
+            highlightT.remove();
+            highlightT = null;
+            return;
+          }
+          if (highlightT) {
+            return;
+          }
+
+          const query = layerView.createQuery();
+          query.where = "MBTA_Location LIKE '%" + attMBTAline + "%'";
+          layerView.queryObjectIds(query).then(function(ids) {
+            if (highlightT) {
+              highlightT.remove();
+            }
+            highlightT = layerView.highlight(ids);
+            hoverMBTAline = attMBTAline;
+          });
+        } else {
+          highlightT.remove();
+          highlightT = null;
+        };
+      };
+    });
 
 
 

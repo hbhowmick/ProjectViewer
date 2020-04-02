@@ -511,16 +511,18 @@ span {
   /* transform: translate(-50%); */
 }
 
-.navArrows {
+#navigationArrows {
   display: none;
-  /* display: inline-block; */
+  width: 100%;
   float: right;
-  padding: 0px 3px;
-  font-weight: bold;
+  padding-bottom: 15px;
+  text-align: right;
 }
 
-.esri-feature__size-container {
-  padding-top: 15px;
+.navArrows {
+  display: inline-block;
+  padding: 0px 3px;
+  font-weight: bold;
 }
 
 .arrow:hover {
