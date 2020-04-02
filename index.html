@@ -165,11 +165,11 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           </div>
           <!-- Close List Button -->
           <div class="col" id="closeList-btn">
-            <span><i class="fa fa-angle-double-left"></i></span>
+            <span><i class="fas fa-angle-double-left"></i></span>
           </div>
           <!-- Re-Open List Button -->
           <div class="col" id="reopenList-btn">
-            <span><i class="fa fa-angle-double-right"></i></span>
+            <span><i class="fas fa-angle-double-right"></i></span>
           </div>
           <!-- MAP -->
           <div class="col" id="mapCol">
@@ -193,7 +193,21 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                 <!-- Popup Content -->
                 <div class="row justify-content-md-center" id="popupContent">
                   <!-- POPUP -->
-                  <div class="col-md" id="popupDock"></div>
+                  <div class="col-md" id="popupDock">
+                    <!-- <div id="navigationArrows"> -->
+                      <div class="arrow navArrows" id="rightArrow">
+                        <i class="fas fa-angle-right"></i>
+                      </div>
+                      <div class="navArrows" id="popupCount">
+                        <div class="d-inline" id="popupIndex"></div>
+                        <div class="d-inline">of</div>
+                        <div class="d-inline" id="popupTotal"></div>
+                      </div>
+                      <div class="arrow navArrows" id="leftArrow">
+                        <i class="fas fa-angle-left"></i>
+                      </div>
+                    <!-- </div> -->
+                  </div>
                   <!-- APIs -->
                   <div class="col-md" id="imageryAPI">
                     <div class="tw-toggle">

@@ -165,7 +165,7 @@ $(document).ready(function () {
 		$("#closePopup-btn").click(function() {
 		  $("#projectModal").css("display", "none");
 			$("#closePopup-btn").css("display", "none");
-		  $("#viewDiv").css("height", "82%");
+		  $("#viewDiv").css("height", "91%");
 			$("#reopenPopup-btn").css("display", "block");
 			$("#reopenPopup-btn").css("height", "25px");
 		})

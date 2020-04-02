@@ -443,6 +443,7 @@ span {
   margin-top: 0.75%;
   /* background-color: yellow; */
   height: 95%;
+  /* height: 50%; */
 }
 
 #projectModal {
@@ -508,6 +509,22 @@ span {
   height: 96%;
   overflow-y: auto;
   /* transform: translate(-50%); */
+}
+
+.navArrows {
+  display: none;
+  /* display: inline-block; */
+  float: right;
+  padding: 0px 3px;
+  font-weight: bold;
+}
+
+.esri-feature__size-container {
+  padding-top: 15px;
+}
+
+.arrow:hover {
+  color: grey;
 }
 
 #projDesc {
