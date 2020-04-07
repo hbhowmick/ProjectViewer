@@ -121,7 +121,7 @@ $(document).ready(function () {
 			$("#division").change(function () {
 				getPrograms();
 			});
-
+			// Cost slider is used to configure the input and do something when the value is changed
 			$("#cost-range").slider({
 				range: true,
 				min: 0,
@@ -132,6 +132,7 @@ $(document).ready(function () {
 					$("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
 				}
 			});
+
 			minValue = numeral($("#minCost").val()).value();
 			maxValue = numeral($("#maxCost").val()).value();
 			if (minValue > maxValue) {

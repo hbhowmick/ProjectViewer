@@ -36,7 +36,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
 <body>
   <div id="outsideContainer" class="container-fluid d-flex flex-column">
     <!-- NAVBAR -->
-      <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
+    <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
         <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
         <a class="navbar-brand">Project Viewer</a>
         <!-- About/Google Translate -->
@@ -179,58 +179,6 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
             </div>
             <!-- View -->
             <div class="w-100" id="viewDiv"></div>
-            <!-- PROJECT MODAL -->
-            <!-- Re-Open Popup Button -->
-            <div class="col" id="reopenPopup-btn">
-              <span><i class="fa fa-angle-double-up"></i></span>
-            </div>
-            <div class="w-100 col-offset-5" id="projectModal">
-              <div class="row" id="projectContent">
-                <!-- Close Popup Button -->
-                <div class="row w-100" id="closePopup-btn">
-                  <span><i class="fa fa-angle-double-down"></i></span>
-                </div>
-                <!-- Popup Content -->
-                <div class="row justify-content-md-center" id="popupContent">
-                  <!-- POPUP -->
-                  <div class="col-md" id="popupDock">
-                    <div id="navigationArrows">
-                      <div class="arrow navArrows" id="leftArrow">
-                        <i class="fas fa-angle-left"></i>
-                      </div>
-                      <div class="navArrows" id="popupCount">
-                        <div class="d-inline" id="popupIndex"></div>
-                        <div class="d-inline">of</div>
-                        <div class="d-inline" id="popupTotal"></div>
-                      </div>
-                      <div class="arrow navArrows" id="rightArrow">
-                        <i class="fas fa-angle-right"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- APIs -->
-                  <div class="col-md" id="imageryAPI">
-                    <div class="tw-toggle">
-                      <input checked type="radio" name="toggle" value="true">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-street-view"></i>
-                      </label>
-                      <input type="radio" name="toggle" value="false">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-images"></i>
-                      </label>
-                      <span></span>
-                    </div>
-                    <div class="gm_streetview">
-                      <div id="g_stview"></div>
-                    </div>
-                    <div class="mapillary">
-                      <div id="mly" class="mapillary-js"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

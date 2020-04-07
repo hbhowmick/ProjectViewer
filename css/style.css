@@ -441,16 +441,14 @@ span {
 #viewDiv {
   margin: 0;
   margin-top: 0.75%;
-  /* background-color: yellow; */
   height: 95%;
-  /* height: 50%; */
 }
 
-#projectModal {
+/* #projectModal {
   display: none;
-  -webkit-animation-name: projectDesc; /* Safari 4.0 - 8.0 */
-  -webkit-animation-duration: 0.25s; /* Safari 4.0 - 8.0 */
-  -webkit-animation-direction: reverse; /* Safari 4.0 - 8.0 */
+  -webkit-animation-name: projectDesc;
+  -webkit-animation-duration: 0.25s;
+  -webkit-animation-direction: reverse;
   animation-name: projectDesc;
   animation-duration: 0.25s;
   animation-direction: reverse;
@@ -464,9 +462,9 @@ span {
 #projectContent {
   margin: 0px auto;
   height: 100%;
-}
+} */
 
-#closePopup-btn, #reopenPopup-btn {
+/* #closePopup-btn, #reopenPopup-btn {
   display: none;
   color: #464648;
   height: 25px !important;
@@ -486,34 +484,47 @@ span {
   position: relative;
   width: 100%;
   height: 87.6%;
-  /* background-color: blue; */
-}
+} */
 
 #closeList-btn:hover,
 #closeList-btn:focus,
 #reopenList-btn:hover,
 #reopenList-btn:focus,
-#closePopup-btn:hover,
+/* #closePopup-btn:hover,
 #closePopup-btn:focus,
 #reopenPopup-btn:hover,
-#reopenPopup-btn:focus  {
+#reopenPopup-btn:focus   */
+{
   color: #fff;
   text-decoration: none;
   cursor: pointer;
 }
 
-#popupDock {
+/* #popupDock {
   background-color: white;
   margin: 0px 7.5px;
   padding: 15px;
   height: 96%;
   overflow-y: auto;
-  /* transform: translate(-50%); */
+} */
+
+/* .topWidgets {
+  display: block;
+  margin-bottom: 45px;
 }
 
-#navigationArrows {
+#zoomTo {
+  float: left;
+  padding: 5px;
+}
+
+#zoomTo:hover {
+  background-color: rgba(210,210,210,0.8);
+  padding: 5px;
+} */
+
+/* #navigationArrows {
   display: none;
-  width: 100%;
   float: right;
   padding-bottom: 15px;
   text-align: right;
@@ -527,12 +538,11 @@ span {
 
 .arrow:hover {
   color: grey;
-}
+} */
 
-#projDesc {
+/* #projDesc {
   margin: 5px;
   display: block;
-  /* height: 85%; */
   overflow-y: auto;
   font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 16px;
@@ -543,6 +553,25 @@ span {
 
 #projDesc>p {
   margin: 0;
+} */
+
+.esri-popup__main-container{
+  width: 100% !important;
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.esri-popup--is-docked {
+  margin: 0;
+}
+
+.esri-popup__action-text {
+  display: inline-block !important;
+}
+
+.tProjList {
+  display: block;
+  margin: 5px 0px;
 }
 
 .mapillary {
@@ -559,9 +588,11 @@ span {
 
 #imageryAPI {
   background-color: white;
+  /* background-color: blue; */
   margin: 0px 7.5px;
   height: 96%;
 }
+
 .h-auto {
   height: auto;
   min-height: 8%;

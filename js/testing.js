@@ -24,98 +24,6 @@
     }
 
 
-    //---------------------Hover on Map---------------------//
-    // view.when().then(function() {
-    //   projectLocations.when().then(graphicHighlight);
-    //   // projectLocationsPoints.when().then(graphicHighlight);
-    //   // projectLocationsMBTA.when().then(graphicHighlight);
-    //
-    //   function graphicHighlight(layer) {
-    //     view.whenLayerView(layer)
-    //     .then(function(layerView) {
-    //       view.on("pointer-move", eventHandler);
-    //
-    //       function eventHandler(event) {
-    //         view.hitTest(event).then(getGraphics);
-    //       };
-    //
-    //       let highlight, hoverLayerTitle, hoverProjectID, hoverMBTAline;
-    //
-    //       function getGraphics(response) {
-    //         // console.log(response)
-    //         if (response.results.length) {
-    //
-    //           const graphic = response.results.filter(function(result) {
-    //             return result.graphic.layer === layer;
-    //           })[0].graphic;
-    //           const attributes = graphic.attributes;
-    //           const attLayerTitle = graphic.layer.title;
-    //
-    //           if(graphic.layer.title.includes('MBTA')) {
-    //             const attMBTAline = attributes.MBTA_Location;
-    //             const attDivision = "MBTA";
-    //
-    //
-    //             if (highlight && hoverMBTAline !== attMBTAline) {
-    //               console.log("a different line is already highlighted")
-    //               highlight.remove();
-    //               highlight = null;
-    //               return;
-    //             }
-    //
-    //             if (highlight) {
-    //               console.log("same MBTA line")
-    //               return;
-    //             }
-    //
-    //             const query = layerView.createQuery();
-    //             query.where = "MBTA_Location LIKE '%" + attMBTAline + "%'";
-    //             layerView.queryObjectIds(query).then(function(ids) {
-    //               if (highlight) {
-    //                 highlight.remove();
-    //               }
-    //               highlight = layerView.highlight(ids);
-    //               hoverMBTAline = attMBTAline;
-    //               hoverLayerTitle = attLayerTitle;
-    //             });
-    //           } else {
-    //
-    //             const attProjectID = attributes.ProjectID;
-    //             const attDivision = attributes.Division;
-    //             const attLocation = attributes.Location;
-    //             const attLayerTitle = graphic.layer.title;
-    //
-    //             if (highlight && hoverProjectID !== attProjectID) {
-    //               highlight.remove();
-    //               highlight = null;
-    //               return;
-    //             }
-    //
-    //             if (highlight) {
-    //               return;
-    //             }
-    //
-    //             const query = layerView.createQuery();
-    //             query.where = "ProjectID = '" + attProjectID + "'";
-    //             layerView.queryObjectIds(query).then(function(ids) {
-    //               if (highlight) {
-    //                 highlight.remove();
-    //               }
-    //               highlight = layerView.highlight(ids);
-    //               hoverProjectID = attProjectID;
-    //               hoverLayerTitle = attLayerTitle;
-    //             });
-    //           }
-    //
-    //
-    //         } else {
-    //            highlight.remove();
-    //            highlight = null;
-    //         };
-    //     });
-    //   }
-    // })
-
 //----------Click-----------//
 view.when(function() {
   var projectLayer = map.layers.getItemAt(1);
@@ -194,3 +102,133 @@ view.when(function() {
     });
   })
 });
+
+
+view.whenLayerView(projectLocationsMBTA)
+.then(function(layerView) {
+  view.on("pointer-move", eventHandler);
+  function eventHandler(event) {
+    view.hitTest(event).then(getGraphics);
+  };
+  let highlight, hoverLayerTitle, hoverProjectID, hoverMBTAline;
+  function getGraphics(response) {
+    // console.log(response)
+    if (response.results.length) {
+
+      const graphic = response.results.filter(function(result) {
+        return result.graphic.layer === layer;
+      })[0].graphic;
+      const attributes = graphic.attributes;
+      const attLayerTitle = graphic.layer.title;
+
+      if(graphic.layer.title.includes('MBTA')) {
+        const attMBTAline = attributes.MBTA_Location;
+        const attDivision = "MBTA";
+
+
+        if (highlight && hoverMBTAline !== attMBTAline) {
+          console.log("a different line is already highlighted")
+          highlight.remove();
+          highlight = null;
+          return;
+        }
+
+        if (highlight) {
+          console.log("same MBTA line")
+          return;
+        }
+
+        const query = layerView.createQuery();
+        query.where = "MBTA_Location LIKE '%" + attMBTAline + "%'";
+        layerView.queryObjectIds(query).then(function(ids) {
+          if (highlight) {
+            highlight.remove();
+          }
+          highlight = layerView.highlight(ids);
+          hoverMBTAline = attMBTAline;
+          hoverLayerTitle = attLayerTitle;
+        });
+      } else {
+
+        const attProjectID = attributes.ProjectID;
+        const attDivision = attributes.Division;
+        const attLocation = attributes.Location;
+        const attLayerTitle = graphic.layer.title;
+
+        if (highlight && hoverProjectID !== attProjectID) {
+          highlight.remove();
+          highlight = null;
+          return;
+        }
+
+        if (highlight) {
+          return;
+        }
+
+        const query = layerView.createQuery();
+        query.where = "ProjectID = '" + attProjectID + "'";
+        layerView.queryObjectIds(query).then(function(ids) {
+          if (highlight) {
+            highlight.remove();
+          }
+          highlight = layerView.highlight(ids);
+          hoverProjectID = attProjectID;
+          hoverLayerTitle = attLayerTitle;
+        });
+      }
+    } else {
+       highlight.remove();
+       highlight = null;
+    };
+  };
+})
+
+
+
+
+
+
+
+
+
+
+function popupFunction(feature) {
+  var query = new Query({
+    outFields: ["*"],
+    where: "ProjectID = '" + feature.graphic.attributes.ProjectID + "'"
+  });
+  return queryProjectTask.execute(query).then(function (result) {
+    var attributes = result.features[0].attributes;
+    if (attributes.Division == "Highway") {
+      link = "<a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink' class='popup-link' style='color: blue'>Additional Project Information.</a>"
+    } else if (attributes.Division == "MBTA") {
+      link = "<a href='https://www.mbta.com/projects' target=blank id='pinfoLink' class='popup-link'>Learn more about MBTA capital projects and programs.</a>"
+    } else {
+      link = ""
+    }
+
+    return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "' votes='" + attributes.Votes + "'>" + link + "</br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This project was programmed by the <b>" + attributes.Division + "</b> within the <b>" + attributes.Program + "</b> CIP Program. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
+  });
+}
+
+
+
+
+
+
+
+
+//
+// function popupFunctionList(attributes) {
+//   console.log(attributes)
+//
+//   if (attributes.Division == "Highway") {
+//     link = "<a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink' class='popup-link' style='color: blue'>Additional Project Information.</a>"
+//   } else if (attributes.Division == "MBTA") {
+//     link = "<a href='https://www.mbta.com/projects' target=blank id='pinfoLink' class='popup-link'>Learn more about MBTA capital projects and programs.</a>"
+//   } else {
+//     link = ""
+//   }
+//   return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + link + "</br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This project was programmed by the <b>" + attributes.Division + "</b> within the <b>" + attributes.Program + "</b> CIP Program. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
+//
+// };
