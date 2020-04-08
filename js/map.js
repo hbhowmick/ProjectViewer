@@ -193,6 +193,9 @@ $(document).ready(function () {
 
     function popupFunction(feature) {
       console.log(feature)
+      $(".esri-popup__main-container").append("<div class='imageryDiv'></div>")
+      $(".imageryDiv").html(feature.graphic.attributes.ProjectID)
+
       if(feature.graphic) {
         console.log("from Map Click")
         var query = new Query({
@@ -220,7 +223,7 @@ $(document).ready(function () {
         } else {
           link = ""
         }
-        return "<p id='popupFeatureSelected' val='" + feature.ProjectID + "'>" + link + "</br>MassDOT Division: " + feature.Division + "</br> Location: " + feature.Location + "</br> Program: " + feature.Program + "</br> Total Cost: " + numeral(feature.Total).format('$0,0[.]00') + "</p> This project was programmed by the <b>" + feature.Division + "</b> within the <b>" + feature.Program + "</b> CIP Program. It is located in <b>" + feature.Location + "</b> and has a total cost of <b>" + numeral(feature.Total).format('$0,0[.]00') + "</b>."
+        return "<p id='popupFeatureSelected' val='" + feature.ProjectID + "'>" + link + "</br>MassDOT Division: " + feature.Division + "</br> Location: " + feature.Location + "</br> Program: " + feature.Program + "</br> Total Cost: " + numeral(feature.Total).format('$0,0[.]00') + "</p> This project was programmed by the <b>" + feature.Division + "</b> within the <b>" + feature.Program + "</b> CIP Program. It is located in <b>" + feature.Location + "</b> and has a total cost of <b>" + numeral(feature.Total).format('$0,0[.]00') + "</b>.";
       }
     }
 
@@ -1189,8 +1192,13 @@ $(document).ready(function () {
 
     view.popup.on("trigger-action", function(event) {
       if (event.action.id === 'zoomTo') {
-        // console.log("clicked zoom to")
-        view.goTo(pointClick);
+        console.log(pointClick.geometry.latitude)
+        pointClick.geometry.latitude = pointClick.geometry.latitude - 0.01;
+        console.log(pointClick.geometry.latitude)
+        view.goTo({
+          center: pointClick,
+          zoom: view.zoom
+        });
       }
     })
 
