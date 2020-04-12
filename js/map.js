@@ -81,13 +81,14 @@ $(document).ready(function () {
     projectSearchID = false;
 
     sourceLayerView = false;
-    highlight = false;
-    highlightClickL = null;
-    highlightClickP = null;
+    // highlight = false;
+    // highlightClickL = null;
+    // highlightClickP = null;
+    // highlightTEST = null;
     results = [];
     popupIndex = 0;
     popupIndexVal = 0;
-    projectPopup = '';
+    currentPopup = '';
 
 
     //-------LAYERS--------//
@@ -98,7 +99,7 @@ $(document).ready(function () {
         color: [255, 255, 0, 1],
         width: "2.5px"
       }
-    }
+    };
 
     projectList = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6",
@@ -194,9 +195,9 @@ $(document).ready(function () {
       var query = new Query({
         outFields: ["*"],
         where: "ProjectID = '" + feature.graphic.attributes.ProjectID + "'"
-      });
+      })
       return queryProjectTask.execute(query).then(function (result) {
-        var attributes = result.features[0].attributes;
+        var attributes = result.features[0].attributes
         if (attributes.Division == "Highway") {
           link = "<a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink' class='popup-link' style='color: blue'>Additional Project Information.</a>"
         } else if (attributes.Division == "MBTA") {
@@ -206,37 +207,38 @@ $(document).ready(function () {
         }
 
         return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "' votes='" + attributes.Votes + "'>" + link + "</br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This project was programmed by the <b>" + attributes.Division + "</b> within the <b>" + attributes.Program + "</b> CIP Program. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
-      });
-    }
+      })
+    };
+
     //This function creates the content for the popups for MBTA lines
     function popupFunctionMbtaAsset(feature) {
-      $(".line").remove();
-      $(".mode").remove();
-      $(".system").remove();
+      $(".line").remove()
+      $(".mode").remove()
+      $(".system").remove()
 
-      thisFeature = feature;
-      console.log(feature)
-      lineProjects = [];
-      modeProjects = [];
-      systemProjects = [];
+      thisFeature = feature
+      // console.log(feature)
+      lineProjects = []
+      modeProjects = []
+      systemProjects = []
       if(sqlQuery){
-        sqlQuery = sqlQuery;
+        sqlQuery = sqlQuery
       } else {
-        sqlQuery = "(1=1)";
+        sqlQuery = "(1=1)"
       }
       var query = new Query({
         outFields: ["*"],
         where: "(MBTA_Location like '%" + feature.graphic.attributes.MBTA_Location + "%' or MBTA_Location = '" + feature.graphic.attributes.route_desc + "' or MBTA_Location = 'System') AND " + sqlQuery
-      });
+      })
       // console.log(query.where)
       return queryProjectTask.execute(query).then(function (result) {
         if (result.features.length > 0) {
-          var table = "";
+          var table = ""
           $(result.features).each(function () {
             // thisProject = "<p><button class='btn info tProjList' id=" + this.attributes.ProjectID + ">" + this.attributes.Project_Description + " (" + this.attributes.ProjectID + ")</button></p>";
             // table = table.concat(thisProject);
-            thisProject = "<p><button class='btn info tProjList' id=" + this.attributes.ProjectID + ">" + this.attributes.Project_Description + " (" + this.attributes.ProjectID + ")</button></p>";
-            table = table.concat(thisProject);
+            thisProject = "<p><button class='btn info tProjList' id=" + this.attributes.ProjectID + ">" + this.attributes.Project_Description + " (" + this.attributes.ProjectID + ")</button></p>"
+            table = table.concat(thisProject)
 
             var thisProject = new Graphic({
               // geometry: view.popup.selectedFeature.geometry,
@@ -256,68 +258,73 @@ $(document).ready(function () {
                   className: "esri-icon-undo"
                 }]
               }
-            });
+            })
             if (this.attributes.MBTA_Location.includes(feature.graphic.attributes.MBTA_Location)) {
               lineProjects.push(thisProject);
             } else if (this.attributes.MBTA_Location === feature.graphic.attributes.route_desc) {
               modeProjects.push(thisProject);
             } else {
               systemProjects.push(thisProject);
+              console.log(this.attributes.MBTA_Location, feature.graphic.attributes.route_desc)
             }
-          });
+          })
 
           $(".mbtaPopup")
           .append("<p id='popupFeatureSelected' class='tProjList line' modeType='line' val='" + feature.graphic.attributes.MBTA_Location + "'></p>")
           .append("<p id='popupFeatureSelected' class='tProjList mode' modeType='mode' val='" + feature.graphic.attributes.route_desc + "'></p>")
-          .append("<p id='popupFeatureSelected' class='tProjList system' modeType='system' val='System'></p>");
+          .append("<p id='popupFeatureSelected' class='tProjList system' modeType='system' val='System'></p>")
 
           if (lineProjects.length > 0) {
             $(".line").append("<button class='btn btn-info' id='mbtaLine'></button>")
-            line = "View " + feature.graphic.attributes.MBTA_Location + " projects";
-            $("#mbtaLine").html(line);
+            line = "View " + feature.graphic.attributes.MBTA_Location + " projects"
+            $("#mbtaLine").html(line)
           } else {
-            $(".line").append("<p>No " + feature.graphic.attributes.MBTA_Location + " projects currently match your search criteria</p>");
+            $(".line").append("<p>No " + feature.graphic.attributes.MBTA_Location + " projects currently match your search criteria</p>")
           }
           if (modeProjects.length > 0) {
             $(".mode").append("<button class='btn btn-info' id='mbtaMode'></button>")
-            mode = "View " + feature.graphic.attributes.route_desc + " projects";
-            $("#mbtaMode").html(mode);
+            mode = "View " + feature.graphic.attributes.route_desc + " projects"
+            $("#mbtaMode").html(mode)
           } else {
-            $(".mode").append("<p>No " + feature.graphic.attributes.route_desc + " projects currently match your search criteria</p>");
+            if(feature.graphic.attributes.route_desc == 'Silver Line') {
+              $(".mode").remove()
+            } else {
+              $(".mode").append("<p>No " + feature.graphic.attributes.route_desc + " projects currently match your search criteria</p>")
+            }
           }
           if (systemProjects.length > 0) {
             $(".system").append("<button class='btn btn-info' id='mbtaSystem'></button>");
-            mbta = "View MBTA Systemwide projects";
-            $("#mbtaSystem").html(mbta);
+            mbta = "View MBTA Systemwide projects"
+            $("#mbtaSystem").html(mbta)
           } else {
-            $(".system").append("<p>No MBTA Systemwide projects currently match your search criteria</p>");
+            $(".system").append("<p>No MBTA Systemwide projects currently match your search criteria</p>")
           }
           } else {
-          return "<p id='popupFeatureSelected' class='tProjList' val=''>No projects currently match your search criteria</p>";
+          return "<p id='popupFeatureSelected' class='tProjList' val=''>No projects currently match your search criteria</p>"
           }
 
-      });
-    }
+      })
+    };
 
     //This listens for the user to click a button from an MBTA system feature with the .tProjList class. It will then display all projects associated with that MBTA asset
     $(document).on("click", ".tProjList", function (e) {
-      existingFeatures = view.popup.features;
-      selectedIndex = view.popup.selectedFeatureIndex;
+      existingFeatures = view.popup.features
+      selectedIndex = view.popup.selectedFeatureIndex
       switch ($(this).attr('modeType')) {
         case 'line':
-          popupFeatures = lineProjects;
+          popupFeatures = lineProjects
           break;
         case 'mode':
-          popupFeatures = modeProjects;
+          popupFeatures = modeProjects
           break;
         case 'system':
-          popupFeatures = systemProjects;
+          popupFeatures = systemProjects
       }
       view.popup.open({
         features: popupFeatures,
         featureMenuOpen: true,
         highlightEnabled: true
-      });
+      })
     });
 
     queryProjectTask = new QueryTask({
@@ -394,7 +401,7 @@ $(document).ready(function () {
       + " AND " + programSQL
       + " AND " + "(Total>=" + numeral($("#minCost").val()).value()
       + " AND Total<=" + numeral($("#maxCost").val()).value()
-      + ")";
+      + ")"
 
       console.log("*************************\n",
       // '\nDiv: ', $("#division").val(),
@@ -412,16 +419,16 @@ $(document).ready(function () {
 
     $("#division").change(function() {
       if ($("#division").val() !== "All") {
-        divisionSQL = "Division='" + $("#division").val() + "'";
+        divisionSQL = "Division='" + $("#division").val() + "'"
       } else {
-        divisionSQL = "1=1";
+        divisionSQL = "1=1"
       }
       divisionSQL = "(" + divisionSQL + ")"
     });
 
     $("#programs").change(function() {
       if ($("#programs").val()[0] == 'All' || $("#programs").val()[0] == '') {
-        programSQL = "1=1";
+        programSQL = "1=1"
       } else {
         $($("#programs").val()).each(function () {
           if (this == $("#programs").val()[0]) {
@@ -429,124 +436,120 @@ $(document).ready(function () {
           } else {
             programSQL = programSQL + " OR Program = '" + this + "'"
           }
-        });
+        })
       }
       programSQL = "(" + programSQL + ")"
     });
 
     $("#townSelect").change(function() {
-      $("#mpoSelect").val("All");
-      $("#rtaSelect").val("All");
-      $("#distSelect").val("All");
+      $("#mpoSelect").val("All")
+      $("#rtaSelect").val("All")
+      $("#distSelect").val("All")
 
       if($("#townSelect").val() == '0') {
-        townName = "All";
-        townSQL = "(1=1)";
-        extentForRegionOfInterest = stateExtent.fullExtent;
+        townName = "All"
+        townSQL = "(1=1)"
+        extentForRegionOfInterest = stateExtent.fullExtent
       } else {
         townName = $("#townSelect").val()
-        townQuery.where = "TOWN = '" + townName + "'";
-        townQuery.returnGeometry = true;
-        townQuery.outSpatialReference = view.spatialReference;
+        townQuery.where = "TOWN = '" + townName + "'"
+        townQuery.returnGeometry = true
+        townQuery.outSpatialReference = view.spatialReference
         townLayer.queryFeatures(townQuery).then(function(response) {
-          townGeometry = response.features[0].geometry;
-          extentForRegionOfInterest = townGeometry;
+          townGeometry = response.features[0].geometry
+          extentForRegionOfInterest = townGeometry
         })
         townSQL = "(Location='" + townName + "' OR Location_Source='" + townName + "' OR Location='Statewide' OR Location_Source='Statewide')"
-        ;
       }
 
-      spatialSQL = spatialSQL + " AND " + townSQL;
+      spatialSQL = spatialSQL + " AND " + townSQL
 
-    })
+    });
 
     $("#mpoSelect").change(function() {
-      $("#townSelect").val("0");
-      $("#rtaSelect").val("All");
-      $("#distSelect").val("All");
+      $("#townSelect").val("0")
+      $("#rtaSelect").val("All")
+      $("#distSelect").val("All")
 
       if($("#mpoSelect").val() == 'All') {
-        mpoName = "All";
-        mpoSQL = "(1=1)";
-        extentForRegionOfInterest = stateExtent.fullExtent;
+        mpoName = "All"
+        mpoSQL = "(1=1)"
+        extentForRegionOfInterest = stateExtent.fullExtent
       } else {
         mpoName = $("#mpoSelect").val()
-        mpoQuery.where = "Location = '" + mpoName + "'";
-        mpoQuery.returnGeometry = true;
-        mpoQuery.outSpatialReference = view.spatialReference;
+        mpoQuery.where = "Location = '" + mpoName + "'"
+        mpoQuery.returnGeometry = true
+        mpoQuery.outSpatialReference = view.spatialReference
         mpoLayer.queryFeatures(mpoQuery).then(function(response) {
-          mpoGeometry = response.features[0].geometry;
-          extentForRegionOfInterest = mpoGeometry;
+          mpoGeometry = response.features[0].geometry
+          extentForRegionOfInterest = mpoGeometry
         })
         mpoSQL = "(Location='" + mpoName + "' OR Location_Source='" + mpoName + "' OR Location='Statewide' OR Location_Source='Statewide')"
-        ;
       }
 
-      spatialSQL = spatialSQL + " AND " + mpoSQL;
+      spatialSQL = spatialSQL + " AND " + mpoSQL
     })
 
     $("#rtaSelect").change(function() {
-      $("#mpoSelect").val("All");
-      $("#townSelect").val("0");
-      $("#distSelect").val("All");
+      $("#mpoSelect").val("All")
+      $("#townSelect").val("0")
+      $("#distSelect").val("All")
 
       if($("#rtaSelect").val() == 'All') {
-        rtaName = "All";
-        rtaSQL = "(1=1)";
-        extentForRegionOfInterest = stateExtent.fullExtent;
+        rtaName = "All"
+        rtaSQL = "(1=1)"
+        extentForRegionOfInterest = stateExtent.fullExtent
       } else {
         rtaName = $("#rtaSelect").val()
         if(rtaName.includes("'")) {
-          rtaQuery.where = "Location LIKE '%" + rtaName.substr(0, rtaName.indexOf("'")) + '%' + rtaName.substr(rtaName.indexOf("'")+1, rtaName.length) +  "'";
+          rtaQuery.where = "Location LIKE '%" + rtaName.substr(0, rtaName.indexOf("'")) + '%' + rtaName.substr(rtaName.indexOf("'")+1, rtaName.length) +  "'"
         } else {
-          rtaQuery.where = "Location = '" + rtaName + "'";
+          rtaQuery.where = "Location = '" + rtaName + "'"
         }
-        console.log(rtaQuery.where);
-        rtaQuery.returnGeometry = true;
-        rtaQuery.outSpatialReference = view.spatialReference;
+        console.log(rtaQuery.where)
+        rtaQuery.returnGeometry = true
+        rtaQuery.outSpatialReference = view.spatialReference
         rtaLayer.queryFeatures(rtaQuery).then(function(response) {
-          rtaGeometry = response.features[0].geometry;
-          extentForRegionOfInterest = rtaGeometry;
+          rtaGeometry = response.features[0].geometry
+          extentForRegionOfInterest = rtaGeometry
           console.log(extentForRegionOfInterest)
         })
         rtaSQL = "(Location='" + rtaName + "' OR Location_Source='" + rtaName
         + "' OR Location='Statewide' OR Location_Source='Statewide')"
-        ;
       }
 
-      spatialSQL = spatialSQL + " AND " + rtaSQL;
+      spatialSQL = spatialSQL + " AND " + rtaSQL
     })
 
     $("#distSelect").change(function() {
-      $("#mpoSelect").val("All");
-      $("#rtaSelect").val("All");
-      $("#townSelect").val("0");
+      $("#mpoSelect").val("All")
+      $("#rtaSelect").val("All")
+      $("#townSelect").val("0")
 
       if($("#distSelect").val() == 'All') {
-        distName = "All";
-        distSQL = "(1=1)";
-        extentForRegionOfInterest = stateExtent.fullExtent;
+        distName = "All"
+        distSQL = "(1=1)"
+        extentForRegionOfInterest = stateExtent.fullExtent
       } else {
         distName = $("#distSelect").val()
-        distQuery.where = "Location = '" + distName + "'";
-        distQuery.returnGeometry = true;
-        distQuery.outSpatialReference = view.spatialReference;
+        distQuery.where = "Location = '" + distName + "'"
+        distQuery.returnGeometry = true
+        distQuery.outSpatialReference = view.spatialReference
         distLayer.queryFeatures(distQuery).then(function(response) {
-          distGeometry = response.features[0].geometry;
-          extentForRegionOfInterest = distGeometry;
+          distGeometry = response.features[0].geometry
+          extentForRegionOfInterest = distGeometry
         })
         distSQL = "(Location='" + distName + "' OR Location_Source='" + distName + "' OR Location='Statewide' OR Location_Source='Statewide')"
-        ;
       }
 
-      spatialSQL = spatialSQL + " AND " + distSQL;
+      spatialSQL = spatialSQL + " AND " + distSQL
     })
 
     $("#searchBtn").on("click", function() {
-      view.popup.close();
-      view.graphics.removeAll();
-      $("#projectModal").css("display", "none");
-      $("#viewDiv").css("height", "95%");
+      view.popup.close()
+      view.graphics.removeAll()
+      $("#projectModal").css("display", "none")
+      $("#viewDiv").css("height", "95%")
       resultObject = {
         "Division":
         [
@@ -565,9 +568,9 @@ $(document).ready(function () {
           {"MapIT":[]},
           {"STIP":[]},
         ]
-      };
+      }
 
-      updateSQL();
+      updateSQL()
       view.goTo(extentForRegionOfInterest)
       view.whenLayerView(projectLocations)
       .then(nowSearchProjects)
@@ -1188,9 +1191,9 @@ $(document).ready(function () {
 
       view.whenLayerView(projectLocations).then(function(layerView) {
         prjLocationLines = layerView
-        let results = []
-        var popupIndex = 0
-        var popupIndexVal = 0
+        // let results = []
+        // var popupIndex = 0
+        // var popupIndexVal = 0
 
         view.on("pointer-move", function(event) {
           view.hitTest(event).then(getGraphics)
@@ -1235,6 +1238,7 @@ $(document).ready(function () {
             highlightL.remove()
           }
           view.hitTest(event).then(function(event) {
+            // console.log(event.results)
             if(event.results.length>0){
               $("#reopenPopup-btn").css("display", "none")
               $("#closePopup-btn").css("display", "block")
@@ -1248,7 +1252,7 @@ $(document).ready(function () {
               results = event.results.filter(function(result) {
                 return result.graphic.layer.popupTemplate
               })
-              console.log(results)
+              // console.log(results)
               if (event.results.length > 1) {
                 $("#navigationArrows").css("display", "inline-block")
                 $("#popupTotal").html(event.results.length)
@@ -1256,7 +1260,7 @@ $(document).ready(function () {
                 $("#navigationArrows").css("display", "none")
                 // console.log(popupIndex,popupIndexVal)
               }
-              replacePopupGraphic(popupIndex)
+              replacePopupGraphic(results)
             }
           })
         })
@@ -1270,7 +1274,7 @@ $(document).ready(function () {
           }
           // console.log(popupIndex,popupIndexVal)
           $("#popupIndex").html(popupIndexVal)
-          replacePopupGraphic(popupIndex)
+          replacePopupGraphic(results)
         })
         $("#leftArrow").on("click", function(){
           if (popupIndexVal>1) {
@@ -1282,38 +1286,11 @@ $(document).ready(function () {
           }
           // console.log(popupIndex, popupIndexVal);
           $("#popupIndex").html(popupIndexVal)
-          replacePopupGraphic(popupIndex)
+          replacePopupGraphic(results)
         })
-        function replacePopupGraphic(index) {
-          $("#popupDock").removeClass("mbtaPopup")
-          $(".tProjList").remove()
-
-          var result = results[index]
-          console.log(result)
-          projectPopup = result.graphic.geometry
-
-          if (result.graphic.attributes.MBTA_Location) {
-            $("#popupDock").addClass("mbtaPopup")
-          }
-
-          // highlight && highlight.remove();
-          if (result) {
-            // console.log(result.graphic.attributes.ProjectID)
-            feature.graphic = result.graphic
-            console.log(index, result.graphic.layer.title)
-            // highlight = layerView.highlight(result.graphic)
-            if (highlightClickP) {
-              highlightClickP.remove()
-              highlightClickP = null
-            }
-            highlightClickL = prjLocationLines.highlight(result.graphic)
-          } else {
-            console.log('else')
-            feature.graphic = graphic
-          }
-        }
 
       });
+
 
       view.whenLayerView(projectLocationsPoints).then(function (layerView) {
         prjLocationPoints = layerView
@@ -1360,85 +1337,61 @@ $(document).ready(function () {
           }
         }
 
-        view.on("click", function(event) {
-          if (highlightP) {
-            highlightP.remove()
-          }
-          view.hitTest(event).then(function(event) {
-            if(event.results.length>0){
-              $("#reopenPopup-btn").css("display", "none")
-              $("#closePopup-btn").css("display", "block")
-              $("#projectModal").css("display", "block")
-              $("#viewDiv").css("height", "58%")
-              results = []
-              popupIndex = 0
-              popupIndexVal = 0
-              popupIndexVal = popupIndex+1
-              $("#popupIndex").html(popupIndexVal)
-              results = event.results.filter(function(result) {
-                return result.graphic.layer.popupTemplate
-              })
-              // console.log(results)
-              if (event.results.length > 1) {
-                $("#navigationArrows").css("display", "inline-block")
-                $("#popupTotal").html(event.results.length)
-              } else {
-                $("#navigationArrows").css("display", "none")
-              }
-              replacePopupGraphic(popupIndex)
-            }
+        // view.on("click", function(event) {
+        //   if (highlightP) {
+        //     highlightP.remove()
+        //   }
+        //   view.hitTest(event).then(function(event) {
+        //     if(event.results.length>0){
+        //       $("#reopenPopup-btn").css("display", "none")
+        //       $("#closePopup-btn").css("display", "block")
+        //       $("#projectModal").css("display", "block")
+        //       $("#viewDiv").css("height", "58%")
+        //       results = []
+        //       popupIndex = 0
+        //       popupIndexVal = 0
+        //       popupIndexVal = popupIndex+1
+        //       $("#popupIndex").html(popupIndexVal)
+        //       results = event.results.filter(function(result) {
+        //         return result.graphic.layer.popupTemplate
+        //       })
+        //       // console.log(results)
+        //       if (event.results.length > 1) {
+        //         $("#navigationArrows").css("display", "inline-block")
+        //         $("#popupTotal").html(event.results.length)
+        //       } else {
+        //         $("#navigationArrows").css("display", "none")
+        //       }
+        //       replacePopupGraphic(popupIndex)
+        //     }
+        //
+        //   })
+        // })
+        // $("#rightArrow").on("click", function(){
+        //   if (popupIndexVal<results.length) {
+        //     popupIndex+=1
+        //     popupIndexVal+=1
+        //   } else {
+        //     popupIndex=0
+        //     popupIndexVal=1
+        //   }
+        //   // console.log(popupIndex,popupIndexVal)
+        //   $("#popupIndex").html(popupIndexVal)
+        //   replacePopupGraphic(popupIndex)
+        // });
+        // $("#leftArrow").on("click", function(){
+        //   if (popupIndexVal>1) {
+        //     popupIndex-=1
+        //     popupIndexVal-=1
+        //   } else {
+        //     popupIndex=results.length-1
+        //     popupIndexVal=results.length
+        //   }
+        //   // console.log(popupIndex, popupIndexVal)
+        //   $("#popupIndex").html(popupIndexVal)
+        //   replacePopupGraphic(popupIndex)
+        // })
 
-          })
-        })
-        $("#rightArrow").on("click", function(){
-          if (popupIndexVal<results.length) {
-            popupIndex+=1
-            popupIndexVal+=1
-          } else {
-            popupIndex=0
-            popupIndexVal=1
-          }
-          // console.log(popupIndex,popupIndexVal)
-          $("#popupIndex").html(popupIndexVal)
-          replacePopupGraphic(popupIndex)
-        });
-        $("#leftArrow").on("click", function(){
-          if (popupIndexVal>1) {
-            popupIndex-=1
-            popupIndexVal-=1
-          } else {
-            popupIndex=results.length-1
-            popupIndexVal=results.length
-          }
-          // console.log(popupIndex, popupIndexVal)
-          $("#popupIndex").html(popupIndexVal)
-          replacePopupGraphic(popupIndex)
-        })
-        function replacePopupGraphic(index) {
-
-          $("#popupDock").removeClass("mbtaPopup")
-          $(".tProjList").remove()
-
-          var result = results[index]
-          projectPopup = result.graphic.geometry
-
-          if (result.graphic.attributes.MBTA_Location) {
-            $("#popupDock").addClass("mbtaPopup")
-          }
-
-          if (result) {
-            feature.graphic = result.graphic
-            // console.log(index, result.graphic.layer.title);
-            if (highlightClickL) {
-              highlightClickL.remove()
-              highlightClickL = null
-            }
-            highlightClickP = prjLocationPoints.highlight(result.graphic)
-          } else {
-            console.log('else')
-            feature.graphic = graphic
-          }
-        }
       });
 
       view.whenLayerView(projectLocationsMBTA).then(function (layerView) {
@@ -1483,11 +1436,121 @@ $(document).ready(function () {
         }
       });
 
+      function replacePopupGraphic(results) {
+        console.log(results)
+        $("#popupDock").removeClass("mbtaPopup")
+        $(".tProjList").remove()
+
+        var result = results[popupIndex]
+        currentPopup = result
+        console.log(popupIndex)
+        if(result.graphic.geometry.type === "point") {
+          console.log("point")
+          currentLat = result.graphic.geometry.latitude
+          currentLong = result.graphic.geometry.longitude
+        } else if (result.graphic.geometry.type === "polyline"){
+          console.log("line")
+          currentLat = result.graphic.geometry.extent.center.latitude
+          currentLong = result.graphic.geometry.extent.center.longitude
+        } else {
+          console.log(result.graphic.geometry.type, "need to return lat/long from graphic")
+        }
+
+        if(result.graphic.attributes.MBTA_Location) {
+          currentID = result.graphic.attributes.MBTA_Location
+        } else {
+          currentID = result.graphic.attributes.ProjectID
+        }
+
+        // currentIMG = "Project: ".concat(currentID).concat(", Latitude: ").concat(currentLat).concat(", Longitude: ").concat(currentLong)
+        // $("#imageryAPI").html(currentIMG)
+
+        googleStreetView(currentLat, currentLong)
+        // mapillaryImage(currentLat, currentLong)
+
+
+
+        if (result.graphic.attributes.MBTA_Location) {
+          $("#popupDock").addClass("mbtaPopup")
+        }
+
+        if (result) {
+          feature.graphic = result.graphic
+          // console.log(popupIndex, result.graphic.layer.title);
+          // if(highlightTEST) {
+            //   highlightTEST.remove()
+            //   console.log("removed highlightTEST")
+            // }
+            // highlightTEST = layerView.highlight(result.graphic)
+            // layerView.highlight(result.graphic)
+          // if (highlightClickL) {
+          //   highlightClickL.remove()
+          //   highlightClickL = null
+          // }
+          // highlightClickP = prjLocationPoints.highlight(result.graphic)
+        } else {
+          console.log('else')
+          feature.graphic = graphic
+        }
+      }
+
     });
 
+    function googleStreetView(lat, long) {
+      console.log("Streetview lat/long: ", lat, long)
+      var mapCenter = {
+        lat: lat,
+        lng: long
+      }
+      // var mapCenter = {
+      //   lat: 42.344,
+      //   lng: -71.036
+      // }
+      var gMap = new google.maps.Map(document.getElementById('mly'), {
+        zoom: 14,
+        center: mapCenter,
+      })
+      var gPanorama = new google.maps.StreetViewPanorama(document.getElementById('g_map'), {
+        position: mapCenter,
+        pov: {
+          heading: 34,
+          pitch: 10
+        },
+        // fov: 20,
+        visible: true
+      })
+      gMap.setStreetView(gPanorama)
+    };
 
 
 
+
+    function mapillaryImage(lat, long) {
+      console.log("Mapillary lat/long: ", lat, long);
+      $.get("https://a.mapillary.com/v3/images", {
+        client_id: 'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
+        // closeto: [long,lat], // [-71.1189,42.3733]
+        closeto: [-71.1189,42.3733],
+        per_page: 100,
+        radius: 10000,
+      })
+      .done(function (data) {
+        var featuresMapAPI = [];
+        featuresMapAPI = data.features;
+        var latMapAPI = featuresMapAPI[0].geometry.coordinates[1];
+        var longMapAPI = featuresMapAPI[0].geometry.coordinates[0];
+        // console.log(longMapAPI, latMapAPI);
+        var keyMapAPI = String(featuresMapAPI[0].properties.key);
+        // console.log(keyMapAPI);
+        var mlyCombined;
+        mlyCombined = {};
+        mlyCombined = new Mapillary.Viewer(
+          'mly',
+          'cWVha0Q3dzFvTTlSQWFBR09jZnJsUTpjOTU2ZWVjNDA4ODAxZjFj',
+          keyMapAPI,
+        )
+      })
+    }
 
 
 
@@ -1504,9 +1567,6 @@ $(document).ready(function () {
       position: "top-left",
       index: 1
     }]);
-
-
-
 
   });
 });

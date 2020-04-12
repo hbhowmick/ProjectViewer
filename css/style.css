@@ -22,10 +22,6 @@ nav {
   background-color: #14558f !important;
 }
 
-/* div {
-  width: 100%;
-} */
-
 .main {
   padding: 0px 15px;
   height: 100%;
@@ -45,11 +41,6 @@ nav {
   font-size: 13px !important;
 }
 
-img {
-  /* padding-bottom: 0.3%;
-  padding-left: 0.3%; */
-}
-
 span {
   margin: 0 auto;
 }
@@ -60,6 +51,7 @@ span {
 
 .esri-view, .esri-view-root, .esri-view-surface {
   width: 100% !important;
+  /* max-height: 96%; */
 }
 
 .esri-attribution {
@@ -114,10 +106,8 @@ span {
 }
 
 .img-fluid {
-  max-width: 12%;
   position: absolute;
   left: 0px;
-  /* float: left; */
   padding: 15px 20px 0px 35px;
 }
 
@@ -141,9 +131,12 @@ span {
   max-width: 330px;
   padding-left: 20px;
   padding-right: 0px !important;
+  /* padding-bottom: 20px; */
   height: 100%;
   /* background-color: #1B2831; */
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 #sidePanel h4, #sidePanel p, .form-inline {
@@ -154,17 +147,12 @@ span {
   color: white;
 }
 
-.overflowScroll {
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
 #sideFilters {
-  /* height: 93%; */
-  height: auto;
+  /* height: 96%; */
+  height: 100%;
   width: 100%;
+  padding: 8% 0%;
   padding-right: 10px;
-  margin-top: 20px;
 }
 
 .filterBox {
@@ -212,9 +200,10 @@ span {
 }
 
 .searchLabel {
-  /* background-color: rgb(226, 119, 40); */
   color: white !important;
   background-color: #14558f;
+  font-size: 10px;
+  font-weight: normal;
 }
 
 .bottomMargin {
@@ -239,16 +228,6 @@ span {
   transition: .3s;
 }
 
-/* .searchBottom {
-  position: fixed;
-  bottom: 0;
-  padding-bottom: 50px;
-} */
-
-#searchBtn, #resetBtn {
-  padding: 6px !important;
-}
-
 #aboutBtn {
   display: block;
   float: left;
@@ -263,11 +242,26 @@ span {
   margin: 0px 10px;
 }
 
-.noLeft {
+.actionBtns {
   display: block;
-  float: left;
-  margin-left: 0px !important;
+  width: 100%;
+  height: auto;
   padding-left: 0px !important;
+  font-family: Verdana, Geneva, sans-serif;
+  text-transform: uppercase;
+  margin-bottom: 100px;
+}
+
+#searchBtn, #resetBtn {
+  float: left;
+  padding: 9px;
+  border-radius: 6px;
+  width: 49%;
+  letter-spacing: 0.5px;
+}
+
+#searchBtn {
+  margin-right: 5px;
 }
 
 .floatBottom {
@@ -300,29 +294,27 @@ span {
 
 #mainPanel {
   display: block;
-  /* float: left; */
   height: 100%;
   padding: 0px;
-  /* overflow-y: scroll; */
 }
 
 .fullHeight {
   height: 100%;
+  overflow-y: auto;
 }
 
 #listModal {
   display: none;
   height: 100%;
-  background-color: #c1c1c1;
+  /* background-color: #c1c1c1; */
+  background-color: rgba(0, 110, 83, 0.5);
   padding: 0px;
   padding-left: 15px;
-  /* min-width: 390px !important; */
   min-width: 350px;
 }
 
 .mostHeight {
   height: 85%;
-  /* width: auto; */
   min-width: 100%;
 }
 
@@ -335,9 +327,25 @@ span {
   min-width: 100% !important;
 }
 
+/* Scrollbar width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
 .listDivision {
   display: block;
-  /* max-width: 90%; */
   padding-right: 20px;
 }
 
@@ -360,13 +368,23 @@ span {
   border: none;
   text-align: left;
   outline: none;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
+  letter-spacing: 0.1px;
+  color: rgba(59, 64, 60, 0.9);
+  color: #fff;
+  text-shadow: 0.5px 0.5px rgba(0,0,0,0.3);
+  text-transform: uppercase;
+}
+
+.collapsible:hover {
+  color: #ebebeb;
+  text-shadow: 0.5px 0.5px rgba(0,0,0,0.4);
 }
 
 .collapsible:before {
   content: '\002B'; /* Unicode character for "plus" sign (+) */
-  color: black;
+  color: color: #4a4a4a;;
   float: left;
   margin-right: 10px;
 }
@@ -383,33 +401,37 @@ span {
 }
 
 .listItem {
-  font-size: 14px;
-  color: #4d4d4d;
+  font-size: 13px;
+  letter-spacing: 0.1px;
+  /* color: rgba(59, 64, 60, 0.9); */
+  color: white;
   white-space: normal;
   padding: 5px;
-  /* margin-top: 8px; */
-  /* margin-right: 20px; */
 }
 
 .listItem:hover, .selected {
   color: black;
   text-decoration: none;
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255,255,255,0.3);
 }
 
 #closeList-btn, #reopenList-btn {
   display: none;
   height: 100%;
   max-width: 40px;
-  color: #464648;
+  /* color: #464648; */
+  color: white;
   font-size: 20px;
   font-weight: bold;
-  background-color: #c1c1c1;
+   /* background-color: #c1c1c1; */
+  /* background-color: rgba(86, 145, 110, 0.7); */
+  background-color: rgba(0, 110, 83, 0.5);
   padding: 0px;
   padding-left: 7px;
 }
 
 #closeList-btn {
+  border: red 8px;
   padding-left: 9px;
 }
 
@@ -427,7 +449,7 @@ span {
 }
 
 #mapCol {
-  height: 100%;
+  height: 94%;
   padding-top: 1% !important;
   overflow-y: auto;
 }
@@ -439,11 +461,9 @@ span {
 }
 
 #viewDiv {
-  margin: 0;
   margin-top: 0.75%;
-  /* background-color: yellow; */
-  height: 95%;
-  /* height: 50%; */
+  padding-bottom: 20px;
+  height: 96%;
 }
 
 #projectModal {
@@ -469,7 +489,7 @@ span {
 #closePopup-btn, #reopenPopup-btn {
   display: none;
   color: #464648;
-  height: 25px !important;
+  height: 25px;
   margin: 0.5% auto !important;
   font-size: 20px;
   font-weight: bold;
@@ -478,6 +498,7 @@ span {
 }
 
 #reopenPopup-btn {
+  display: none !important;
   padding-top: 3px;
   padding-bottom: 30px;
 }
@@ -497,7 +518,8 @@ span {
 #closePopup-btn:focus,
 #reopenPopup-btn:hover,
 #reopenPopup-btn:focus  {
-  color: #fff;
+  /* color: #fff; */
+  color: rgba(255,255,255,0.6);
   text-decoration: none;
   cursor: pointer;
 }
@@ -543,6 +565,13 @@ span {
 
 #projDesc>p {
   margin: 0;
+}
+
+.btn-info {
+  background-color: #14558f;
+  border-color: transparent;
+  font-family: Verdana, Geneva, sans-serif;
+  letter-spacing: 0.1px;
 }
 
 .mapillary {
@@ -700,6 +729,12 @@ width: 100%;
 } */
 
 #g_stview {
+  float: left;
+  height: 100%;
+  width: 100%;
+}
+
+#g_map {
   float: left;
   height: 100%;
   width: 100%;

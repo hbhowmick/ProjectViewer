@@ -16,9 +16,9 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" SameSite=None Secure />
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
-<script async defer
-<!-- src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback"> -->
-</script> <!--does callback need parameter? (e.g. callback=googleMap) -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback">
+</script>
+<!--does callback need parameter? (e.g. callback=googleMap) -->
 <!-- <script async defer
 src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofmassachusetts&channel=dotsv&key=AIzaSyA0mcp-iQYjhrR6JUDF4w_8H8FA9JjFIK8&callback">
 </script> -->
@@ -54,7 +54,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
       <!-- SIDE PANEL -->
       <div class="col-3" id="sidePanel">
         <!-- FILTERS -->
-        <div class="row overflowScroll" id="sideFilters">
+        <div class="row" id="sideFilters">
           <!-- ATTRIBUTE Filters -->
           <div class="w-100 rounded filterBox" id="attrFilters">
             <h4 class="filterHeading">Category Filters</h4>
@@ -143,13 +143,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
             </div>
           </div>
           <!-- Search/Reset BUTTONS -->
-          <div class="row noLeft ">
-            <div class="btn my-2 my-sm-0 zeroPadding">
-              <button class='nav-link btn filterLabel searchLabel' id="searchBtn">SEARCH PROJECTS</button>
-            </div>
-            <div class="btn my-2 my-sm-0 zeroPadding">
-              <button class='nav-link btn filterLabel searchLabel' id="resetBtn">RESET FILTERS</button>
-            </div>
+          <div class="row actionBtns ">
+              <button class='nav-link btn searchLabel' id="searchBtn">SEARCH PROJECTS</button>
+              <button class='nav-link btn searchLabel' id="resetBtn">RESET FILTERS</button>
           </div>
         </div>
       </div>
@@ -222,7 +218,8 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                       <span></span>
                     </div>
                     <div class="gm_streetview">
-                      <div id="g_stview"></div>
+                      <div id="g_map"></div>
+                      <!-- <div id="g_stview"></div> -->
                     </div>
                     <div class="mapillary">
                       <div id="mly" class="mapillary-js"></div>
