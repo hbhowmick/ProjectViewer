@@ -3,21 +3,25 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-
+<title>Project Viewer - DRAFT</title>
 
 <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest" SameSite=None Secure></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" SameSite=None Secure></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" SameSite=None Secure></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
+<script src="https://unpkg.com/@popperjs/core@2" SameSite=None Secure>
+  $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  })
+</script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback"></script>
+
 <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" SameSite=None Secure></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" SameSite=None Secure />
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" SameSite=None Secure />
-<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback">
-</script>
 <!--does callback need parameter? (e.g. callback=googleMap) -->
 <!-- <script async defer
 src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofmassachusetts&channel=dotsv&key=AIzaSyA0mcp-iQYjhrR6JUDF4w_8H8FA9JjFIK8&callback">
@@ -194,7 +198,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                       <div class="arrow navArrows" id="leftArrow">
                         <i class="fas fa-angle-left"></i>
                       </div>
-                      <div class="navArrows" id="popupCount">
+                      <div class="row navArrows" id="popupCount">
                         <div class="d-inline" id="popupIndex"></div>
                         <div class="d-inline">of</div>
                         <div class="d-inline" id="popupTotal"></div>
@@ -203,27 +207,37 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                         <i class="fas fa-angle-right"></i>
                       </div>
                     </div>
+                    <div class='row' id="popupFunc"></div>
                   </div>
                   <!-- APIs -->
                   <div class="col-md" id="imageryAPI">
-                    <div class="tw-toggle">
-                      <input checked type="radio" name="toggle" value="true">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-street-view"></i>
+                    <!-- <div id="currentProj"></div> -->
+                    <div class="switch-toggle">
+                     <input id="stview_input" name="state-d" type="radio" checked/>
+                     <label for="stview_input" onclick="" >
+                       <i class="fas fa-street-view" data-toggle="tooltip" title="Google Street View"></i>
+                     </label>
+
+                     <input id="map_input" name="state-d" type="radio"/>
+                     <label for="map_input" onclick="">
+                       <i class="fas fa-map-marker-alt" data-toggle="tooltip" title="Google Maps"></i>
+                     </label>
+
+                     <input id="pict_input" name="state-d" type="radio"/>
+                     <label for="pict_input" onclick="">
+                       <i class="fas fa-images" data-toggle="tooltip" title="Pictometry"></i>
+                     </label>
+
+                      <input id="mly_input" name="state-d" type="radio"/>
+                      <label for="mly_input" onclick="">
+                        <img src="images/mapillary_grey.png" class="mapillary_logo" alt="Mapillary Logo" data-toggle="tooltip" title="Mapillary">
                       </label>
-                      <input type="radio" name="toggle" value="false">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-images"></i>
-                      </label>
-                      <span></span>
                     </div>
-                    <div class="gm_streetview">
-                      <div id="g_map"></div>
-                      <!-- <div id="g_stview"></div> -->
-                    </div>
-                    <div class="mapillary">
-                      <div id="mly" class="mapillary-js"></div>
-                    </div>
+
+                    <div id="stview_div" class="popup_api"></div>
+                    <div id="map_div" class="popup_api"></div>
+                    <div id="pict_div" class="popup_api">PICTOMETRY PLACEHOLDER</div>
+                    <div id="mly_div" class="popup_api"></div>
                   </div>
                 </div>
               </div>
@@ -243,8 +257,6 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
   <script src="js/page_contents.js"></script>
   <script src="js/controls.js"></script>
   <script src="js/map.js"></script>
-  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure>
-  </script> -->
-  </script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure></script> -->
 </body>
 </html>

@@ -178,9 +178,46 @@ $(document).ready(function () {
 			$("#reopenPopup-btn").css("display", "none");
 		})
 
-		$('.mapillary').hide();
-		$('.tw-toggle').click(function(){
-		  $('.gm_streetview, .mapillary').toggle();
+		$('.switch-toggle').click(function(){
+			if($('#mly_input').prop('checked')) {
+				$(".mapillary_logo").attr("src", "images/mapillary_white.png")
+			} else {
+				$(".mapillary_logo").attr("src", "images/mapillary_grey.png")
+			}
+			// console.log(
+			// 	$('#stview_input').prop('checked'),
+			// 	$('#map_input').prop('checked'),
+			// 	$('#pict_input').prop('checked'),
+			// 	$('#mly_input').prop('checked')
+			// )
+			if($('#stview_input').prop('checked')) {
+				$('#stview_div').css('display', 'inline-block')
+				$('#map_div').css('display', 'none')
+				$('#pict_div').css('display', 'none')
+				$('#mly_div').css('display', 'none')
+				$('.switch-toggle').css('border', '2px solid #fff')
+			}
+			if($('#map_input').prop('checked')) {
+				$('#map_div').css('display', 'inline-block')
+				$('#stview_div').css('display', 'none')
+				$('#pict_div').css('display', 'none')
+				$('#mly_div').css('display', 'none')
+				$('.switch-toggle').css('border', '2px solid #95A5A6')
+			}
+			if($('#pict_input').prop('checked')) {
+				$('#pict_div').css('display', 'inline-block')
+				$('#stview_div').css('display', 'none')
+				$('#map_div').css('display', 'none')
+				$('#mly_div').css('display', 'none')
+				$('.switch-toggle').css('border', '2px solid #fff')
+			}
+			if($('#mly_input').prop('checked')) {
+				$('#mly_div').css('display', 'inline-block')
+				$('#stview_div').css('display', 'none')
+				$('#map_div').css('display', 'none')
+				$('#pict_div').css('display', 'none')
+				$('.switch-toggle').css('border', '2px solid #fff')
+			}
 		});
 
 		$("#aboutBtn").click(function() {

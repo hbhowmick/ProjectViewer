@@ -1,0 +1,64 @@
+
+/* .tw-toggle {
+  background: #e6e6e6;
+  display: inline-block;
+  padding: 2px 2px;
+  margin: 0 0 20px 10px;
+  border-radius: 20px;
+  position: absolute;
+  left: 10;
+  bottom: 0;
+  border: 2px solid #fff;
+  line-height: 1.5;
+  z-index: 3;
+}
+
+.tw-toggle label {
+  text-align: center;
+  font-family: sans-serif;
+  display: inline-block;
+  color: #95A5A6;
+  position:relative;
+  z-index: 1;
+  margin: 0;
+  text-align: center;
+  padding: 2px 7px;
+  font-size: 15px;
+  width: 28px;
+}
+
+.tw-toggle input {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+  padding: 50px;
+  width: 28px;
+  height: 28px;
+}
+
+.tw-toggle span {
+  height: 25px;
+  width: 25px;
+  line-height: 25px;
+  border-radius: 50%;
+  background:#2197F5;
+  display:block;
+  position:absolute;
+  top: 2px;
+  transition:all 0.3s ease-in-out;
+}
+
+.tw-toggle input[value="true"]:checked ~ span{
+  background:#2197F5;
+  color:#fff;
+}
+
+.tw-toggle input[value="false"]:checked ~ span{
+  background:#2197F5;
+  left: 28%;
+}
+
+.tw-toggle input[value="true"]:checked + label,.tw-toggle input[value="false"]:checked + label{
+  color:#fff;
+} */
