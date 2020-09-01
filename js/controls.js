@@ -12,9 +12,8 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var divisions = $.parseJSON(data);
-          var divisionSelect = $('#division');
           $(divisions.features).each(function () {
-            divisionSelect.append(
+            $('#divisionSelect').append(
               $('<option></option>').val(this.attributes.Division).html(this.attributes.Division)
             );
           });
@@ -30,9 +29,8 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var mpos = $.parseJSON(data);
-          var mpoSelect = $('#mpoSelect');
           $(mpos.features).each(function () {
-            mpoSelect.append(
+            $('#mpoSelect').append(
               $('<option></option>').val(this.attributes.MPO).html(this.attributes.MPO)
             );
           });
@@ -47,9 +45,8 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var towns = $.parseJSON(data);
-          var townsSelect = $('#townSelect');
           $(towns.features).each(function () {
-            townsSelect.append(
+            $('#townSelect').append(
               $('<option></option>').val(this.attributes.TOWN).html(this.attributes.TOWN)
             );
           });
@@ -64,9 +61,8 @@ $(document).ready(function () {
 				})
 				.done(function (data) {
 					var rtas = $.parseJSON(data);
-					var rtasSelect = $('#rtaSelect');
 					$(rtas.features).each(function () {
-						rtasSelect.append(
+						$('#rtaSelect').append(
 							$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
 						);
 					});
@@ -81,9 +77,8 @@ $(document).ready(function () {
 				})
 				.done(function (data) {
 							var districts = $.parseJSON(data);
-							var districtsSelect = $('#distSelect');
 							$(districts.features).each(function () {
-								districtsSelect.append(
+								$('#districtSelect').append(
 									$('<option></option>').val(this.attributes.DistrictName).html(this.attributes.DistrictName)
 								);
 							});
@@ -101,10 +96,9 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var programs = $.parseJSON(data);
-          var programSelector = $('#programs');
           $(programs.features).each(function () {
             programList.push(this.attributes.Program);
-            programSelector.append(
+            $('#programSelect').append(
               $('<option></option>').val(this.attributes.Program).html(this.attributes.Program).attr("division", this.attributes.Division)
             );
           });
@@ -112,15 +106,36 @@ $(document).ready(function () {
         });
 
 		  function getPrograms() {
-				$("#programs").val("");
-		    $("#programs option").filter(function () {
-		      $(this).toggle($(this).attr("division") == $('#division').val() || $(this).attr("division") == "All");
+				$("#programSelect").val("");
+		    $("#programSelect option").filter(function () {
+		      $(this).toggle(
+						$(this).attr("division") == $('#divisionSelect').val() || $(this).attr("division") == "All");
 		    });
 		  };
 
-			$("#division").change(function () {
+			$("#divisionSelect").change(function () {
 				getPrograms();
 			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 			$("#cost-range").slider({
 				range: true,
@@ -151,8 +166,8 @@ $(document).ready(function () {
 			$("#closeList-btn").css("display", "none");
 			$("#reopenList-btn").css("display", "inline-block");
       if($("#projectModal").css("display") == "block") {
-        $("#viewDiv").css("height", "58%");
-        $("#projectModal").css("height", "35%");
+        $("#viewDiv").css("height", "56%");
+        $("#projectModal").css("height", "37%");
       }
     })
 
@@ -165,63 +180,30 @@ $(document).ready(function () {
 		$("#closePopup-btn").click(function() {
 		  $("#projectModal").css("display", "none");
 			$("#closePopup-btn").css("display", "none");
-		  $("#viewDiv").css("height", "91%");
+		  $("#viewDiv").css("height", "93%");
 			$("#reopenPopup-btn").css("display", "block");
-			$("#reopenPopup-btn").css("height", "25px");
+			$("#reopenPopup-btn").css("height", "4%");
 		})
 
 		$("#reopenPopup-btn").click(function() {
 			$("#projectModal").css("display", "block");
-			$("#viewDiv").css("height", "58%");
-			$("#projectModal").css("height", "35%");
+			$("#viewDiv").css("height", "56%");
+			$("#projectModal").css("height", "37%");
 			$("#closePopup-btn").css("display", "block");
 			$("#reopenPopup-btn").css("display", "none");
 		})
 
-		$('.switch-toggle').click(function(){
-			if($('#mly_input').prop('checked')) {
-				$(".mapillary_logo").attr("src", "images/mapillary_white.png")
-			} else {
-				$(".mapillary_logo").attr("src", "images/mapillary_grey.png")
-			}
-			// console.log(
-			// 	$('#stview_input').prop('checked'),
-			// 	$('#map_input').prop('checked'),
-			// 	$('#pict_input').prop('checked'),
-			// 	$('#mly_input').prop('checked')
-			// )
-			if($('#stview_input').prop('checked')) {
-				$('#stview_div').css('display', 'inline-block')
-				$('#map_div').css('display', 'none')
-				$('#pict_div').css('display', 'none')
-				$('#mly_div').css('display', 'none')
-				$('.switch-toggle').css('border', '2px solid #fff')
-			}
-			if($('#map_input').prop('checked')) {
-				$('#map_div').css('display', 'inline-block')
-				$('#stview_div').css('display', 'none')
-				$('#pict_div').css('display', 'none')
-				$('#mly_div').css('display', 'none')
-				$('.switch-toggle').css('border', '2px solid #95A5A6')
-			}
-			if($('#pict_input').prop('checked')) {
-				$('#pict_div').css('display', 'inline-block')
-				$('#stview_div').css('display', 'none')
-				$('#map_div').css('display', 'none')
-				$('#mly_div').css('display', 'none')
-				$('.switch-toggle').css('border', '2px solid #fff')
-			}
-			if($('#mly_input').prop('checked')) {
-				$('#mly_div').css('display', 'inline-block')
-				$('#stview_div').css('display', 'none')
-				$('#map_div').css('display', 'none')
-				$('#pict_div').css('display', 'none')
-				$('.switch-toggle').css('border', '2px solid #fff')
-			}
+		// $('.mapillary').hide();
+		// $('.tw-toggle').click(function(){
+		//   $('.gm_streetview, .mapillary').toggle();
+		// });
+
+		$("#helpContent").on("click", "button", function() {
+			$("#helpModal").css('display', 'none');
 		});
 
-		$("#aboutBtn").click(function() {
-			$("#aboutModal").css("display", "block")
+		$("#helpBtn").on("click", function() {
+			$("#helpModal").css('display', 'block');
 		})
 
 });

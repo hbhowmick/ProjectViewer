@@ -3,35 +3,30 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Project Viewer - DRAFT</title>
+<title>MassDOT Project Viewer - DEV Version</title>
 
 <script src="https://use.fontawesome.com/releases/v5.12.0/js/all.js" data-auto-replace-svg="nest" SameSite=None Secure></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" SameSite=None Secure></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" SameSite=None Secure></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
-<script src="https://unpkg.com/@popperjs/core@2" SameSite=None Secure>
-  $(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-  })
-</script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback"></script>
-
 <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" SameSite=None Secure></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" SameSite=None Secure></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" SameSite=None Secure />
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" SameSite=None Secure></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" SameSite=None Secure />
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback">
+</script>
 <!--does callback need parameter? (e.g. callback=googleMap) -->
 <!-- <script async defer
 src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofmassachusetts&channel=dotsv&key=AIzaSyA0mcp-iQYjhrR6JUDF4w_8H8FA9JjFIK8&callback">
 </script> -->
 <!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js' SameSite=None Secure> -->
 <!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
-<link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure />
-<link rel="stylesheet" href="https://js.arcgis.com/4.14/esri/themes/light/main.css" SameSite=None Secure />
+<!-- <link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
+<link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" SameSite=None Secure />
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
-<!-- <script src="https://js.arcgis.com/4.14/" SameSite=None Secure></script>
+<!-- <script src="https://js.arcgis.com/4.16/" SameSite=None Secure></script>
 <script src="js/map.js"></script>
 <script src="js/controls.js"></script> -->
 <link rel="stylesheet" href="css/style.css"/>
@@ -40,65 +35,89 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
 <body>
   <div id="outsideContainer" class="container-fluid d-flex flex-column">
     <!-- NAVBAR -->
-      <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
-        <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
-        <a class="navbar-brand">Project Viewer</a>
-        <!-- About/Google Translate -->
-        <div class="topnav topnav-support" id="navbarCollapse">
-          <!-- <div class="btn my-2 my-sm-0 m-2">
-            <button class='nav-link btn btn-about' id="aboutBtn">ABOUT</button>
-          </div> -->
-          <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
-            <div id="google_translate_element"></div>
+    <nav class="navbar-expand-sm s-navbar navbar-custom w-100">
+      <img src="images/massdot_logo.png" class="img-fluid" alt="MassDOT Logo">
+      <a class="navbar-brand">Project Viewer</a>
+      <!-- Help/Google Translate -->
+      <div class="topnav topnav-support" id="navbarCollapse">
+        <div class="btn" id="helpBtn">Help</div>
+        <div id="helpModal">
+          <div id="helpContent">
+            <button><span aria-hidden="true">close</span></button>
+            <h4 class="center">Welcome to the MassDOT Project Viewer</h4>
+            <p>This tool allows users to explore and visualize MassDOT-related projects across division, program, and geography. To get started, either filter your search using the dropdowns to the left or click a location on the map.</p>
+            <h6 class="bold">To Filter a List of Projects:</h6>
+            <p class="note">*All filters are optional.</p>
+            <ol>
+              <li>Use the <b>Category Filters</b> to select any combination of Division, Program, Cost, and/or Project Source.</li>
+              <li>Use the <b>Location Filters</b> to select a geography to include in the filter <i>(**only one location may be selected at a time)</i>.</li>
+              <li>Click the 'Search Projects' button. A list of projects will open, organized by MassDOT Division.</li>
+              <li>Hover over a project description to see its location highlighted on the map or click a project description to zoom to its location and open additional information in a popup below the map.</li>
+            </ol>
+            <h6 class="bold">To Find a Project on the Map:</h6>
+            <ol>
+              <li>Zoom/pan to a location on the map using your mouse or the +/- buttons and arrow keys.</li>
+              <li>Use your mouse to right-click on the map. A popup will open below the map with additional information about projects intersecting the map click.</li>
+              <li>When more than one project is clicked, use the '<' and '>' buttons to sort through project cards.</li>
+            </ol>
+
+            <p></p>
           </div>
         </div>
-      </nav>
+        <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
+          <div id="google_translate_element"></div>
+        </div>
+      </div>
+    </nav>
     <!-- MAIN PAGE -->
     <div class="row main">
+      <!-- LOADING WHEEL -->
+      <div class="col-12" id="loadingScreen">
+        <div class="spinner-border text-light"></div>
+      </div>
       <!-- SIDE PANEL -->
       <div class="col-3" id="sidePanel">
         <!-- FILTERS -->
         <div class="row" id="sideFilters">
           <!-- ATTRIBUTE Filters -->
-          <div class="w-100 rounded filterBox" id="attrFilters">
+          <div class="filterBox" id="attrFilters">
             <h4 class="filterHeading">Category Filters</h4>
             <!-- Division Filter -->
-            <div class="w-100">
-              <label class="filterLabel" for="division">Division</label>
+            <div>
+              <label class="filterLabel" for="divisionSelect">Division</label>
               <div class="input-group mb-1">
-                <select class="form-control dropdown filter" id="division">
+                <select class="form-control dropdown filter" id="divisionSelect">
                   <option>All</option>
                 </select>
               </div>
             </div>
-
             <!-- Program Filter -->
-            <div class="row w-100">
-              <label class="filterLabel" for="programs">Program</label>
+            <div>
+              <label class="filterLabel" for="programSelect">Program</label>
               <div class="input-group mb-1">
-                <select class="form-control custom-select filter" id="programs" multiple>
-                  <option value="All" division= "All" selected>All</option>
+                <select class="form-control custom-select filter" id="programSelect" multiple>
+                  <option value="All" division="All" selected>All</option>
                 </select>
               </div>
             </div>
             <!-- Cost Filter -->
-            <div class="w-100">
+            <div>
               <label class="filterLabel" id="costRange" for="amount">Cost Range</label>
               <form class="form">
                 <div class="filter form-inline flex-grow-1">Min:  $
-                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCostSelect" placeholder="0" value="0">
                 </div>
                 <div class="filter form-inline ">Max:  $
-                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+                  <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCostSelect" placeholder="5,000,000,000" value="5,000,000,000">
                 </div>
               </form>
-              <div class="filter" id="costSlider"></div>
+              <!-- <div class="filter" id="costSlider"></div> -->
             </div>
             <!-- Source Filter -->
-            <div class="w-100">
-              <label class="filterLabel" for="sources">Project Source</label>
+            <div>
+              <label class="filterLabel" for="projSources">Project Source</label>
               <div class="input-group mb-1">
-                <select class="form-control dropdown filter" id="sources">
+                <select class="form-control dropdown filter" id="projSources">
                   <option>CIP</option><!-- change CIP to ALL once additional sources added (e.g. MapIT, STIP, etc.) -->
                 </select>
               </div>
@@ -106,11 +125,11 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           </div>
 
           <!-- SPATIAL Filters -->
-          <div class="w-100 rounded filterBox" id="spatialFilters">
+          <div class="filterBox" id="spatialFilters">
             <h4 class="filterHeading">Location Filters</h4>
             <!-- **Limit one location at a time -->
             <!-- Town Filter -->
-            <div class="w-100">
+            <div>
               <label class="filterLabel" for="townSelect">Town</label>
               <div class="input-group mb-1">
                 <select class="form-control dropdown filter" id="townSelect">
@@ -119,7 +138,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
               </div>
             </div>
             <!-- MPO Filter -->
-            <div class="w-100">
+            <div>
               <label class="filterLabel" for="mpoSelect">MPO</label>
               <div class="input-group mb-1">
                 <select class="form-control dropdown filter" id="mpoSelect">
@@ -128,7 +147,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
               </div>
             </div>
             <!-- RTA Filter -->
-            <div class="w-100">
+            <div>
               <label class="filterLabel" for="rtaSelect">RTA</label>
               <div class="input-group mb-1">
                 <select class="form-control dropdown filter" id="rtaSelect">
@@ -137,19 +156,20 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
               </div>
             </div>
             <!-- District Filter -->
-            <div class="w-100">
-              <label class="filterLabel" for="distSelect">District</label>
+            <div>
+              <label class="filterLabel" for="districtSelect">District</label>
               <div class="input-group mb-1">
-                <select class="form-control dropdown filter" id="distSelect">
+                <select class="form-control dropdown filter" id="districtSelect">
                   <option value="All">All</option>
                 </select>
               </div>
             </div>
           </div>
+
           <!-- Search/Reset BUTTONS -->
           <div class="row actionBtns ">
-              <button class='nav-link btn searchLabel' id="searchBtn">SEARCH PROJECTS</button>
-              <button class='nav-link btn searchLabel' id="resetBtn">RESET FILTERS</button>
+            <div id="searchBtnVeil"></div>
+            <button class='nav-link btn searchLabel' id="searchBtn">SEARCH PROJECTS</button>
           </div>
         </div>
       </div>
@@ -159,9 +179,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           <!-- LIST MODAL -->
           <!-- List Content -->
           <div class="col-3" id="listModal">
-            <div class="row mostHeight">
+            <!-- <div class="row mostHeight"> -->
               <div class="col-11 break-word" id="listContent"></div>
-            </div>
+            <!-- </div> -->
           </div>
           <!-- Close List Button -->
           <div class="col" id="closeList-btn">
@@ -174,31 +194,33 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           <!-- MAP -->
           <div class="col" id="mapCol">
             <!-- Project Search Bar -->
-            <div class="w-100">
+            <div class="h_3pct">
               <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
             </div>
+
             <!-- View -->
-            <div class="w-100" id="viewDiv"></div>
+            <div id="viewDiv"></div>
+
             <!-- PROJECT MODAL -->
             <!-- Re-Open Popup Button -->
             <div class="col" id="reopenPopup-btn">
               <span><i class="fa fa-angle-double-up"></i></span>
             </div>
+            <!-- Close Popup Button -->
+            <div class="row w-100" id="closePopup-btn">
+              <span><i class="fa fa-angle-double-down"></i></span>
+            </div>
             <div class="w-100 col-offset-5" id="projectModal">
               <div class="row" id="projectContent">
-                <!-- Close Popup Button -->
-                <div class="row w-100" id="closePopup-btn">
-                  <span><i class="fa fa-angle-double-down"></i></span>
-                </div>
                 <!-- Popup Content -->
                 <div class="row justify-content-md-center" id="popupContent">
                   <!-- POPUP -->
                   <div class="col-md" id="popupDock">
-                    <div id="navigationArrows">
+                    <div class="row" id="navigationArrows">
                       <div class="arrow navArrows" id="leftArrow">
                         <i class="fas fa-angle-left"></i>
                       </div>
-                      <div class="row navArrows" id="popupCount">
+                      <div class="navArrows" id="popupCount">
                         <div class="d-inline" id="popupIndex"></div>
                         <div class="d-inline">of</div>
                         <div class="d-inline" id="popupTotal"></div>
@@ -207,37 +229,35 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                         <i class="fas fa-angle-right"></i>
                       </div>
                     </div>
-                    <div class='row' id="popupFunc"></div>
+                    <div class="row" id="backBtnRow">
+                      <button class='btn btn-info' id='backToModes'>
+                        <span aria-hidden='true' class='esri-popup__icon esri-icon-undo'></span>
+                        Go Back
+                      </button>
+                    </div>
+                    <div class="row" id="popupContainer"></div>
                   </div>
                   <!-- APIs -->
                   <div class="col-md" id="imageryAPI">
-                    <!-- <div id="currentProj"></div> -->
-                    <div class="switch-toggle">
-                     <input id="stview_input" name="state-d" type="radio" checked/>
-                     <label for="stview_input" onclick="" >
-                       <i class="fas fa-street-view" data-toggle="tooltip" title="Google Street View"></i>
-                     </label>
-
-                     <input id="map_input" name="state-d" type="radio"/>
-                     <label for="map_input" onclick="">
-                       <i class="fas fa-map-marker-alt" data-toggle="tooltip" title="Google Maps"></i>
-                     </label>
-
-                     <input id="pict_input" name="state-d" type="radio"/>
-                     <label for="pict_input" onclick="">
-                       <i class="fas fa-images" data-toggle="tooltip" title="Pictometry"></i>
-                     </label>
-
-                      <input id="mly_input" name="state-d" type="radio"/>
-                      <label for="mly_input" onclick="">
-                        <img src="images/mapillary_grey.png" class="mapillary_logo" alt="Mapillary Logo" data-toggle="tooltip" title="Mapillary">
+                    <!-- <div class="tw-toggle">
+                      <input checked type="radio" name="toggle" value="true">
+                      <label class="toggle toggle-yes">
+                        <i class="fas fa-street-view"></i>
                       </label>
-                    </div>
 
-                    <div id="stview_div" class="popup_api"></div>
-                    <div id="map_div" class="popup_api"></div>
-                    <div id="pict_div" class="popup_api">PICTOMETRY PLACEHOLDER</div>
-                    <div id="mly_div" class="popup_api"></div>
+                      <input type="radio" name="toggle" value="false">
+                      <label class="toggle toggle-yes">
+                        <i class="fas fa-images"></i>
+                      </label>
+                      <span></span>
+                    </div> -->
+                    <div class="gm_streetview">
+                      <div id="g_map"></div>
+                      <div id="g_stview"></div>
+                    </div>
+                    <!-- <div class="mapillary">
+                      <div id="mly" class="mapillary-js"></div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -247,16 +267,15 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
       </div>
     </div>
   </div>
-  <!-- <div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div> -->
   <script type="text/javascript">
   function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
   </script>
-  <script src="https://js.arcgis.com/4.14/" SameSite=None Secure></script>
+  <script src="https://js.arcgis.com/4.16/" SameSite=None Secure></script>
   <script src="js/page_contents.js"></script>
   <script src="js/controls.js"></script>
   <script src="js/map.js"></script>
-  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVkDHsjYRM8sk6wQdbOgpaqibEpHE6Qmg&callback=initialize" SameSite=None Secure></script> -->
+
 </body>
 </html>
