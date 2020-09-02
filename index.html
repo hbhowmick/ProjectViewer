@@ -40,12 +40,24 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
       <a class="navbar-brand">Project Viewer</a>
       <!-- Help/Google Translate -->
       <div class="topnav topnav-support" id="navbarCollapse">
-        <div class="btn" id="helpBtn">Help</div>
+        <div class="h_3pct searchBar">
+          <h5>Project Search: </h5>
+          <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
+        </div>
+        <div class="btn my-2 my-sm-0" id="translateBtn">
+          <div id="google_translate_element"></div>
+        </div>
+        <div class="h_3pct btn" id="helpBtn">Help</div>
         <div id="helpModal">
           <div id="helpContent">
             <button><span aria-hidden="true">close</span></button>
             <h4 class="center">Welcome to the MassDOT Project Viewer</h4>
             <p>This tool allows users to explore and visualize MassDOT-related projects across division, program, and geography. To get started, either filter your search using the dropdowns to the left or click a location on the map.</p>
+            <h6 class="bold">To Search for a Specific Project:</h6>
+            <ol>
+              <li>Locate the <b>search bar</b> at the top right of the screen, above the map.</li>
+              <li>Begin typing a project's description, ID, or location, and select from the list of suggested projects.
+            </ol>
             <h6 class="bold">To Filter a List of Projects:</h6>
             <p class="note">*All filters are optional.</p>
             <ol>
@@ -54,18 +66,15 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
               <li>Click the 'Search Projects' button. A list of projects will open, organized by MassDOT Division.</li>
               <li>Hover over a project description to see its location highlighted on the map or click a project description to zoom to its location and open additional information in a popup below the map.</li>
             </ol>
-            <h6 class="bold">To Find a Project on the Map:</h6>
+            <h6 class="bold">To Get More Info About a Project on the Map:</h6>
             <ol>
-              <li>Zoom/pan to a location on the map using your mouse or the +/- buttons and arrow keys.</li>
+              <li><b>Zoom/pan</b> to a location on the map using your mouse or the +/- buttons and arrow keys.</li>
               <li>Use your mouse to right-click on the map. A popup will open below the map with additional information about projects intersecting the map click.</li>
               <li>When more than one project is clicked, use the '<' and '>' buttons to sort through project cards.</li>
             </ol>
 
             <p></p>
           </div>
-        </div>
-        <div class="btn my-2 my-sm-0 m-2" id="translateBtn">
-          <div id="google_translate_element"></div>
         </div>
       </div>
     </nav>
@@ -79,6 +88,10 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
       <div class="col-3" id="sidePanel">
         <!-- FILTERS -->
         <div class="row" id="sideFilters">
+          <!-- Search BUTTON -->
+          <div class="row actionBtns ">
+            <button class='nav-link btn searchLabel searchBtn' disabled>SEARCH PROJECTS</button>
+          </div>
           <!-- ATTRIBUTE Filters -->
           <div class="filterBox" id="attrFilters">
             <h4 class="filterHeading">Category Filters</h4>
@@ -166,10 +179,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
             </div>
           </div>
 
-          <!-- Search/Reset BUTTONS -->
+          <!-- Search BUTTON -->
           <div class="row actionBtns ">
-            <div id="searchBtnVeil"></div>
-            <button class='nav-link btn searchLabel' id="searchBtn">SEARCH PROJECTS</button>
+            <button class='nav-link btn searchLabel searchBtn' disabled>SEARCH PROJECTS</button>
           </div>
         </div>
       </div>
@@ -194,9 +206,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           <!-- MAP -->
           <div class="col" id="mapCol">
             <!-- Project Search Bar -->
-            <div class="h_3pct">
+            <!-- <div class="h_3pct">
               <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
-            </div>
+            </div> -->
 
             <!-- View -->
             <div id="viewDiv"></div>
@@ -221,9 +233,9 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                         <i class="fas fa-angle-left"></i>
                       </div>
                       <div class="navArrows" id="popupCount">
-                        <div class="d-inline" id="popupIndex"></div>
+                        <div class="d-inline" id="popupIndex">1</div>
                         <div class="d-inline">of</div>
-                        <div class="d-inline" id="popupTotal"></div>
+                        <div class="d-inline" id="popupTotal">1</div>
                       </div>
                       <div class="arrow navArrows" id="rightArrow">
                         <i class="fas fa-angle-right"></i>
@@ -269,7 +281,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
   </div>
   <script type="text/javascript">
   function googleTranslateElementInit() {
-    new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
   }
   </script>
   <script src="https://js.arcgis.com/4.16/" SameSite=None Secure></script>

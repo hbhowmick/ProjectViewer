@@ -166,7 +166,7 @@ $(document).ready(function () {
 			$("#closeList-btn").css("display", "none");
 			$("#reopenList-btn").css("display", "inline-block");
       if($("#projectModal").css("display") == "block") {
-        $("#viewDiv").css("height", "56%");
+        $("#viewDiv").css("height", "59%");
         $("#projectModal").css("height", "37%");
       }
     })
@@ -180,14 +180,14 @@ $(document).ready(function () {
 		$("#closePopup-btn").click(function() {
 		  $("#projectModal").css("display", "none");
 			$("#closePopup-btn").css("display", "none");
-		  $("#viewDiv").css("height", "93%");
+		  $("#viewDiv").css("height", "96%");
 			$("#reopenPopup-btn").css("display", "block");
 			$("#reopenPopup-btn").css("height", "4%");
 		})
 
 		$("#reopenPopup-btn").click(function() {
 			$("#projectModal").css("display", "block");
-			$("#viewDiv").css("height", "56%");
+			$("#viewDiv").css("height", "59%");
 			$("#projectModal").css("height", "37%");
 			$("#closePopup-btn").css("display", "block");
 			$("#reopenPopup-btn").css("display", "none");
