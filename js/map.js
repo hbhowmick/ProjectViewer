@@ -238,23 +238,6 @@ $(document).ready(function () {
       view: view
     });
 
-    // var b = document.createElement('div');
-    // b.setAttribute("id", "basemap");
-    // b.className = 'esri-widget--button esri-widget esri-interactive';
-    // b.role = 'button';
-    // b.innerHTML = '<img src="images/basemapG_icon.png" class="widget-icons"alt="Basemap Widget" style="width: 20px">'
-    //
-    // basemapGallery = new BasemapGallery({
-    //   id: "basemapGal",
-    // });
-
-    // var l = document.createElement('div');
-    // l.setAttribute("id", "legend");
-    // l.className = 'esri-widget--button esri-widget esri-interactive';
-    // l.role = 'button';
-    // // l.innerHTML = '<img src="images/legendG_icon.png" class="widget-icons" alt="Legend Widget" style="width: 20px">'
-    // l.innerHTML = '<img src="images/massdot_logo.png" class="widget-icons" alt="Legend Widget" style="width: 20px">'
-
     legend = new Legend({
       view: view,
       layerInfos: [{
@@ -275,47 +258,17 @@ $(document).ready(function () {
       expanded: true
     });
 
-    view.ui.add([{
-      component: homeWidget,
-      position: "top-left",
-      index: 1
-    // }, {
-    //   component: basemapGallery,
-    //   position: "top-left",
-    //   index: 2
-    }, {
-      component:legend,
-      position: "bottom-left",
-      index: 3
-    }]);
-
-
-    // $("#basemap").click(function () {
-    //   console.log(basemapGallery.view);
-    //   if (basemapGallery.view) {
-    //     basemapGallery.view = null;
-    //     view.ui.remove(basemapGallery, "top-left");
-    //   } else {
-    //     basemapGallery.view = view;
-    //     legend.view = null;
-    //     view.ui.remove(legend, "top-left");
-    //     view.ui.add(basemapGallery, "top-left");
-    //   }
-    // });
-
-    // $("#legend").click(function () {
-    //   if (legend.view) {
-    //     legend.view = null;
-    //     view.ui.remove(legend, "top-left");
-    //   } else {
-    //     legend.view = view;
-    //     basemapGallery.view = null;
-    //     view.ui.remove(basemapGallery, "top-left");
-    //     view.ui.add(legend, "top-left");
-    //   }
-    // });
-
-
+    view.ui.add([
+      {
+        component: homeWidget,
+        position: "top-left",
+        index: 1
+      }, {
+        component:legend,
+        position: "bottom-left",
+        index: 3
+      }
+    ]);
 
     $(document).on("click", ".esri-home", function(e){
       view.goTo({
@@ -323,12 +276,6 @@ $(document).ready(function () {
         zoom: locZoom
       })
     });
-    // var zoomTo = {
-    //   id: "zoomTo",
-    //   title: "Zoom To",
-    //   label: "Zoom To",
-    //   className: "esri-icon-zoom-in-magnifying-glass"
-    // };
 
     projectLocationsPolygonsMapImageLayer.when(function () {
       prjLocationPolygons = projectLocationsPolygonsMapImageLayer.findSublayerById(4);
@@ -1432,6 +1379,11 @@ $(document).ready(function () {
         var feature = results.features[0];
         console.log("feature:", feature);
         replacePopupGraphic(feature);
+
+        queryProjectList(id);
+        // console.log(hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
+        // console.log("layer:", layer);
+
         if(fromSearchBar==true) {
           var loc = feature.attributes.Location;
           var locSrc = feature.attributes.Location_Source;
@@ -1440,6 +1392,71 @@ $(document).ready(function () {
 
         }
       });
+    };
+
+    function queryProjectList(id) {
+      var listQuery = projectList.createQuery();
+      listQuery.where = "ProjectID = '"+id+"'";
+      listQuery.outFields = ["*"];
+      projectList.queryFeatures(listQuery).then(function(results){
+        console.log(results.features)
+        hoverLoc = results.features[0].attributes.Location;
+        hoverMBTA_Loc = results.features[0].attributes.MBTA_Location;
+        hoverLoc_Src = results.features[0].attributes.Location_Source;
+        if(hoverLoc_Src!=="POINT" && hoverLoc_Src!=="LINE" &&  hoverLoc_Src!=="MBTA") {
+          hoverGeom = stateExtent;
+          goToGeom(hoverGeom);
+          highlightGraphics.removeAll();
+          clickGraphics.removeAll();
+          $("#imageryAPI").css("display", "none");
+        };
+        var layer = getLayerFromSrc(id, hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
+        console.log("Layer:", layer);
+        // return getLayerFromSrc(id, hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
+        if (layer.title.includes('MBTA')) {
+          var identifier = hoverMBTA_Loc;
+        } else {
+          var identifier = id;
+        }
+        getProjectGeom(identifier, layer);
+        mbtaSymbols = assignSymbols(layer);
+      });
+    };
+
+    function getProjectGeom(identifier, layer) {
+      console.log(identifier, layer.title);
+      var layerQuery = layer.createQuery();
+      if(layer.title.includes('MBTA')) {
+        layerQuery.where = "MBTA_Location LIKE '%"+identifier+"%'";
+        hoverGeom = layer.fullExtent;
+        goToGeom(hoverGeom);
+      } else {
+        layerQuery.where = "ProjectID= '"+identifier+"'";
+      }
+      layerQuery.outFields = ["*"];
+      layerQuery.returnGeometry = true;
+      layer.queryFeatures(layerQuery).then(function(results) {
+        console.log(results.features[0]);
+        if(results.features[0]) {
+          hoverGeom = results.features[0].geometry;
+          currentProjectHighlight(mbtaSymbols, hoverGeom);
+          goToGeom(hoverGeom);
+          googleStreetView(hoverGeom);
+        } else {
+          highlightGraphics.removeAll();
+          clickGraphics.removeAll();
+          $("#imageryAPI").css("display", "none");
+        }
+
+      })
+    };
+
+    function getLayerFromSrc(id, loc, mbta_loc, loc_src) {
+      console.log("ID:", id, "Location:", loc, "\nMBTA Location:", mbta_loc, "\nLocation Source:", loc_src);
+      var layerTitle = Object.keys(featureLayers).filter(function(k) {
+        return k.includes(loc_src);
+      })
+      return featureLayers[layerTitle];
     };
 
     function replacePopupGraphic(feature) {
