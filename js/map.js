@@ -1256,6 +1256,8 @@ $(document).ready(function () {
 
     view.on("click", function(event) {
       $("#projectSearch").val("");
+      $("#backBtnRow").css("display", "none");
+      $("#navigationArrows").css("display", "inline-block");
       legend.expanded = false;
 
       var mapLayersChecked = 0;
