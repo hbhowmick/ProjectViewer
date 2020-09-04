@@ -883,7 +883,6 @@ $(document).ready(function () {
               return rObj;
             });
             response(searchSuggestions);
-            view.popup.close();
             $(".ui-autocomplete").css({
               'width': ($("#projectSearch").width() + 'px')
             });
@@ -920,6 +919,7 @@ $(document).ready(function () {
     //--------------------Click from List---------------------//
     $("#listModal").on("click", ".listItem", function () {
       console.log("clicked list item:", this);
+      $("#projectSearch").val("");
       $(".listItemSelected").removeClass("listItemSelected");
       $(this).addClass("listItemSelected");
       allPopups = [];
@@ -1116,6 +1116,7 @@ $(document).ready(function () {
 
     $(".searchBtn").on("click", function() {
       console.log("clicked the search button");
+      $("#projectSearch").val("");
       legend.expanded = false;
       $("#loadingScreen").css('display', 'block');
       $("#reopenList-btn").css("display", "none"); //4%
@@ -1254,6 +1255,7 @@ $(document).ready(function () {
     });
 
     view.on("click", function(event) {
+      $("#projectSearch").val("");
       legend.expanded = false;
 
       var mapLayersChecked = 0;
@@ -1381,8 +1383,6 @@ $(document).ready(function () {
         replacePopupGraphic(feature);
 
         queryProjectList(id);
-        // console.log(hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
-        // console.log("layer:", layer);
 
         if(fromSearchBar==true) {
           var loc = feature.attributes.Location;
