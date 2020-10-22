@@ -32,7 +32,9 @@ $(document).ready(function () {
     hoverGeom = null;
 
     pointProjects = [];
+    pointProjects_ids = [];
     lineProjects = [];
+    lineProjects_ids = [];
     mbtaModes = [];
     mbtaFeatures =[];
     mbtaProjects = [];
@@ -41,7 +43,9 @@ $(document).ready(function () {
     allProjects = [];
     projectTally = 0;
 
+    possibleLineDivs = [];
     lineDivisions = [];
+    possiblePointDivs = [];
     pointDivisions = [];
     mbtaDivisions = [];
     locationDivisions = [];
@@ -59,6 +63,38 @@ $(document).ready(function () {
     popupCount = 0;
     popupIndex = 0;
     popupIndexVal = 0;
+
+    queryTask = new QueryTask({
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/6"
+    });
+
+    function possibleDivs(locSrc) {
+      var query = new Query({
+        outFields: ["*"],
+        where: "Location_Source = '" + locSrc + "'"
+      });
+      return queryTask.execute(query).then(function (result) {
+        for(var i=0; i<result.features.length; i++) {
+          var locSrc = result.features[i].attributes.Location_Source;
+          // console.log(feature_locSrc);
+          var locSrc_div = result.features[i].attributes.Division;
+          if(locSrc == 'POINT') {
+            if(!possiblePointDivs.includes(locSrc_div)){
+              possiblePointDivs.push(locSrc_div);
+            };
+          } else if(locSrc == 'LINE'){
+            if(!possibleLineDivs.includes(locSrc_div)){
+              possibleLineDivs.push(locSrc_div);
+            };
+          };
+        };
+        // if(possiblePointDivs.length>0 && possibleLineDivs.length>0) {
+        //   console.log('All Possible Point Divisions:', possiblePointDivs, '\nAll Possible Line Divisions:', possibleLineDivs);
+        // };
+      });
+    };
+    possibleDivs('POINT');
+    possibleDivs('LINE');
 
     function updateSQL() {
       sqlFilters = divisionSQL + " AND " + programSQL
@@ -149,9 +185,6 @@ $(document).ready(function () {
         }
       }]
     });
-    queryTask = new QueryTask({
-      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/6"
-    });
 
     polyGraphics = new GraphicsLayer({
       title: "Polygon Geographies (GraphicsLayer)"
@@ -210,8 +243,8 @@ $(document).ready(function () {
 
     view = new MapView({
       map: map,
-      center: [-72, 42],
-      zoom: 8,
+      // center: [-72, 42],
+      // zoom: 8,
       container: "viewDiv",
       popup: {
         autoOpenEnabled: false, // false hides popup in map
@@ -227,12 +260,27 @@ $(document).ready(function () {
     });
 
     // ---------- Home Widget ----------
-    view.when(function() {
-      initialExtent = view.extent;
-      locExtent = view.extent;
-      locZoom = view.zoom;
-      locLat = view.center.latitude;
-      locLong = view.center.longitude;
+    function zoomToLayer(layer) {
+      return layer.queryExtent().then(function (response) {
+        view.goTo(response.extent)
+        .then(function() {
+          view.extent = response.extent;
+          initialExtent = view.extent;
+          initialZoom = view.zoom;
+          locExtent = initialExtent;
+          locZoom = initialZoom;
+          locLat = view.center.latitude;
+          locLong = view.center.longitude;
+        })
+        .catch(function (error) {
+          if (error.name != "AbortError") {
+            console.error(error);
+          };
+        });
+      });
+    };
+    projectLines.when(function() {
+      zoomToLayer(projectLines);
     });
     homeWidget = new Home({
       view: view
@@ -271,10 +319,7 @@ $(document).ready(function () {
     ]);
 
     $(document).on("click", ".esri-home", function(e){
-      view.goTo({
-        target: locExtent,
-        zoom: locZoom
-      })
+      view.goTo(locExtent);
     });
 
     projectLocationsPolygonsMapImageLayer.when(function () {
@@ -498,11 +543,17 @@ $(document).ready(function () {
           projectLines.definitionExpression = defExp;
         }
         // console.log("Lines defExp:", projectLines.definitionExpression);
-        lineProjects.push(features);
-        allProjects.push(features);
+        for(var i=0; i<features.length; i++) {
+          var pid = features[i].attributes.ProjectID;
+          if(!lineProjects_ids.includes(pid)){
+            lineProjects_ids.push(pid);
+            lineProjects.push(features[i]);
+          };
+        };
+        allProjects.push(lineProjects);
         projectTally = projectTally + features.length;
+        // console.log("Line Projects:", lineProjects);
         lineDivisions = divisionsArray;
-
         checkedLines = true;
         checkLayers();
       } else if (title.toLowerCase().includes('point')) {
@@ -514,12 +565,18 @@ $(document).ready(function () {
           projectPoints.definitionExpression = defExp;
         }
         // console.log("Points defExp:", projectPoints.definitionExpression);
-        pointProjects.push(features);
-        allProjects.push(features);
-        projectTally = projectTally + features.length;
-        console.log("Point Projects:", pointProjects);
-        pointDivisions = divisionsArray;
 
+        for(var i=0; i<features.length; i++) {
+          var pid = features[i].attributes.ProjectID;
+          if(!pointProjects_ids.includes(pid)){
+            pointProjects_ids.push(pid);
+            pointProjects.push(features[i]);
+          };
+        };
+        allProjects.push(pointProjects);
+        projectTally = projectTally + features.length;
+        // console.log("Point Projects:", pointProjects);
+        pointDivisions = divisionsArray;
         checkedPoints = true;
         checkLayers();
       };
@@ -577,7 +634,7 @@ $(document).ready(function () {
         mbtaProjects.push(results.features);
         allProjects.push(results.features);
         projectTally = projectTally + results.features.length;
-        // console.log("MBTA Projects:", mbtaProjects)
+        // console.log("MBTA Projects:", mbtaProjects);
         checkedMBTA = true;
         checkLayers();
       });
@@ -603,7 +660,7 @@ $(document).ready(function () {
       locFilterQuery.where = sqlFilters + " AND Location_Source LIKE '%" + locName + "%'";
       projectList.queryFeatures(locFilterQuery).then(function(results) {
         locFilterProjects = results.features;
-        allProjects.push(results.features);
+        allProjects.push(locFilterProjects);
         projectTally = projectTally + results.features.length;
         // console.log("Location Projects:", locFilterProjects);
 
@@ -629,7 +686,7 @@ $(document).ready(function () {
       polyGeomQuery.where = sqlFilters + " AND Location_Source <> 'POINT' AND  Location_Source <> 'LINE' AND Location_Source <> 'MBTA' AND Location_Source <> 'Statewide'";
       projectList.queryFeatures(polyGeomQuery).then(function(results) {
         polyGeomProjects = results.features;
-        allProjects.push(results.features);
+        allProjects.push(polyGeomProjects);
         projectTally = projectTally + results.features.length;
         // console.log("Location Projects:", polyGeomProjects);
 
@@ -649,144 +706,98 @@ $(document).ready(function () {
     };
 
     function getStatewideProjects() {
-      var divisionsArray = [];
-      var projectIDs = [];
       statewideQuery = projectList.createQuery();
       statewideQuery.where = sqlFilters + " AND Location_Source = 'Statewide'";
       projectList.queryFeatures(statewideQuery).then(function(results) {
         statewideProjects = results.features;
+        allProjects.push(statewideProjects);
+        console.log("Statewide Projects:", statewideProjects);
         checkedStatewide = true;
         checkLayers();
       });
     };
 
     function checkStatewideDivs(divArray) {
-      var divisionsArray = [];
-      var projectIDs = [];
-
       for(var i=0; i<divArray.length; i++) {
-        // console.log(i, ":", divArray[i]);
-        for(var j=0; j<divArray[i].length; j++) {
-          if(!allDivisions.includes(divArray[i][j])) {
-            allDivisions.push(divArray[i][j]);
+        var array = divArray[i];
+        for(var j=0; j<array.length; j++) {
+          if(!allDivisions.includes(array[j])) {
+              allDivisions.push(array[j]);
           };
-
         };
       };
-      // console.log("All Divisions (before Statewide):", allDivisions);
-
+      // console.log("Point Divisions:", pointDivisions);
+      // console.log("Line Divisions:", lineDivisions);
+      console.log("All Divisions (before Statewide):", allDivisions);
+      var divisionsArray = [];
       for(var k=0; k<statewideProjects.length; k++) {
         var projDiv = statewideProjects[k].attributes.Division;
         var projectID = statewideProjects[k].attributes.ProjectID;
-
-        if(!statewideDivisions.includes(projDiv)) {
-          statewideDivisions.push(projDiv);
-        };
-
-        if(allDivisions.includes(projDiv)) {
-          divisionsArray.push(statewideProjects[k]);
-        } else {
-          if(projDiv == "Information Technology" || projDiv == "Transit") {
-            divisionsArray.push(statewideProjects[k]);
-            if(!allDivisions.includes(projDiv)){
+        if(!divisionsArray.includes(projDiv)) {
+          divisionsArray.push(projDiv);
+          if(!allDivisions.includes(projDiv)) {
+            if(possibleLineDivs.includes(projDiv) || possiblePointDivs.includes(projDiv)){
+              console.log(projDiv, 'does not have intersecting points or lines with geometry filtered on');
+            } else {
               allDivisions.push(projDiv);
             };
           };
         };
+
       };
-
-      allProjects.push(divisionsArray);
-      // console.log("Statewide Divisions:", statewideDivisions);
-
+      statewideDivisions = divisionsArray;
+      // console.log('Statewide Divisions:', statewideDivisions);
       projectTally = projectTally + divisionsArray.length;
-      // console.log("All Divisions (after Statewide):", allDivisions);
-
+      console.log("All Divisions (after Statewide):", allDivisions);
       checkedStatewide = true;
       populateList();
     };
 
     function checkLayers() {
-      // console.log(checkedLines, checkedPoints, checkedMBTA, checkedLocFilters, checkedStatewide);
       if(checkedLines == true && checkedPoints == true && checkedMBTA == true && checkedLocFilters == true && checkedStatewide == true) {
-        // console.log("all layers checked! make list!")
-      // if(checkedLines == true && checkedPoints == true && checkedMBTA == true && checkedLocFilters == true) {
         checkStatewideDivs([pointDivisions, lineDivisions, mbtaDivisions, locationDivisions]);
-
-        // populateList();
-
-
-      // } else {
-      //   console.log("there is an unchecked layer")
-      }
+      };
     };
 
     function projectsByDiv(projects, tally) {
-      resultObject = {
-        "Division": {
-          'Aeronautics':[],
-          'Highway':[],
-          'IT':[],
-          'MBTA':[],
-          'Planning':[],
-          'Rail':[],
-          'RMV':[],
-          'Transit':[],
-        }
+      console.log("All Projects:", projects);
+      resultObject = {};
+      resultObject['Division'] = {};
+      for(var i=0; i<allDivisions.length; i++) {
+        resultObject['Division'][allDivisions[i]] = [];
       };
-      console.log("All Projects:", tally, projects)
       for(var i=0; i<projects.length; i++) {
         for(var j=0; j<projects[i].length; j++) {
           // console.log(projects[i][j].attributes.Division);
           var divKey = projects[i][j].attributes.Division;
-          if(divKey == 'Aeronautics') {
-            resultObject.Division.Aeronautics.push(projects[i][j])
-          } else if(divKey == 'Highway') {
-            resultObject.Division.Highway.push(projects[i][j])
-          } else if(divKey == 'Information Technology') {
-            resultObject.Division.IT.push(projects[i][j])
-          }  if(divKey == 'MBTA') {
-            resultObject.Division.MBTA.push(projects[i][j])
-          }  if(divKey.includes("Planning")) {
-            resultObject.Division.Planning.push(projects[i][j])
-          }  if(divKey == 'Rail') {
-            resultObject.Division.Rail.push(projects[i][j])
-          }  if(divKey == 'RMV') {
-            resultObject.Division.RMV.push(projects[i][j])
-          }  if(divKey == 'Transit') {
-            resultObject.Division.Transit.push(projects[i][j])
-          };
+          Object.keys(resultObject['Division']).forEach(function(key) {
+            if (divKey == key) {
+              resultObject['Division'][key].push(projects[i][j]);
+            };
+          });
         };
       };
       console.log(resultObject);
     };
 
     function getDivLength(divName) {
-      if(divName.includes("Aeronautics")) {
-        return resultObject.Division.Aeronautics.length;
-      } else if (divName.includes("Highway")) {
-        return resultObject.Division.Highway.length;
-      } else if (divName.includes("Information")) {
-        return resultObject.Division.IT.length;
-      } else if (divName.includes("MBTA")) {
-        return resultObject.Division.MBTA.length;
-      } else if (divName.includes("Planning")) {
-        return resultObject.Division.Planning.length;
-      } else if (divName.includes("Rail")) {
-        return resultObject.Division.Rail.length;
-      } else if (divName.includes("RMV")) {
-        return resultObject.Division.RMV.length;
-      } else if (divName.includes("Transit")) {
-        return resultObject.Division.Transit.length;
-      };
+      var divLength;
+      Object.keys(resultObject['Division']).forEach(function(key, index) {
+        if(divName == key) {
+          divLength = resultObject['Division'][key].length;
+        };
+      });
+      return divLength;
     };
 
     function populateDivHeadings(divs) {
-      // console.log("All Divisions:", divs);
+      console.log("All Divisions:", divs);
       if(divs.length>0){
         for(var i=0; i<divs.length; i++){
           var currentDiv = divs[i];
-          currentDiv = currentDiv.replace(/ /g, "_");
           var currentDivLength = getDivLength(currentDiv);
+          currentDiv = currentDiv.replace(/ /g, "_");
+          console.log(currentDiv, ':', currentDivLength);
           var listDivID = "div_".concat(currentDiv);
           var selectDivID= "#".concat(listDivID);
           var divHeading = divs[i].concat(" Projects (").concat(currentDivLength).concat(")");
@@ -833,6 +844,8 @@ $(document).ready(function () {
             };
           };
         };
+      } else {
+        $("#listContent").append("<p class='emptyListHeading'>No projects match your search criteria.<p>");
       };
 
       $("#loadingScreen").css('display', 'none');
@@ -956,8 +969,8 @@ $(document).ready(function () {
     });
 
     function getGeomFromLocSrc(uniqueRecord, locSrc) {
-      // console.log("unique record:", uniqueRecord);
-      // console.log("locSrc:", locSrc);
+      console.log("unique record:", uniqueRecord);
+      console.log("locSrc:", locSrc);
       if(locSrc=="MBTA") {
         var title = "MBTA Projects"
         var layer = layerFromTitle(title);
@@ -1000,13 +1013,16 @@ $(document).ready(function () {
       view.goTo({
         target: geometry,
       });
+      locExtent = geometry.extent;
+      // console.log("locExtent:", locExtent);
     };
 
     function updateHoverProject(project) {
       resultFeatures = [];
       var locSrc = project.attr('locsrc');
       var projID = project.attr('projid');
-      // console.log(locSrc, projID);
+      console.log("locSrc:", locSrc);
+      console.log("projID:", projID);
       if(locSrc=="POINT") {
         hoverQuery(projectPoints, projID);
       } else if(locSrc=="LINE") {
@@ -1034,6 +1050,7 @@ $(document).ready(function () {
 
       layerQuery.returnGeometry = true;
       layerQuery.outFields = ["*"];
+      console.log("id:", id);
       if(id!=="System" && id!=="Commuter Rail" && id!=="Ferry" && id!=="Rapid Transit") {
         layer.queryFeatures(layerQuery)
         .then(function(results) {
@@ -1091,7 +1108,9 @@ $(document).ready(function () {
 
     function clearCollections() {
       pointProjects = [];
+      pointProjects_ids = [];
       lineProjects = [];
+      lineProjects_ids = [];
       mbtaFeatures = [];
       mbtaProjects = [];
       locFilterProjects = [];
@@ -1124,7 +1143,7 @@ $(document).ready(function () {
       $("#closePopup-btn").css("display", "none"); //4%
       clearCollections();
       updateSQL();
-      // console.log("locName:", locName);
+      console.log("locName:", locName);
 
       if(locName !== "All") { // && locName !== 0
         locQuery.returnGeometry = true;
@@ -1137,6 +1156,7 @@ $(document).ready(function () {
           view.goTo({
             target: locGeom,
           });
+          locExtent = locGeom.extent;
           polyGraphic = new Graphic({
             geometry:locGeom,
             symbol: {
@@ -1160,11 +1180,61 @@ $(document).ready(function () {
         locName = 'All';
         locGeom = null;
         view.goTo({
-          target: locExtent,
+          target: initialExtent,
           zoom: locZoom
-        })
+        });
+        locExtent = initialExtent;
         filterLayers();
       };
+    });
+
+    $(".resetBtn").on("click", function() {
+      console.log("clicked the reset button");
+      $("#projectSearch").val("");
+      legend.expanded = false;
+      $("#loadingScreen").css('display', 'block');
+      $("#listModal").css("display", "none");
+      $("#reopenList-btn").css("display", "none"); //4%
+      $("#closeList-btn").css("display", "none"); //
+      $("#projectModal").css("display", "none");
+      $("#reopenPopup-btn").css("display", "none"); //4%
+      $("#closePopup-btn").css("display", "none"); //4%
+      clearCollections();
+      $("#divisionSelect").val("All");
+      $("#programSelect option").filter(function () {
+        $(this).toggle(
+          $(this).attr("division") == $('#divisionSelect').val() || $(this).attr("division") == "All")
+      });
+      $('#minCostSelect').val(0);
+      $('#maxCostSelect').val(5000000000);
+      $('#projSources').val("CIP");
+      $('#townSelect').val(0);
+      $('#mpoSelect').val("All");
+      $('#rtaSelect').val("All");
+      $('#districtSelect').val("All");
+
+      sqlFilters = "1=1";
+      divisionSQL = "1=1";
+      programSQL = "1=1";
+      costMinSQL = "Total>=0";
+      costMaxSQL = "Total<=5000000000";
+      projSrcSQL = "1=1";
+      updateSQL();
+      locName = "All";
+      //
+      // console.log("locName:", locName);
+      // console.log("sqlFilters:", sqlFilters);
+
+      polyGraphics.removeAll();
+      view.map.layers.forEach(function(layer) {
+        layer.definitionExpression = "1=1";
+      });
+      view.goTo({
+        target: initialExtent,
+        zoom: locZoom
+      });
+      locExtent = initialExtent;
+      $("#loadingScreen").css('display', 'none');
     });
 
     function popupFunction(feature) {
@@ -1200,10 +1270,11 @@ $(document).ready(function () {
         where: "(MBTA_Location like '%" + mbtaLine + "%' or MBTA_Location = '" + mbtaMode + "' or MBTA_Location = 'System')"
       })
       return queryTask.execute(query).then(function (results) {
+        // console.log(results.features);
         $(results.features).each(function() {
           if(this.attributes.MBTA_Location.includes(mbtaLine)) {
             mbtaLineProjects.push(this);
-          } else if (this.attributes.MBTA_Location == mbtaMode) {
+          } else if (this.attributes.MBTA_Location.includes(mbtaMode)) {
             mbtaModeProjects.push(this);
           } else {
             mbtaSystemProjects.push(this);
@@ -1216,7 +1287,13 @@ $(document).ready(function () {
         } else {
           var lineContent = "<div><p class='mbtaBtn' id='mbtaLine'>No "+mbtaLine+" projects currently match your search criteria</p></div>"
         };
-        var modeContent = "<div><button class='btn btn-info mbtaBtn' id='mbtaMode'>View "+mbtaMode+" projects</button></div>";
+        if(mbtaModeProjects.length>0) {
+          var modeContent = "<div><button class='btn btn-info mbtaBtn' id='mbtaMode'>View "+mbtaMode+" projects</button></div>";
+        } else if (mbtaMode == 'Silver Line'){
+          var modeContent = "<div></div>"
+        } else {
+          var modeContent = "<div><p class='mbtaBtn' id='mbtaMode'>No "+mbtaMode+" projects currently match your search criteria</p></div>"
+        };
         var systemContent = "<div><button class='btn btn-info mbtaBtn' id='mbtaSystem'>View MBTA Systemwide projects</button></div>";
         var fullContent = "<div>" + lineContent + modeContent + systemContent + "</div>";
         popupFeature.graphic.popupTemplate.title = mbtaLine;
@@ -1250,6 +1327,7 @@ $(document).ready(function () {
       layerView.watch("updating", function(value) {
         if(!value) {
           $('.searchBtn').css('background-color', '#14558f').prop("disabled", false);
+          $('.resetBtn').css('background-color', '#14558f').prop("disabled", false);
         }
       });
     });
@@ -1414,7 +1492,6 @@ $(document).ready(function () {
         };
         var layer = getLayerFromSrc(id, hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
         console.log("Layer:", layer);
-        // return getLayerFromSrc(id, hoverLoc, hoverMBTA_Loc, hoverLoc_Src);
         if (layer.title.includes('MBTA')) {
           var identifier = hoverMBTA_Loc;
         } else {
@@ -1455,10 +1532,23 @@ $(document).ready(function () {
 
     function getLayerFromSrc(id, loc, mbta_loc, loc_src) {
       console.log("ID:", id, "Location:", loc, "\nMBTA Location:", mbta_loc, "\nLocation Source:", loc_src);
-      var layerTitle = Object.keys(featureLayers).filter(function(k) {
-        return k.includes(loc_src);
-      })
-      return featureLayers[layerTitle];
+      // console.log('featureLayers:', featureLayers);
+      var layers = Object.keys(featureLayers);
+      // console.log('layers:', layers);
+      return layers.forEach(function(layer) {
+        // console.log(layer)
+        if(layer.includes(loc_src)) {
+          console.log(featureLayers[layer]);
+          return featureLayers[layer];
+
+        }
+      });
+      // var layerTitle = Object.keys(featureLayers).forEach(function(k) {
+      //   console.log(k.title)
+      //   return k.title.includes(loc_src);
+      // })
+      // return featureLayers[layerTitle];
+
     };
 
     function replacePopupGraphic(feature) {
@@ -1488,7 +1578,7 @@ $(document).ready(function () {
     });
 
     function populateMbtaTable(id) {
-      console.log("Id:", id);
+      // console.log("Id:", id);
       if(id.includes("Line")) {
         var tableProjects = mbtaLineProjects;
       } else if(id.includes("Mode")) {
@@ -1504,7 +1594,7 @@ $(document).ready(function () {
         mbtaCount = mbtaCount + 1;
         mbtaTableContent = mbtaTableContent.concat("<tr><td class='mbtaCount'>"+mbtaCount+"</td><td class='mbtaDesc' id='"+id+"'>"+desc+"</td></tr>");
       })
-      console.log("mbtaCount:", mbtaCount);
+      // console.log("mbtaCount:", mbtaCount);
       var newTable = "<div id='mbtaPopupTable'><table class='table-bordered mbtaTable'><tbody>" + mbtaTableContent + "</tbody></table></div>";
       popupFeature.graphic.popupTemplate.title = mbtaCount+" results";
       popupFeature.graphic.popupTemplate.content = $(newTable)[0];
@@ -1527,7 +1617,7 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#closePopup-btn", function() {
-      console.log('close popup');
+      // console.log('close popup');
       $("#reopenPopup-btn").css("display", "block"); //4%
       $("#viewDiv").css("height", "96%")
     });

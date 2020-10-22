@@ -311,17 +311,21 @@ span {
 .searchLabel {
   color: white !important;
   background-color: #e8e8e8;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: normal;
 }
 
-.searchBtn {
+.searchBtn, .resetBtn {
   float: left;
   padding: 9px;
   border-radius: 6px;
-  width: 49%;
+  width: 45%;
   letter-spacing: 0.5px;
   margin-right: 5px;
+}
+
+.resetBtn {
+  margin-right: 0px;
 }
 
 .bottomMargin {
@@ -417,8 +421,9 @@ span {
   box-shadow: none;
 }
 
+
 /* Style the button that is used to open and close the collapsible content */
-.collapsible {
+.collapsible, .emptyListHeading {
   display: inline-block;
   cursor: pointer;
   padding: 2px;
@@ -433,6 +438,11 @@ span {
   color: #fff;
   text-shadow: 0.5px 0.5px rgba(0,0,0,0.3);
   text-transform: uppercase;
+}
+
+.emptyListHeading {
+  cursor: default;
+  margin-left: 18px;
 }
 
 .collapsible:hover {
