@@ -12,9 +12,8 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var divisions = $.parseJSON(data);
-          var divisionSelect = $('#division');
           $(divisions.features).each(function () {
-            divisionSelect.append(
+            $('#divisionSelect').append(
               $('<option></option>').val(this.attributes.Division).html(this.attributes.Division)
             );
           });
@@ -30,9 +29,8 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var mpos = $.parseJSON(data);
-          var mpoSelect = $('#mpoSelect');
           $(mpos.features).each(function () {
-            mpoSelect.append(
+            $('#mpoSelect').append(
               $('<option></option>').val(this.attributes.MPO).html(this.attributes.MPO)
             );
           });
@@ -47,43 +45,40 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var towns = $.parseJSON(data);
-          var townsSelect = $('#townSelect');
           $(towns.features).each(function () {
-            townsSelect.append(
+            $('#townSelect').append(
               $('<option></option>').val(this.attributes.TOWN).html(this.attributes.TOWN)
             );
           });
         });
 
-				$.post(url.RTAs + "/query", {
-						where: "1=1",
-						outFields: "RTA, RTA_NAME",
-						returnGeometry: false,
-						orderByFields: 'RTA',
-						f: 'pjson'
-					})
-					.done(function (data) {
-						var rtas = $.parseJSON(data);
-						var rtasSelect = $('#rtaSelect');
-						$(rtas.features).each(function () {
-							rtasSelect.append(
-								$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
-							);
-						});
+			$.post(url.RTAs + "/query", {
+					where: "1=1",
+					outFields: "RTA, RTA_NAME",
+					returnGeometry: false,
+					orderByFields: 'RTA',
+					f: 'pjson'
+				})
+				.done(function (data) {
+					var rtas = $.parseJSON(data);
+					$(rtas.features).each(function () {
+						$('#rtaSelect').append(
+							$('<option></option>').val(this.attributes.RTA_NAME).html(this.attributes.RTA.concat(" (", this.attributes.RTA_NAME, ")"))
+						);
 					});
+				});
 
-					$.post(url.Districts + "/query", {
-							where: "1=1",
-							outFields: "DistrictName",
-							returnGeometry: false,
-							orderByFields: 'DistrictName',
-							f: 'pjson'
-						})
-						.done(function (data) {
+			$.post(url.Districts + "/query", {
+					where: "1=1",
+					outFields: "DistrictName",
+					returnGeometry: false,
+					orderByFields: 'DistrictName',
+					f: 'pjson'
+				})
+				.done(function (data) {
 							var districts = $.parseJSON(data);
-							var districtsSelect = $('#distSelect');
 							$(districts.features).each(function () {
-								districtsSelect.append(
+								$('#districtSelect').append(
 									$('<option></option>').val(this.attributes.DistrictName).html(this.attributes.DistrictName)
 								);
 							});
@@ -101,10 +96,9 @@ $(document).ready(function () {
         })
         .done(function (data) {
           var programs = $.parseJSON(data);
-          var programSelector = $('#programs');
           $(programs.features).each(function () {
             programList.push(this.attributes.Program);
-            programSelector.append(
+            $('#programSelect').append(
               $('<option></option>').val(this.attributes.Program).html(this.attributes.Program).attr("division", this.attributes.Division)
             );
           });
@@ -112,15 +106,36 @@ $(document).ready(function () {
         });
 
 		  function getPrograms() {
-				$("#programs").val("");
-		    $("#programs option").filter(function () {
-		      $(this).toggle($(this).attr("division") == $('#division').val() || $(this).attr("division") == "All");
+				$("#programSelect").val("");
+		    $("#programSelect option").filter(function () {
+		      $(this).toggle(
+						$(this).attr("division") == $('#divisionSelect').val() || $(this).attr("division") == "All");
 		    });
 		  };
 
-			$("#division").change(function () {
+			$("#divisionSelect").change(function () {
 				getPrograms();
 			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 			$("#cost-range").slider({
 				range: true,
@@ -145,5 +160,50 @@ $(document).ready(function () {
     .fail(function (jqxhr, textStatus, error) {
       var err = textStatus + ", " + error;
     });
+
+		$("#closeList-btn").click(function() {
+      $("#listModal").css("display", "none");
+			$("#closeList-btn").css("display", "none");
+			$("#reopenList-btn").css("display", "inline-block");
+      if($("#projectModal").css("display") == "block") {
+        $("#viewDiv").css("height", "59%");
+        $("#projectModal").css("height", "37%");
+      }
+    })
+
+		$("#reopenList-btn").click(function() {
+			$("#listModal").css("display", "block");
+			$("#closeList-btn").css("display", "inline-block");
+			$("#reopenList-btn").css("display", "none");
+		})
+
+		$("#closePopup-btn").click(function() {
+		  $("#projectModal").css("display", "none");
+			$("#closePopup-btn").css("display", "none");
+		  $("#viewDiv").css("height", "96%");
+			$("#reopenPopup-btn").css("display", "block");
+			$("#reopenPopup-btn").css("height", "4%");
+		})
+
+		$("#reopenPopup-btn").click(function() {
+			$("#projectModal").css("display", "block");
+			$("#viewDiv").css("height", "59%");
+			$("#projectModal").css("height", "37%");
+			$("#closePopup-btn").css("display", "block");
+			$("#reopenPopup-btn").css("display", "none");
+		})
+
+		// $('.mapillary').hide();
+		// $('.tw-toggle').click(function(){
+		//   $('.gm_streetview, .mapillary').toggle();
+		// });
+
+		$("#helpContent").on("click", "button", function() {
+			$("#helpModal").css('display', 'none');
+		});
+
+		$("#helpBtn").on("click", function() {
+			$("#helpModal").css('display', 'block');
+		})
 
 });
