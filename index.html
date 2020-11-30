@@ -17,18 +17,8 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?client=gme-commonwealthofmassachusetts&channel=dotsv&callback">
 </script>
-<!--does callback need parameter? (e.g. callback=googleMap) -->
-<!-- <script async defer
-src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofmassachusetts&channel=dotsv&key=AIzaSyA0mcp-iQYjhrR6JUDF4w_8H8FA9JjFIK8&callback">
-</script> -->
-<!-- <link href='https://unpkg.com/mapillary-js@1.7.1/dist/mapillary-js.min.js' SameSite=None Secure> -->
-<!-- <link href="https://unpkg.com/mapillary-js@2.18.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
-<!-- <link href="https://unpkg.com/mapillary-js@2.20.0/dist/mapillary.min.css" rel="stylesheet" SameSite=None Secure /> -->
 <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" SameSite=None Secure />
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
-<!-- <script src="https://js.arcgis.com/4.16/" SameSite=None Secure></script>
-<script src="js/map.js"></script>
-<script src="js/controls.js"></script> -->
 <link rel="stylesheet" href="css/style.css"/>
 </head>
 
@@ -81,7 +71,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
     <!-- MAIN PAGE -->
     <div class="row main">
       <!-- LOADING WHEEL -->
-      <div class="col-12" id="loadingScreen">
+      <div class="col-12 justify-content-center" id="loadingScreen">
         <div class="spinner-border text-light"></div>
       </div>
       <!-- SIDE PANEL -->
@@ -141,7 +131,6 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           <!-- SPATIAL Filters -->
           <div class="filterBox" id="spatialFilters">
             <h4 class="filterHeading">Location Filters</h4>
-            <!-- **Limit one location at a time -->
             <!-- Town Filter -->
             <div>
               <label class="filterLabel" for="townSelect">Town</label>
@@ -207,14 +196,8 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
           </div>
           <!-- MAP -->
           <div class="col" id="mapCol">
-            <!-- Project Search Bar -->
-            <!-- <div class="h_3pct">
-              <input class="form-control mr-sm-2" id="projectSearch" type="search" placeholder="Search for a project (e.g. Red-Blue Connector)" aria-label="Search">
-            </div> -->
-
             <!-- View -->
             <div id="viewDiv"></div>
-
             <!-- PROJECT MODAL -->
             <!-- Re-Open Popup Button -->
             <div class="col" id="reopenPopup-btn">
@@ -229,7 +212,7 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                 <!-- Popup Content -->
                 <div class="row justify-content-md-center" id="popupContent">
                   <!-- POPUP -->
-                  <div class="col-md" id="popupDock">
+                  <div class="col-6" id="popupDock">
                     <div class="row" id="navigationArrows">
                       <div class="arrow navArrows" id="leftArrow">
                         <i class="fas fa-angle-left"></i>
@@ -252,26 +235,11 @@ src="https://maps.googleapis.com/maps/api/streetview?client=gme-commonwealthofma
                     <div class="row" id="popupContainer"></div>
                   </div>
                   <!-- APIs -->
-                  <div class="col-md" id="imageryAPI">
-                    <!-- <div class="tw-toggle">
-                      <input checked type="radio" name="toggle" value="true">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-street-view"></i>
-                      </label>
-
-                      <input type="radio" name="toggle" value="false">
-                      <label class="toggle toggle-yes">
-                        <i class="fas fa-images"></i>
-                      </label>
-                      <span></span>
-                    </div> -->
+                  <div class="col-6" id="imageryAPI">
                     <div class="gm_streetview">
                       <div id="g_map"></div>
                       <div id="g_stview"></div>
                     </div>
-                    <!-- <div class="mapillary">
-                      <div id="mly" class="mapillary-js"></div>
-                    </div> -->
                   </div>
                 </div>
               </div>
